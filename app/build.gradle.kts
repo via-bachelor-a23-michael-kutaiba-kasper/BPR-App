@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "io.github.viabachelora23michaelkutaibakasper.bprapp"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "io.github.viabachelora23michaelkutaibakasper.bprapp"
         minSdk = 27
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
