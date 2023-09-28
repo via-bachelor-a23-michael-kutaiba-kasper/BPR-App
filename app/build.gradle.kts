@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -10,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "io.github.viabachelora23michaelkutaibakasper.bprapp"
         minSdk = 27
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -67,7 +68,16 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Google Maps
+    // Google maps
+    implementation(`play-services-maps`())
+    implementation(`play-services-location`())
+    // Google maps for compose
+    implementation(`maps-compose`())
+
+    // KTX for the Maps SDK for Android
+    implementation(`maps-ktx`())
+    // KTX for the Maps SDK for Android Utility Library
+    implementation(`maps-utils-ktx`())
 
 
     // Serialization
