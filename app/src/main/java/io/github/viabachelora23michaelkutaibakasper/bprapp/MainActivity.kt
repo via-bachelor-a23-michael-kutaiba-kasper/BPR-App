@@ -73,13 +73,17 @@ class MainActivity : ComponentActivity() {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         askPermissions()
         setContent {
             BPRAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     loadEventList()
                     MainScreen()
                 }
@@ -187,11 +191,13 @@ fun Map() {
 
     }
 }
+
 fun loadEventList() {
     eventList.add(event1)
     eventList.add(event2)
     eventList.add(event3)
 }
+
 class Event(val name: String, val location: LatLng)
 
 val eventList = mutableListOf<Event>()
