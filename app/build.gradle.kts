@@ -1,9 +1,23 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
+    id("com.apollographql.apollo3").version("3.7.3")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
 }
 
+apollo {
+    service("service") {
+        packageName.set("io.github.viabachelora23michaelkutaibakasper.bprapp")
+    }
+}
+kotlin {
+    jvmToolchain(8)
+}
 android {
     namespace = "io.github.viabachelora23michaelkutaibakasper.bprapp"
     compileSdk = 34
@@ -18,6 +32,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        kotlinOptions {
+            jvmTarget = "1.8"
         }
     }
 
@@ -81,4 +99,13 @@ dependencies {
 
 
     // Serialization
+
+    //apollo
+    implementation("com.apollographql.apollo3:apollo-runtime:3.7.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+    implementation("com.google.dagger:hilt-android:2.42")
+    kapt("com.google.dagger:hilt-android-compiler:2.42")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }

@@ -1,0 +1,14 @@
+query ExampleQuery {
+
+    countries {
+        name
+        capital
+        continent {
+            name
+        }
+        languages {
+            name
+        }
+    }
+
+}
