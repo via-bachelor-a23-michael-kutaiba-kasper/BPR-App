@@ -48,6 +48,8 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.ApolloCountryClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.domain.CountryClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -75,6 +77,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         askPermissions()
         setContent {
@@ -204,7 +207,7 @@ val eventList = mutableListOf<Event>()
 var event1 = Event("Run event", LatLng(55.862207, 9.844651))
 var event2 = Event("Dance event", LatLng(55.872207, 9.744651))
 var event3 = Event("Drunk event", LatLng(55.882207, 9.644651))
-
+val client = ApolloCountryClient(it)
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

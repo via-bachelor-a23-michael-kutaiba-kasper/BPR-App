@@ -2,6 +2,8 @@ query ExampleQuery {
 
     countries {
         name
+        code
+
         capital
         continent {
             name
