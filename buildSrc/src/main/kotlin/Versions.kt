@@ -13,5 +13,6 @@ internal object Versions{
     const val MAPS_COMPOSE= "2.8.0"
     const val MAPS_KTX= "3.2.1"
     const val MAPS_UTILS_KTX= "3.2.1"
+    const val GSON = "2.10.1"
     // TODO: Add test dependencies here as well
 }

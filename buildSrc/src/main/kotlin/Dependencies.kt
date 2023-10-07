@@ -18,3 +18,6 @@ fun DependencyHandler.`play-services-location`(version:String = Versions.PLAY_SE
 fun DependencyHandler.`maps-compose`(version:String = Versions.MAPS_COMPOSE) = "com.google.maps.android:maps-compose:${version}"
 fun DependencyHandler.`maps-ktx`(version:String = Versions.MAPS_KTX) = "com.google.maps.android:maps-ktx:${version}"
 fun DependencyHandler.`maps-utils-ktx`(version:String = Versions.MAPS_UTILS_KTX) = "com.google.maps.android:maps-utils-ktx:${version}"
+
+// Serialization
+fun DependencyHandler.`gson`(version: String = Versions.GSON) = "com.google.code.gson:gson:$version"

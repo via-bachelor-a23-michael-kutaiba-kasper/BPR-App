@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BPR App"
 include(":app")
+include(":graphite")
