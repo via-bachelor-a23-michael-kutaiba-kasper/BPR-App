@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 
-    id("com.apollographql.apollo3").version("3.7.3")
+    id("com.apollographql.apollo3").version("3.8.2")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
@@ -99,7 +99,7 @@ dependencies {
     // Serialization
 
     //apollo
-    implementation("com.apollographql.apollo3:apollo-runtime:3.7.3")
+    implementation("com.apollographql.apollo3:apollo-runtime:3.8.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
     implementation("com.google.dagger:hilt-android:2.42")
