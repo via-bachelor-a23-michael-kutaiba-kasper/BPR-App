@@ -14,3 +14,18 @@ query ExampleQuery {
     }
 
 }
+
+query CountryByCode($code: ID!) {
+    country(code: $code) {
+        name
+        code
+
+        capital
+        continent {
+            name
+        }
+        languages {
+            name
+        }
+    }
+}
