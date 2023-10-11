@@ -5,9 +5,6 @@ plugins {
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 
     id("com.apollographql.apollo3").version("3.8.2")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
-    id("com.google.dagger.hilt.android")
 }
 
 apollo {
@@ -95,15 +92,7 @@ dependencies {
     // KTX for the Maps SDK for Android Utility Library
     implementation(`maps-utils-ktx`())
 
-
-    // Serialization
-
     //apollo
-    implementation("com.apollographql.apollo3:apollo-runtime:3.8.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation(`apollo-runtime`())
 
-    implementation("com.google.dagger:hilt-android:2.42")
-    kapt("com.google.dagger:hilt-android-compiler:2.42")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }

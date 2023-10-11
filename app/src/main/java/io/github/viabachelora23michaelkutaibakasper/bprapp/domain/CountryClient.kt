@@ -4,6 +4,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ExampleQuery
 
 interface CountryClient {
 
-    suspend fun getCountries(): List<SimpleCountry>
-    suspend fun getCountry(code: String): SimpleCountry?
+    suspend fun getCountries(url:String): List<SimpleCountry>
+    suspend fun getCountry(url:String, code: String): SimpleCountry?
 }

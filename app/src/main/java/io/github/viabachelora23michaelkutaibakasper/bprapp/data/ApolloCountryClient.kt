@@ -8,9 +8,9 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.domain.CountryClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.domain.SimpleCountry
 
 class ApolloCountryClient() : CountryClient {
-    override suspend fun getCountries(): List<SimpleCountry> {
+    override suspend fun getCountries(url:String): List<SimpleCountry> {
        val apolloClient = ApolloClient.Builder()
-            .serverUrl("https://countries.trevorblades.com/")
+            .serverUrl(url)
             .build()
         val response = apolloClient.query(ExampleQuery()).execute()
         Log.d("ApolloCountryClient", "getCountries: ${response.data?.countries}")
@@ -22,9 +22,9 @@ class ApolloCountryClient() : CountryClient {
         } ?: emptyList()
     }
 
-    override suspend fun getCountry(code: String): SimpleCountry {
+    override suspend fun getCountry(url: String, code: String): SimpleCountry {
        val apolloClient = ApolloClient.Builder()
-            .serverUrl("https://countries.trevorblades.com/")
+            .serverUrl(url)
             .build()
         val response = apolloClient.query(CountryByCodeQuery(code)).execute()
         Log.d("ApolloCountryClient", "getCountry: $response")

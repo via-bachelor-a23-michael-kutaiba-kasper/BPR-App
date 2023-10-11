@@ -220,7 +220,7 @@ fun CountryList() {
     LaunchedEffect(Unit) {
         val countryClient: CountryClient = ApolloCountryClient()
         try {
-            val countries = countryClient.getCountries()
+            val countries = countryClient.getCountries("https://countries.trevorblades.com/")
             response = countries
 
         } catch (e: Exception) {
@@ -242,13 +242,13 @@ fun CountryList() {
 
 @Composable
 fun CountrySpecific(code: String) {
-    var response by remember { mutableStateOf<SimpleCountry>(SimpleCountry("", "", "")) }
+    var response by remember { mutableStateOf<List<SimpleCountry>>(mutableListOf()) }
     LaunchedEffect(Unit) {
         val countryClient: CountryClient = ApolloCountryClient()
         try {
-            val country = countryClient.getCountry(code = code)
-            if (country != null) {
-                response = country
+            val countries = countryClient.getCountries(url="https://countries.trevorblades.com/")
+            if (countries != null) {
+                response = countries
             }
 
         } catch (e: Exception) {
@@ -256,9 +256,10 @@ fun CountrySpecific(code: String) {
         }
     }
     Column {
-        Text("Country: ${response.name ?: "No name"}")
-        Text(text = "Country code: ${response.code ?: "No code"}")
-        Text(text = "Capital: ${response.capital ?: "No capital"}")
+
+        Text(text = "Country: ${response[0].name}")
+        Text(text = "Country code: ${response[0].code ?: "No code"}")
+        Text(text = "Capital: ${response[0].capital ?: "No capital"}")
         HorizontalDivider()
     }
 }

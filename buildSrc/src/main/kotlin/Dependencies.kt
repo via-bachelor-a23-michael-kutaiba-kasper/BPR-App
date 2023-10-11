@@ -18,3 +18,8 @@ fun DependencyHandler.`play-services-location`(version:String = Versions.PLAY_SE
 fun DependencyHandler.`maps-compose`(version:String = Versions.MAPS_COMPOSE) = "com.google.maps.android:maps-compose:${version}"
 fun DependencyHandler.`maps-ktx`(version:String = Versions.MAPS_KTX) = "com.google.maps.android:maps-ktx:${version}"
 fun DependencyHandler.`maps-utils-ktx`(version:String = Versions.MAPS_UTILS_KTX) = "com.google.maps.android:maps-utils-ktx:${version}"
+fun DependencyHandler.`apollo-runtime`(version:String = Versions.APOLLO_RUNTIME) = "com.apollographql.apollo3:apollo-runtime:${version}"
+//do it for gradle plugin
+fun DependencyHandler.`build-gradle`(version:String = Versions.GRADLE_BUILD) = "com.android.tools.build:gradle:${version}"
+// do it for kotlin gradle plugin
+fun DependencyHandler.`kotlin-gradle-plugin`(version:String = Versions.KOTLIN_GRADLE_PLUGIN) = "org.jetbrains.kotlin:kotlin-gradle-plugin:${version}"
