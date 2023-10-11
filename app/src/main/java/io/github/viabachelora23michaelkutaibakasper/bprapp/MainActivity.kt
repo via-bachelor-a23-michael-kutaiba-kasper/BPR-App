@@ -3,16 +3,16 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.GridLayout
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,13 +30,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,9 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.ApolloCountryClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.domain.CountryClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.domain.SimpleCountry
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -75,7 +79,11 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
+
+
         askPermissions()
         setContent {
             BPRAppTheme {
@@ -85,6 +93,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     loadEventList()
+
                     MainScreen()
                 }
             }
@@ -150,15 +159,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Map()
+            // Map()
+            CountryList()
+            // CountrySpecific(code ="DK")
         }
     }
-
 }
 
 @Composable
 fun Map() {
-
     val horsens = LatLng(55.862207, 9.844651)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(horsens, 15f)
@@ -205,11 +214,53 @@ var event1 = Event("Run event", LatLng(55.862207, 9.844651))
 var event2 = Event("Dance event", LatLng(55.872207, 9.744651))
 var event3 = Event("Drunk event", LatLng(55.882207, 9.644651))
 
+@Composable
+fun CountryList() {
+    var response by remember { mutableStateOf<List<SimpleCountry>>(emptyList()) }
+    LaunchedEffect(Unit) {
+        val countryClient: CountryClient = ApolloCountryClient()
+        try {
+            val countries = countryClient.getCountries("https://countries.trevorblades.com/")
+            response = countries
+
+        } catch (e: Exception) {
+            Log.d("countriesList", "Failure", e)
+        }
+    }
+    LazyColumn {
+        items(response) { country ->
+            Column {
+                Text("Country: ${country.name ?: "No name"}")
+                Text(text = "Country code: ${country.code ?: "No code"}")
+                Text(text = "Capital: ${country.capital ?: "No capital"}")
+                HorizontalDivider()
+            }
+
+        }
+    }
+}
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun CountrySpecific(code: String) {
+    var response by remember { mutableStateOf<List<SimpleCountry>>(mutableListOf()) }
+    LaunchedEffect(Unit) {
+        val countryClient: CountryClient = ApolloCountryClient()
+        try {
+            val countries = countryClient.getCountries(url="https://countries.trevorblades.com/")
+            if (countries != null) {
+                response = countries
+            }
+
+        } catch (e: Exception) {
+            Log.d("countriesList", "Failure", e)
+        }
+    }
     Column {
-        Text(text = name, modifier = modifier)
+
+        Text(text = "Country: ${response[0].name}")
+        Text(text = "Country code: ${response[0].code ?: "No code"}")
+        Text(text = "Capital: ${response[0].capital ?: "No capital"}")
+        HorizontalDivider()
     }
 }
 
@@ -217,6 +268,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     BPRAppTheme {
-        Greeting("Test")
+        MainScreen()
     }
 }

@@ -1,9 +1,20 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
+    id("com.apollographql.apollo3").version("3.8.2")
 }
 
+apollo {
+    service("service") {
+        packageName.set("io.github.viabachelora23michaelkutaibakasper.bprapp")
+    }
+}
+kotlin {
+    jvmToolchain(17)
+}
 android {
     namespace = "io.github.viabachelora23michaelkutaibakasper.bprapp"
     compileSdk = 34
@@ -19,6 +30,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        kotlinOptions {
+            jvmTarget = "17"
+        }
     }
 
     buildTypes {
@@ -28,12 +43,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+
     buildFeatures {
         compose = true
     }
@@ -79,6 +92,7 @@ dependencies {
     // KTX for the Maps SDK for Android Utility Library
     implementation(`maps-utils-ktx`())
 
+    //apollo
+    implementation(`apollo-runtime`())
 
-    // Serialization
 }

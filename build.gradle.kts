@@ -6,11 +6,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath (`secrets-gradle-plugin`())
+        classpath(`secrets-gradle-plugin`())
+        classpath(`build-gradle`())
+        classpath(`kotlin-gradle-plugin`())
+
     }
 }
+
 
 plugins {
     id("com.android.application") version "8.1.1" apply false
     id("org.jetbrains.kotlin.android") version "1.8.10" apply false
+    id("com.google.dagger.hilt.android") version "2.42" apply false
 }

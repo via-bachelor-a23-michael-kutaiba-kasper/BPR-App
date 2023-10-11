@@ -1,0 +1,30 @@
+query ExampleQuery {
+
+    countries {
+        name
+        code
+        capital
+        continent {
+            name
+        }
+        languages {
+            name
+        }
+    }
+
+}
+
+query CountryByCode($code: ID!) {
+    country(code: $code) {
+        name
+        code
+
+        capital
+        continent {
+            name
+        }
+        languages {
+            name
+        }
+    }
+}

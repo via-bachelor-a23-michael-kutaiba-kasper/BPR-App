@@ -13,5 +13,8 @@ internal object Versions{
     const val MAPS_COMPOSE= "2.8.0"
     const val MAPS_KTX= "3.2.1"
     const val MAPS_UTILS_KTX= "3.2.1"
+    const val APOLLO_RUNTIME= "3.8.2"
+    const val GRADLE_BUILD= "7.1.0"
+    const val KOTLIN_GRADLE_PLUGIN= "1.7.0"
     // TODO: Add test dependencies here as well
 }
