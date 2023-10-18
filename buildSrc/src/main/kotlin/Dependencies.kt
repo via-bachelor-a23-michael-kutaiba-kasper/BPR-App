@@ -23,3 +23,5 @@ fun DependencyHandler.`apollo-runtime`(version:String = Versions.APOLLO_RUNTIME)
 fun DependencyHandler.`build-gradle`(version:String = Versions.GRADLE_BUILD) = "com.android.tools.build:gradle:${version}"
 // do it for kotlin gradle plugin
 fun DependencyHandler.`kotlin-gradle-plugin`(version:String = Versions.KOTLIN_GRADLE_PLUGIN) = "org.jetbrains.kotlin:kotlin-gradle-plugin:${version}"
+// do it for compose viewmodel
+fun DependencyHandler.`lifecycle-viewmodel-compose`(version:String = Versions.LIFECYCLE_VIEWMODEL_COMPOSE) = "androidx.lifecycle:lifecycle-viewmodel-compose:${version}"

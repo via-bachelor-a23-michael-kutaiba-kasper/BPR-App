@@ -16,5 +16,6 @@ internal object Versions{
     const val APOLLO_RUNTIME= "3.8.2"
     const val GRADLE_BUILD= "7.1.0"
     const val KOTLIN_GRADLE_PLUGIN= "1.7.0"
+    const val LIFECYCLE_VIEWMODEL_COMPOSE= "2.6.2"
     // TODO: Add test dependencies here as well
 }
