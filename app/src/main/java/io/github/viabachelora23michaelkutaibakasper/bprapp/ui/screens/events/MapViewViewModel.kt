@@ -1,5 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
@@ -20,12 +21,17 @@ class MapViewViewModel : ViewModel() {
     private val _event = MutableStateFlow<Event?>(null)
     val event = _event.asStateFlow() //expose the stateflow as a public property
 
+    init {
+        fetchEventData()
+    }
 
-     fun fetchEventData() {
+    private fun fetchEventData() {
         viewModelScope.launch {
             val events = eventRepository.getEvents()
             _eventList.value = events
+            Log.d("mapviewmodel", "getevents: $events")
         }
+
     }
 
     fun loadEvent(code: String) {

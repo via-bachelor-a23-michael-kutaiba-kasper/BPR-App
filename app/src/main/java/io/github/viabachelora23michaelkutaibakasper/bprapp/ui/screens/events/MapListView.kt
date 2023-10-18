@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 
 class MapListView {
@@ -19,7 +20,7 @@ class MapListView {
     @Composable
     fun EventList() {
         var response by remember { mutableStateOf<List<Event>>(emptyList()) }
-        val viewModel = MapViewViewModel()
+        val viewModel:MapViewViewModel = viewModel()
 
         // val countryClient: CountryClient = ApolloCountryClient()
 

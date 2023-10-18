@@ -14,7 +14,7 @@ class EventRepository : IEventRepository {
             .serverUrl(URL)
             .build()
         val response = apolloClient.query(ExampleQuery()).execute()
-        Log.d("ApolloCountryClient", "getCountries: ${response.data?.countries}")
+        Log.d("ApolloEventClient", "getCountries: ${response.data?.countries}")
         return response.data?.countries?.map {
             Event(
                 it.name,
