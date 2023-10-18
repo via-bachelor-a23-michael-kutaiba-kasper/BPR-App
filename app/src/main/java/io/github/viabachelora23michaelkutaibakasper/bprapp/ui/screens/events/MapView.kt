@@ -55,6 +55,8 @@ class MapView {
 
         Column(modifier = Modifier.fillMaxSize())
         {
+            val mapView = 0
+            val listView = 1
             val tabs = listOf("Map", "List")
             val selectedIndex = remember { mutableIntStateOf(0) }
             PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
@@ -68,11 +70,10 @@ class MapView {
             }
 
             when (selectedIndex.intValue) {
-                0 -> {
+                mapView -> {
                     mapEvents()
                 }
-
-                1 -> {
+                listView -> {
                     EventList()
                 }
             }
@@ -85,11 +86,9 @@ class MapView {
         var response by remember { mutableStateOf<List<Event>>(emptyList()) }
         val viewModel: MapViewViewModel = viewModel()
 
-        // val countryClient: CountryClient = ApolloCountryClient()
-
         val events by viewModel.eventList.collectAsState(emptyList())
         response = events
-        Log.d("ApolloCountryClient", "getCountries: $response")
+        Log.d("ApolloEventClient", "getEvents: $response")
 
 
         LazyColumn {
@@ -135,7 +134,7 @@ class MapView {
                     snippet = "description"
                 )
             }
-            
+
             FloatingActionButton(
                 onClick = {}, content = {
                     Column {
