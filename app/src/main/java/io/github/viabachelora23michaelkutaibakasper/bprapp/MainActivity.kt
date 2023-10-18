@@ -196,18 +196,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
             composable(MainActivity.Screens.Profile.name) {
                 Text(text = "Profile")
             }
-
-            /* Column(
-                 modifier = Modifier
-                     .padding(innerPadding),
-                 verticalArrangement = Arrangement.spacedBy(16.dp),
-             ) {
-                 val MapListView = MapView()
-                 MapListView.Map()
-                 // MapListView.EventList()
-                 //  CountryList()
-                 // CountrySpecific(code ="DK")
-             }*/
         }
     }
 }

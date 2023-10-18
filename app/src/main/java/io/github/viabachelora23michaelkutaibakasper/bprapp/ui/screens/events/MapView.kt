@@ -51,13 +51,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 class MapView {
 
     @Composable
-    fun name() {
-        Column {
-
-        }
-    }
-
-    @Composable
     fun Map(navController: NavController) {
 
         Column(modifier = Modifier.fillMaxSize())
@@ -142,7 +135,7 @@ class MapView {
                     snippet = "description"
                 )
             }
-            //create floating action button in bottom right corner
+            
             FloatingActionButton(
                 onClick = {}, content = {
                     Column {
@@ -161,7 +154,6 @@ class MapView {
     fun CountrySpecific(code: String) {
         var response by remember { mutableStateOf<List<Event>>(mutableListOf()) }
         val viewModel = MapViewViewModel()
-        //   val countryClient: CountryClient = ApolloCountryClient()
 
         val events = viewModel.eventList.collectAsState(emptyList()).value
         if (events != null) {
