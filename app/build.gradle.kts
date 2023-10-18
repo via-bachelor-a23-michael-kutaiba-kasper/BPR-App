@@ -82,6 +82,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(`lifecycle-viewmodel-compose`())
 
+    implementation(`navigation-compose`())
+
     // Google maps
     implementation(`play-services-maps`())
     implementation(`play-services-location`())

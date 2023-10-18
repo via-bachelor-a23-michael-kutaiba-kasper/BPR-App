@@ -25,3 +25,5 @@ fun DependencyHandler.`build-gradle`(version:String = Versions.GRADLE_BUILD) = "
 fun DependencyHandler.`kotlin-gradle-plugin`(version:String = Versions.KOTLIN_GRADLE_PLUGIN) = "org.jetbrains.kotlin:kotlin-gradle-plugin:${version}"
 // do it for compose viewmodel
 fun DependencyHandler.`lifecycle-viewmodel-compose`(version:String = Versions.LIFECYCLE_VIEWMODEL_COMPOSE) = "androidx.lifecycle:lifecycle-viewmodel-compose:${version}"
+// do it for navigation compose
+fun DependencyHandler.`navigation-compose`(version:String = Versions.NAVIGATION_COMPOSE) = "androidx.navigation:navigation-compose:${version}"
