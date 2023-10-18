@@ -39,5 +39,9 @@ class EventRepository : IEventRepository {
         } ?: throw Exception("Country not found with country code: $code")
     }
 
+    override suspend fun createEvent(event: Event): Event {
+        TODO("Not yet implemented")
+    }
+
 
 }

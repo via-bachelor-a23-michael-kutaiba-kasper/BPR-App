@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapViewViewModel : ViewModel() {
-    //make a viewmodel that holds the list of events. the viewmodel should use kotlin stateflow to hold the list of events
-    //the viewmodel should have a function that loads the list of events from the repository
 
     private val eventRepository: IEventRepository = EventRepository()
     private val _eventList = MutableStateFlow<List<Event>>(emptyList())
@@ -32,6 +30,12 @@ class MapViewViewModel : ViewModel() {
             Log.d("mapviewmodel", "getevents: $events")
         }
 
+    }
+    //make a function that creates a new event in the repository
+    fun createEvent(event: Event) {
+        viewModelScope.launch {
+            eventRepository.createEvent(event)
+        }
     }
 
     fun loadEvent(code: String) {

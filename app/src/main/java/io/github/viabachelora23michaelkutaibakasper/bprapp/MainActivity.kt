@@ -39,6 +39,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
@@ -47,7 +48,8 @@ class MainActivity : ComponentActivity() {
         Map,
         Recommendations,
         Achievements,
-        Profile
+        Profile,
+        CreateEvent
     }
 
     private val requestPermissionLauncher =
@@ -196,6 +198,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
             composable(MainActivity.Screens.Profile.name) {
                 Text(text = "Profile")
             }
+            composable(MainActivity.Screens.CreateEvent.name) {
+               CreateEvent(navController)
+            }
+
         }
     }
 }

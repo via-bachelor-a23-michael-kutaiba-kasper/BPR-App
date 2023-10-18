@@ -66,12 +66,11 @@ class MapView {
                         onClick = { selectedIndex.intValue = index }
                     )
                 }
-
             }
 
             when (selectedIndex.intValue) {
                 mapView -> {
-                    mapEvents()
+                    mapEvents(navController)
                 }
                 listView -> {
                     EventList()
@@ -85,7 +84,6 @@ class MapView {
     fun EventList() {
         var response by remember { mutableStateOf<List<Event>>(emptyList()) }
         val viewModel: MapViewViewModel = viewModel()
-
         val events by viewModel.eventList.collectAsState(emptyList())
         response = events
         Log.d("ApolloEventClient", "getEvents: $response")
@@ -105,7 +103,7 @@ class MapView {
     }
 
     @Composable
-    fun mapEvents() {
+    fun mapEvents(navController: NavController) {
         val horsens = LatLng(55.862207, 9.844651)
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(horsens, 15f)
@@ -136,7 +134,7 @@ class MapView {
             }
 
             FloatingActionButton(
-                onClick = {}, content = {
+                onClick = {navController.navigate(MainActivity.Screens.CreateEvent.name)}, content = {
                     Column {
                         Icon(Icons.Default.Add, contentDescription = "Add")
                     }
