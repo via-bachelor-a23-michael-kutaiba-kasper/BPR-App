@@ -5,6 +5,7 @@ plugins {
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 
     id("com.apollographql.apollo3").version("3.8.2")
+    id("com.google.gms.google-services")
 }
 
 apollo {
@@ -72,6 +73,9 @@ dependencies {
     implementation(`androidx-compose-ui-graphics`())
     implementation(`androidx-compose-ui-tooling-preview`())
     implementation(`androidx-compose-material3`())
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     // TODO: Move rest of dependencies into Versions.kt and Dependencies.kt
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -81,6 +85,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(`lifecycle-viewmodel-compose`())
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     implementation(`navigation-compose`())
 
