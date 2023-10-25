@@ -1,0 +1,13 @@
+query AllPublicEvents {
+    allPublicEvents {
+        title
+        description
+        url
+        location {
+            city
+            streetNumber
+            houseNumber
+            floor
+        }
+    }
+}

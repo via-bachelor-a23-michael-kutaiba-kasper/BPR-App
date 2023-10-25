@@ -43,8 +43,6 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
@@ -94,9 +92,7 @@ class MapView {
         LazyColumn {
             items(response) { country ->
                 Column {
-                    Text("Country: ${country.name ?: "No name"}")
-                    Text(text = "Country code: ${country.code ?: "No code"}")
-                    Text(text = "Capital: ${country.capital ?: "No capital"}")
+
                     HorizontalDivider()
                 }
 
@@ -149,23 +145,7 @@ class MapView {
 
     }
 
-    @Composable
-    fun CountrySpecific(code: String) {
-        var response by remember { mutableStateOf<List<Event>>(mutableListOf()) }
-        val viewModel = MapViewViewModel()
 
-        val events = viewModel.eventList.collectAsState(emptyList()).value
-        if (events != null) {
-            response = events
-            Column {
-
-                Text(text = "Country: ${response[0].name}")
-                Text(text = "Country code: ${response[0].code ?: "No code"}")
-                Text(text = "Capital: ${response[0].capital ?: "No capital"}")
-                HorizontalDivider()
-            }
-        }
-    }
 
     @Preview(showBackground = true)
     @Composable
