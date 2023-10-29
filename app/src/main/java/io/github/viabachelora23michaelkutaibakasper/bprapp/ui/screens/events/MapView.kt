@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,8 +46,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainScreen
+
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
@@ -52,7 +54,7 @@ class MapView {
 
     @Composable
     fun Map(navController: NavController) {
-
+        val isDarkTheme = isSystemInDarkTheme()
         Column(modifier = Modifier.fillMaxSize())
         {
             val mapView = 0
@@ -61,9 +63,15 @@ class MapView {
             val selectedIndex = remember { mutableIntStateOf(0) }
             PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
                 tabs.forEachIndexed { index, title ->
-                    Tab(text = { Text(text = title) },
+                    Tab(text = { Text(text = title)},
                         selected = selectedIndex.intValue == index,
-                        onClick = { selectedIndex.intValue = index }
+                        onClick = { selectedIndex.intValue = index },
+                        icon = {
+                            when (index) {
+                                mapView -> Icon(Icons.Default.Place, contentDescription = "Map")
+                                listView -> Icon(Icons.Default.Menu, contentDescription = "List",)
+                            }
+                        }
                     )
                 }
 

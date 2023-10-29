@@ -35,7 +35,6 @@ class MapViewViewModel : ViewModel() {
     }
 
     fun loadEvent(code: String) {
-
         viewModelScope.launch {
             _event.value = eventRepository.getEvent(code)
         }

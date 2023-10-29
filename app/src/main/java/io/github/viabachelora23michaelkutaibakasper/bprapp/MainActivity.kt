@@ -3,13 +3,10 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,6 +15,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,40 +27,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.identity.Identity
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.GoogleAuthUIClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-
-    val googleAuthUiClient by lazy {
-        GoogleAuthUIClient(
-            context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
-        )
-    }
+private val authentication:IAuthenticationClient = AuthenticationClient()
 
     enum class Screens() {
         Map,
@@ -131,6 +113,7 @@ class MainActivity : ComponentActivity() {
                             NavigationBar(
                                 contentColor = MaterialTheme.colorScheme.secondary,
                                 content = {
+                                    val isDarkTheme = isSystemInDarkTheme()
                                     NavigationBarItem(
                                         label = { Text("Home") },
                                         selected = (selectedIndex.intValue == 0),
@@ -142,7 +125,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Filled.LocationOn,
                                                 contentDescription = "Map",
-                                                tint = Color.Black,
+                                                tint = if (isDarkTheme) Color.White else Color.Black
                                             )
                                         })
                                     NavigationBarItem(
@@ -156,7 +139,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Filled.ThumbUp,
                                                 contentDescription = "Achievements",
-                                                tint = Color.Black,
+                                                tint = if (isDarkTheme) Color.White else Color.Black
                                             )
                                         })
                                     NavigationBarItem(
@@ -170,7 +153,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Filled.Star,
                                                 contentDescription = "Achievements",
-                                                tint = Color.Black,
+                                                tint = if (isDarkTheme) Color.White else Color.Black
                                             )
                                         })
                                     NavigationBarItem(
@@ -184,7 +167,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 imageVector = Icons.Filled.Person,
                                                 contentDescription = "Profile",
-                                                tint = Color.Black,
+                                                tint = if (isDarkTheme) Color.White else Color.Black
                                             )
                                         })
                                 }
@@ -200,62 +183,13 @@ class MainActivity : ComponentActivity() {
                                 MapView().Map(navController = navController)
                             }
                             composable(MainActivity.Screens.Recommendations.name) {
-                                Text(text = "Recommendations")
+                                Text(text = authentication.getCurrentUser()?.displayName.toString() +": Recommendations")
                             }
                             composable(MainActivity.Screens.Achievements.name) {
                                 Text(text = "Achievements")
                             }
                             composable(MainActivity.Screens.Profile.name) {
-                                val viewModel = viewModel<ProfileViewModel>()
-                                val state by viewModel.state.collectAsStateWithLifecycle()
-                                LaunchedEffect(key1 = Unit) {
-                                    if (googleAuthUiClient.getSignedInUser() != null) {
-                                        Toast.makeText(
-                                            applicationContext,
-                                            "Signed in",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                                val launcher = rememberLauncherForActivityResult(
-                                    contract = ActivityResultContracts.StartIntentSenderForResult(),
-                                    onResult = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            lifecycleScope.launch {
-                                                val signInResult =
-                                                    googleAuthUiClient.signInWithIntent(
-                                                        intent = result.data ?: return@launch
-                                                    )
-                                                viewModel.onSignInResult(signInResult)
-                                            }
-                                        }
-                                    }
-                                )
-                                LaunchedEffect(key1 = state.isSignInSuccessful) {
-                                    if (state.isSignInSuccessful) {
-                                        Toast.makeText(
-                                            applicationContext,
-                                            "Sign in successful",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-
-                                      //  navController.navigate("profile")
-                                       // viewModel.resetState()
-                                    }
-                                }
-                                ProfileScreen(
-                                    state = state,
-                                    onSignInClick = {
-                                        lifecycleScope.launch {
-                                            val signInIntentSender = googleAuthUiClient.signIn()
-                                            launcher.launch(
-                                                IntentSenderRequest.Builder(
-                                                    signInIntentSender ?: return@launch
-                                                ).build()
-                                            )
-                                        }
-                                    }
-                                )
+                                ProfileScreen()
                             }
                         }
                     }
@@ -266,15 +200,9 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-fun MainScreen(modifier: Modifier = Modifier) {
-
-}
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     BPRAppTheme {
-        MainScreen()
     }
 }
