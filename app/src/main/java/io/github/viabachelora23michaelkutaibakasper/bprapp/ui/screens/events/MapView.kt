@@ -1,5 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,7 +58,6 @@ class MapView {
 
     @Composable
     fun Map(navController: NavController) {
-        val isDarkTheme = isSystemInDarkTheme()
         Column(modifier = Modifier.fillMaxSize())
         {
             val mapView = 0
@@ -62,13 +66,13 @@ class MapView {
             val selectedIndex = remember { mutableIntStateOf(0) }
             PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
                 tabs.forEachIndexed { index, title ->
-                    Tab(text = { Text(text = title)},
+                    Tab(text = { Text(text = title) },
                         selected = selectedIndex.intValue == index,
                         onClick = { selectedIndex.intValue = index },
                         icon = {
                             when (index) {
                                 mapView -> Icon(Icons.Default.Place, contentDescription = "Map")
-                                listView -> Icon(Icons.Default.Menu, contentDescription = "List",)
+                                listView -> Icon(Icons.Default.Menu, contentDescription = "List")
                             }
                         }
                     )
@@ -80,6 +84,7 @@ class MapView {
                 mapView -> {
                     mapEvents()
                 }
+
                 listView -> {
                     EventList()
                 }
@@ -92,16 +97,33 @@ class MapView {
     fun EventList() {
         var response by remember { mutableStateOf<List<Event>>(emptyList()) }
         val viewModel: MapViewViewModel = viewModel()
-
         val events by viewModel.eventList.collectAsState(emptyList())
         response = events
         Log.d("ApolloEventClient", "getEvents: $response")
 
 
         LazyColumn {
-            items(response) { country ->
+            items(response) { event ->
                 Column {
+                    Row(Modifier.padding(4.dp)) {
+                        Column {
+                            Row {
+                                //text title in bold
+                                Text(text = "Title: ", fontWeight = Bold)
+                                Text(text = event.title ?: "No title")
+                            }
+                            Text(text = "Description:", fontWeight = Bold)
+                            Text(text = event.description ?: "No description")
+                            val context = LocalContext.current
+                            val intent =
+                                remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
+                            Button(onClick = { context.startActivity(intent) })
+                            {
+                                Text(text = "Link to event")
+                            }
 
+                        }
+                    }
                     HorizontalDivider()
                 }
 
@@ -133,11 +155,27 @@ class MapView {
                 uiSettings = uiSettings,
                 properties = MapProperties(isMyLocationEnabled = true)
             ) {
-                Marker(
-                    state = MarkerState(position = LatLng(55.862207, 9.844651)),
-                    title = "run guys",
-                    snippet = "description"
-                )
+                //create Markers for each event
+
+                var response by remember { mutableStateOf<List<Event>>(emptyList()) }
+                val viewModel: MapViewViewModel = viewModel()
+                val events by viewModel.eventList.collectAsState(emptyList())
+                response = events
+
+                Log.d("events for makers", "getEvents: $response")
+                events.forEach { event ->
+                    Marker(
+
+                        state = MarkerState(
+                            position = LatLng(
+                                event.location?.geoLocation?.lat ?: 0.0,
+                                event.location?.geoLocation?.lng ?: 0.0
+                            )
+                        ),
+                        title = event.title ?: "No title",
+                        snippet = event.description ?: "No description",
+                    )
+                }
             }
 
             FloatingActionButton(
@@ -153,7 +191,6 @@ class MapView {
         }
 
     }
-
 
 
     @Preview(showBackground = true)
