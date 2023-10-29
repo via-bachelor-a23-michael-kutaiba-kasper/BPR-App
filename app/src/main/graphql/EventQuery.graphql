@@ -8,6 +8,10 @@ query AllPublicEvents {
             streetNumber
             houseNumber
             floor
+            geoLocation {
+                lat
+                lng
+            }
         }
     }
 }

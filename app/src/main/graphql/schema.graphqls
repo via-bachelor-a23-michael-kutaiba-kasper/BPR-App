@@ -1,7 +1,7 @@
 type GeoLocation {
   lat: String
 
-  long: String
+  lng: String
 }
 
 """
@@ -22,7 +22,7 @@ type Location {
 
   floor: String
 
-  geolocation: GeoLocation
+  geoLocation: GeoLocation
 }
 
 type Event {
