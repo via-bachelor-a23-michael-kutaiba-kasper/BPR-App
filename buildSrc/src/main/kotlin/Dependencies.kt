@@ -27,3 +27,11 @@ fun DependencyHandler.`kotlin-gradle-plugin`(version:String = Versions.KOTLIN_GR
 fun DependencyHandler.`lifecycle-viewmodel-compose`(version:String = Versions.LIFECYCLE_VIEWMODEL_COMPOSE) = "androidx.lifecycle:lifecycle-viewmodel-compose:${version}"
 // do it for navigation compose
 fun DependencyHandler.`navigation-compose`(version:String = Versions.NAVIGATION_COMPOSE) = "androidx.navigation:navigation-compose:${version}"
+//firebase bom
+fun DependencyHandler.`firebase-bom`(version:String = Versions.FIREBASE_BOM) = "com.google.firebase:firebase-bom:${version}"
+//firebase auth
+fun DependencyHandler.`firebase-auth-ktx`() = "com.google.firebase:firebase-auth-ktx"
+// gms play services auth
+fun DependencyHandler.`play-services-auth`(version:String = Versions.PLAY_SERVICES_AUTH) = "com.google.android.gms:play-services-auth:${version}"
+//coil compose
+fun DependencyHandler.`coil-compose`(version:String = Versions.COIL_COMPOSE) = "io.coil-kt:coil-compose:${version}"

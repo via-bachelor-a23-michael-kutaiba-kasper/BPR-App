@@ -73,9 +73,9 @@ dependencies {
     implementation(`androidx-compose-ui-graphics`())
     implementation(`androidx-compose-ui-tooling-preview`())
     implementation(`androidx-compose-material3`())
-    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(platform(`firebase-bom`()))
+    implementation(`firebase-auth-ktx`())
+    implementation(`play-services-auth`())
     // TODO: Move rest of dependencies into Versions.kt and Dependencies.kt
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -88,7 +88,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     implementation(`navigation-compose`())
-
+    //image caching
+    implementation (`coil-compose`())
     // Google maps
     implementation(`play-services-maps`())
     implementation(`play-services-location`())
@@ -99,7 +100,6 @@ dependencies {
     implementation(`maps-ktx`())
     // KTX for the Maps SDK for Android Utility Library
     implementation(`maps-utils-ktx`())
-
     //apollo
     implementation(`apollo-runtime`())
 
