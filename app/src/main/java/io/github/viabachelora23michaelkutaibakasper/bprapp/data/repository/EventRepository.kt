@@ -5,11 +5,12 @@ import com.apollographql.apollo3.ApolloClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.AllPublicEventsQuery
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 
 class EventRepository : IEventRepository {
 
-    private val URL = "https://countries.trevorblades.com/"
+    private val URL = "https://api-gateway-6tyymw4cxq-ew.a.run.app/"
     override suspend fun getEvents(): List<Event> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(URL)
@@ -18,14 +19,19 @@ class EventRepository : IEventRepository {
         Log.d("ApolloEventClient", "getPublicEvents: ${response.data?.allPublicEvents}")
         return response.data?.allPublicEvents?.map {
             Event(
-              title= it?.title,
-               description = it?.description,
+                title = it?.title,
+                description = it?.description,
                 url = it?.url,
                 location = Location(
                     city = it?.location?.city,
                     streetName = it?.location?.streetNumber,
                     houseNumber = it?.location?.houseNumber,
-                    floor = it?.location?.floor)
+                    floor = it?.location?.floor,
+                    geoLocation = GeoLocation(
+                        lat = it?.location?.geoLocation?.lat?.toDouble(),
+                        lng = it?.location?.geoLocation?.lng?.toDouble()
+                    )
+                )
             )
         } ?: emptyList()
     }
