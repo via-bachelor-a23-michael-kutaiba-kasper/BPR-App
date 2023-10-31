@@ -41,6 +41,10 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String", "API_URL", "\"https://api-gateway-6tyymw4cxq-ew.a.run.app/\"")
+        }
+        debug {
+            buildConfigField("String", "API_URL", "\"https://api-gateway-6tyymw4cxq-ew.a.run.app/\"")
         }
     }
     compileOptions {
@@ -50,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
