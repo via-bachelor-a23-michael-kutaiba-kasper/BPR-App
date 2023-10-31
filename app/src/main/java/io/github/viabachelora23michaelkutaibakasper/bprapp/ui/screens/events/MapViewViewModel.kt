@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
@@ -21,24 +22,32 @@ class MapViewViewModel : ViewModel() {
     private val _event = MutableStateFlow<Event?>(null)
     val event = _event.asStateFlow() //expose the stateflow as a public property
 
+    val isLoading = mutableStateOf(false)
+
     init {
         fetchEventData()
     }
+//q: how do i await the response from the repository? i need to update isLoading to false after the response is received
+    //a: use a try catch finally block
+    //a: but what if the repository call is also async?
+//a: use a coroutine
+    //a: but what if the repository call is also async?
+    //show me the code
 
-    private fun fetchEventData() {
-        viewModelScope.launch {
-            val events = eventRepository.getEvents()
-            _eventList.value = events
-            Log.d("mapviewmodel", "getevents: $events")
+    fun fetchEventData() {
+        try {
+            viewModelScope.launch {
+                isLoading.value = true
+                val events = eventRepository.getEvents()
+                _eventList.value = events
+                Log.d("mapviewmodel", "getevents: $events")
+            }
+        } catch (e: Exception) {
+            Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
 
     }
-
-    fun loadEvent(code: String) {
-        viewModelScope.launch {
-            _event.value = eventRepository.getEvent(code)
-        }
-
-    }
-
 }
