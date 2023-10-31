@@ -3,17 +3,16 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.AllPublicEventsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 
 class EventRepository : IEventRepository {
-
-    private val URL = "https://api-gateway-6tyymw4cxq-ew.a.run.app/"
     override suspend fun getEvents(): List<Event> {
         val apolloClient = ApolloClient.Builder()
-            .serverUrl(URL)
+            .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.query(AllPublicEventsQuery()).execute()
         Log.d("ApolloEventClient", "getPublicEvents: ${response.data?.allPublicEvents}")

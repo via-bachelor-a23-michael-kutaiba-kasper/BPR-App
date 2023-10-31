@@ -121,12 +121,10 @@ class MapView {
                             {
                                 Text(text = "Link to event")
                             }
-
                         }
                     }
                     HorizontalDivider()
                 }
-
             }
         }
     }
