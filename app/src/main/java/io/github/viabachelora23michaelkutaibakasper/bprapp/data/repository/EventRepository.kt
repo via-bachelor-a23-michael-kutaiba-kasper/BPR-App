@@ -2,41 +2,41 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CountryByCodeQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ExampleQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.AllPublicEventsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
+
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 
 class EventRepository : IEventRepository {
-
-    private val URL = "https://countries.trevorblades.com/"
     override suspend fun getEvents(): List<Event> {
         val apolloClient = ApolloClient.Builder()
-            .serverUrl(URL)
+            .serverUrl(BuildConfig.API_URL)
             .build()
-        val response = apolloClient.query(ExampleQuery()).execute()
-        Log.d("ApolloEventClient", "getCountries: ${response.data?.countries}")
-        return response.data?.countries?.map {
+        val response = apolloClient.query(AllPublicEventsQuery()).execute()
+        Log.d("ApolloEventClient", "getPublicEvents: ${response.data?.allPublicEvents}")
+        return response.data?.allPublicEvents?.map {
             Event(
-                it.name,
-                it.capital,
-                it.code
+                title = it?.title,
+                description = it?.description,
+                url = it?.url,
+                location = Location(
+                    city = it?.location?.city,
+                    streetName = it?.location?.streetNumber,
+                    houseNumber = it?.location?.houseNumber,
+                    floor = it?.location?.floor,
+                    geoLocation = GeoLocation(
+                        lat = it?.location?.geoLocation?.lat?.toDouble(),
+                        lng = it?.location?.geoLocation?.lng?.toDouble()
+                    )
+                )
             )
         } ?: emptyList()
     }
 
     override suspend fun getEvent(code: String): Event? {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(URL)
-            .build()
-        val response = apolloClient.query(CountryByCodeQuery(code)).execute()
-        Log.d("ApolloCountryClient", "getCountry: $response")
-        return response.data?.country?.let {
-            Event(
-                it.name,
-                it.capital,
-                it.code
-            )
-        } ?: throw Exception("Country not found with country code: $code")
+        TODO("Not yet implemented")
     }
 
     override suspend fun createEvent(event: Event): Event {

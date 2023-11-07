@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
@@ -11,6 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapViewViewModel : ViewModel() {
+    //make a viewmodel that holds the list of events. the viewmodel should use kotlin stateflow to hold the list of events
+    //the viewmodel should have a function that loads the list of events from the repository
 
     private val eventRepository: IEventRepository = EventRepository()
     private val _eventList = MutableStateFlow<List<Event>>(emptyList())
@@ -19,31 +22,32 @@ class MapViewViewModel : ViewModel() {
     private val _event = MutableStateFlow<Event?>(null)
     val event = _event.asStateFlow() //expose the stateflow as a public property
 
+    val isLoading = mutableStateOf(false)
+
     init {
         fetchEventData()
     }
+//q: how do i await the response from the repository? i need to update isLoading to false after the response is received
+    //a: use a try catch finally block
+    //a: but what if the repository call is also async?
+//a: use a coroutine
+    //a: but what if the repository call is also async?
+    //show me the code
 
-    private fun fetchEventData() {
-        viewModelScope.launch {
-            val events = eventRepository.getEvents()
-            _eventList.value = events
-            Log.d("mapviewmodel", "getevents: $events")
+    fun fetchEventData() {
+        try {
+            viewModelScope.launch {
+                isLoading.value = true
+                val events = eventRepository.getEvents()
+                _eventList.value = events
+                Log.d("mapviewmodel", "getevents: $events")
+            }
+        } catch (e: Exception) {
+            Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
 
     }
-    //make a function that creates a new event in the repository
-    fun createEvent(event: Event) {
-        viewModelScope.launch {
-            eventRepository.createEvent(event)
-        }
-    }
-
-    fun loadEvent(code: String) {
-
-        viewModelScope.launch {
-            _event.value = eventRepository.getEvent(code)
-        }
-
-    }
-
 }
