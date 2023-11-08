@@ -81,6 +81,7 @@ dependencies {
     implementation(platform(`firebase-bom`()))
     implementation(`firebase-auth-ktx`())
     implementation(`play-services-auth`())
+    implementation("com.google.android.material:material:1.10.0")
     // TODO: Move rest of dependencies into Versions.kt and Dependencies.kt
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -91,7 +92,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(`lifecycle-viewmodel-compose`())
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-
+    implementation ("com.google.maps.android:maps-compose-utils:4.1.1")
     implementation(`navigation-compose`())
     //image caching
     implementation (`coil-compose`())

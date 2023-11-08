@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,25 +32,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventDateAndTimeScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventDetailsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventImagesScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventInviteFriendsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventLocationScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventTitleAndDescriptionScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
 class MainActivity : ComponentActivity() {
-private val authentication:IAuthenticationClient = AuthenticationClient()
 
-    enum class Screens() {
-        Map,
-        Recommendations,
-        Achievements,
-        Profile
-    }
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -119,7 +120,7 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
                                         selected = (selectedIndex.intValue == 0),
                                         onClick = {
                                             selectedIndex.intValue = 0;
-                                            navController.navigate(MainActivity.Screens.Map.name)
+                                            navController.navigate(BottomNavigationScreens.Map.name)
                                         },
                                         icon = {
                                             Icon(
@@ -133,7 +134,7 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
                                         selected = (selectedIndex.intValue == 1),
                                         onClick = {
                                             selectedIndex.intValue =
-                                                1; navController.navigate(MainActivity.Screens.Recommendations.name)
+                                                1; navController.navigate(BottomNavigationScreens.Recommendations.name)
                                         },
                                         icon = {
                                             Icon(
@@ -147,7 +148,7 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
                                         selected = (selectedIndex.intValue == 2),
                                         onClick = {
                                             selectedIndex.intValue =
-                                                2; navController.navigate(MainActivity.Screens.Achievements.name)
+                                                2; navController.navigate(BottomNavigationScreens.Achievements.name)
                                         },
                                         icon = {
                                             Icon(
@@ -161,7 +162,7 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
                                         selected = (selectedIndex.intValue == 3),
                                         onClick = {
                                             selectedIndex.intValue = 3;
-                                            navController.navigate(MainActivity.Screens.Profile.name)
+                                            navController.navigate(BottomNavigationScreens.Profile.name)
                                         },
                                         icon = {
                                             Icon(
@@ -176,20 +177,39 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = MainActivity.Screens.Map.name,
+                            startDestination = BottomNavigationScreens.Map.name,
                             modifier = Modifier.padding(innerPadding)
                         ) {
-                            composable(MainActivity.Screens.Map.name) {
+                            val authentication: IAuthenticationClient = AuthenticationClient()
+                            composable(BottomNavigationScreens.Map.name) {
                                 MapView().Map(navController = navController)
                             }
-                            composable(MainActivity.Screens.Recommendations.name) {
-                                Text(text = authentication.getCurrentUser()?.displayName.toString() +": Recommendations")
+                            composable(BottomNavigationScreens.Recommendations.name) {
+                                Text(text = authentication.getCurrentUser()?.displayName.toString() + ": Recommendations")
                             }
-                            composable(MainActivity.Screens.Achievements.name) {
+                            composable(BottomNavigationScreens.Achievements.name) {
                                 Text(text = "Achievements")
                             }
-                            composable(MainActivity.Screens.Profile.name) {
+                            composable(BottomNavigationScreens.Profile.name) {
                                 ProfileScreen()
+                            }
+                            composable(CreateEventScreens.Title.name) {
+                                CreateEventTitleAndDescriptionScreen(navController = navController)
+                            }
+                            composable(CreateEventScreens.Location.name) {
+                                CreateEventLocationScreen(navController = navController)
+                            }
+                            composable(CreateEventScreens.DateAndTime.name) {
+                                CreateEventDateAndTimeScreen(navController = navController)
+                            }
+                            composable(CreateEventScreens.Details.name) {
+                                CreateEventDetailsScreen(navController = navController)
+                            }
+                            composable(CreateEventScreens.Images.name) {
+                                CreateEventImagesScreen(navController = navController)
+                            }
+                            composable(CreateEventScreens.InviteFriends.name) {
+                                CreateEventInviteFriendsScreen(navController = navController)
                             }
                         }
                     }
@@ -197,6 +217,22 @@ private val authentication:IAuthenticationClient = AuthenticationClient()
             }
         }
     }
+}
+
+enum class BottomNavigationScreens() {
+    Map,
+    Recommendations,
+    Achievements,
+    Profile,
+}
+
+enum class CreateEventScreens() {
+    Title,
+    Location,
+    DateAndTime,
+    Details,
+    Images,
+    InviteFriends
 }
 
 

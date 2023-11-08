@@ -16,6 +16,7 @@ class EventRepository : IEventRepository {
             .build()
         val response = apolloClient.query(AllPublicEventsQuery()).execute()
         Log.d("ApolloEventClient", "getPublicEvents: ${response.data?.allPublicEvents}")
+        if (response.hasErrors()) Log.d("ApolloEventClient", "getPublicEvents: ${response.errors}")
         return response.data?.allPublicEvents?.map {
             Event(
                 title = it?.title,
