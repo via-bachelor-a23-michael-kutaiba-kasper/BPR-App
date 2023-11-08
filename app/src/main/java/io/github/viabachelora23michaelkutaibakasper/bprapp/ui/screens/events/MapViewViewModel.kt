@@ -35,19 +35,16 @@ class MapViewViewModel : ViewModel() {
     //show me the code
 
     fun fetchEventData() {
-        try {
-            viewModelScope.launch {
-                isLoading.value = true
+        isLoading.value = true
+        viewModelScope.launch {
+            try {
                 val events = eventRepository.getEvents()
                 _eventList.value = events
                 Log.d("mapviewmodel", "getevents: $events")
+                isLoading.value = false
+            } catch (e: Exception) {
+                Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
             }
-        } catch (e: Exception) {
-            Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
         }
-        finally {
-            isLoading.value = false
-        }
-
     }
 }
