@@ -20,7 +20,7 @@ internal object Versions{
     const val NAVIGATION_COMPOSE= "2.7.4"
     const val FIREBASE_BOM= "32.4.0"
     const val PLAY_SERVICES_AUTH= "20.7.0"
-    const val COIL_COMPOSE= "2.2.2"
+    const val COIL_COMPOSE= "2.3.0"
 
     // TODO: Add test dependencies here as well
 }
