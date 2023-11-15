@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,9 +44,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.GoogleMap
@@ -55,10 +58,12 @@ import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.clustering.Clustering
+import com.google.maps.android.compose.googleMapFactory
 import com.google.maps.android.compose.rememberCameraPositionState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
+import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
@@ -147,6 +152,7 @@ class MapView {
 
 @Composable
 fun MapEvents(navController: NavController) {
+    val context = LocalContext.current
     val horsens = LatLng(55.862207, 9.844651)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(horsens, 15f)
@@ -168,8 +174,11 @@ fun MapEvents(navController: NavController) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            googleMapOptionsFactory = { GoogleMapOptions().mapId(context.getString(R.string.map_id)) },
             uiSettings = uiSettings,
-            properties = MapProperties(isMyLocationEnabled = true)
+            properties = MapProperties(
+                isMyLocationEnabled = true
+            )
         ) {
             //create Markers for each event
 
