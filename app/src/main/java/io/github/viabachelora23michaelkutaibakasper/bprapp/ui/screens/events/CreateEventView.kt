@@ -2,10 +2,17 @@
 
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
+import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -52,11 +59,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.PlaceTypes
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -66,6 +80,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.math.log
 
 @Composable
 fun DisplayFormattedDateTime(dateTime: LocalDateTime, modifier: Modifier = Modifier) {
@@ -96,7 +111,7 @@ fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
         // Title
         TextField(
             value = title,
-            onValueChange = { title = it },
+            onValueChange = { title = viewModel.setTitle(it).toString() },
             label = { Text("Title") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -105,7 +120,7 @@ fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
 
         TextField(
             value = description,
-            onValueChange = { description = it },
+            onValueChange = { description = viewModel.setDescription(it).toString() },
             label = { Text("Description") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,6 +176,71 @@ fun CreateEventLocationScreen(navController: NavController) {
         )
         Text(text = "Location")
         val context = LocalContext.current
+
+
+        val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+
+        fun getMetaDataValue(context: Context, key: String): String? {
+            try {
+                val ai: ApplicationInfo =
+                    context.packageManager.getApplicationInfo(
+                        context.packageName,
+                        PackageManager.GET_META_DATA
+                    )
+                val bundle: Bundle = ai.metaData
+                return bundle.getString(key)
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        Places.initializeWithNewPlacesApiEnabled(
+            context, getMetaDataValue(context, "com.google.android.geo.API_KEY")!!
+        )
+
+        // Create a new PlacesClient instance
+        val placesClient = Places.createClient(context)
+
+        // Start the autocomplete intent.
+        val countries = mutableListOf<String>()
+        countries.add("DK")
+        var intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+            .setCountries(countries).setTypesFilter(listOf(PlaceTypes.ADDRESS))
+            .build(context)
+
+        var address by remember {
+            mutableStateOf("Address")
+        }
+        var latLng by remember {
+            mutableStateOf("LatLng")
+        }
+        val startAutocomplete =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val intent1 = result.data
+                    if (intent1 != null) {
+                        val place = Autocomplete.getPlaceFromIntent(intent1)
+                        Log.i(
+                            TAG, "Place: ${place.name}, ${place.id}"
+                        )
+                        address = place.address?.toString() ?: "Address"
+                        latLng = place.latLng?.toString() ?: "LatLng"
+                    }
+                } else if (result.resultCode == Activity.RESULT_CANCELED) {
+                    // The user canceled the operation.
+                    Log.i(TAG, "User canceled autocomplete")
+                }
+            }
+
+
+        Button(onClick = { startAutocomplete.launch(intent) }) {
+            Text(text = "Select location")
+        }
+
+        Text(text = address)
+        Text(text = latLng)
+
         // Save or submit button
         Button(
             onClick = {
@@ -192,6 +272,8 @@ fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().t
 @Composable
 fun CreateEventDateAndTimeScreen(navController: NavController) {
     val viewModel: CreateEventViewModel = viewModel()
+    var selectedStartDateTime = viewModel.selectedStartDateTime.value
+    var selectedEndDateTime = viewModel.selectedEndDateTime.value
 
     fun convertUtcMillisecondsToFormattedDate(
         utcMilliseconds: Long?
@@ -220,17 +302,17 @@ fun CreateEventDateAndTimeScreen(navController: NavController) {
         )
 
         val startDatePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toMillis())
+            rememberDatePickerState(initialSelectedDateMillis = selectedStartDateTime.toMillis())
         val endDatePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toMillis())
+            rememberDatePickerState(initialSelectedDateMillis = selectedEndDateTime.toMillis())
         val startTimeDialogState = rememberMaterialDialogState()
         val endTimeDialogState = rememberMaterialDialogState()
 
         var pickedStartTime by remember {
-            mutableStateOf(LocalTime.now())
+            mutableStateOf(selectedStartDateTime.toLocalTime())
         }
         var pickedEndTime by remember {
-            mutableStateOf(LocalTime.now().plusHours(3))
+            mutableStateOf(selectedEndDateTime.toLocalTime())
         }
         val combinedStartDateAndTime by remember {
             derivedStateOf {
@@ -374,6 +456,20 @@ fun CreateEventDateAndTimeScreen(navController: NavController) {
         Button(
             onClick = {
                 navController.navigate(CreateEventScreens.Details.name)
+                viewModel.setSelectedDateTime(
+                    combinedStartDateAndTime
+                )
+                Log.d(
+                    "CreateEventDateAndTimeScreen",
+                    "Selected start date and time: $combinedStartDateAndTime"
+                )
+                viewModel.setSelectedEndDateTime(
+                    combinedEndDateAndTime
+                )
+                Log.d(
+                    "CreateEventDateAndTimeScreen",
+                    "Selected end date and time: $combinedEndDateAndTime"
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -420,7 +516,6 @@ fun CreateEventDetailsScreen(navController: NavController) {
                 .height(8.dp)
         )
         Text(text = "Details")
-        //create a switch for private and adults only
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -429,16 +524,14 @@ fun CreateEventDetailsScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Private")
-            //create switch that toggles between private and public
             Switch(
                 checked = isPrivate,
-                onCheckedChange = { isPrivate = it }
+                onCheckedChange = { isPrivate = viewModel.setIsPrivate(it) }
             )
         }
 
 
         val context = LocalContext.current
-        // Save or submit button
         Button(
             onClick = {
                 navController.navigate(CreateEventScreens.Images.name)

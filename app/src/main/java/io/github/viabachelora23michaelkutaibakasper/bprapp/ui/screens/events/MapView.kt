@@ -148,10 +148,6 @@ class MapView {
 @Composable
 fun MapEvents(navController: NavController) {
     val horsens = LatLng(55.862207, 9.844651)
-    val horsens1 = LatLng(55.862207, 10.844651)
-    val horsens2 = LatLng(55.862207, 11.844651)
-    val horsens3 = LatLng(55.862207, 12.844651)
-    val horsens4 = LatLng(55.862207, 13.844651)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(horsens, 15f)
 

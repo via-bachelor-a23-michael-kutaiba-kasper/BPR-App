@@ -25,7 +25,7 @@ class MapViewViewModel : ViewModel() {
     val isLoading = mutableStateOf(false)
 
     init {
-        fetchEventData()
+       // fetchEventData()
     }
 //q: how do i await the response from the repository? i need to update isLoading to false after the response is received
     //a: use a try catch finally block

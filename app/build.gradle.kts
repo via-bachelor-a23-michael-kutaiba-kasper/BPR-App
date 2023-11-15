@@ -110,5 +110,6 @@ dependencies {
     implementation(`apollo-runtime`())
 
     implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+    implementation ("com.google.android.libraries.places:places:3.3.0")
 
 }
