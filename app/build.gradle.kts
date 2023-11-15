@@ -109,4 +109,6 @@ dependencies {
     //apollo
     implementation(`apollo-runtime`())
 
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+
 }

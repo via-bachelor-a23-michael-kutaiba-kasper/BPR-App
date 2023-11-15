@@ -4,18 +4,13 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.net.Uri
 import android.util.Log
-import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,56 +20,62 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
-import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberDateRangePickerState
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.R
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
-import java.net.URI
-import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
-import java.util.Date
-import java.util.TimeZone
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
+@Composable
+fun DisplayFormattedDateTime(dateTime: LocalDateTime, modifier: Modifier = Modifier) {
+    val formatter = DateTimeFormatter
+        .ofLocalizedDateTime(FormatStyle.SHORT)
+        .withLocale(Locale.UK)
+    val formattedTime = dateTime.format(formatter)
+    //make text bigger
+    Text(text = formattedTime, fontSize = 32.sp)
+}
 
 @Composable
 fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
@@ -102,10 +103,6 @@ fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
                 .padding(all = 8.dp)
         )
 
-        // Type (Dropdown)
-        // You can use a DropdownMenu or other custom implementations
-        // to create a dropdown for event types
-        // Description
         TextField(
             value = description,
             onValueChange = { description = it },
@@ -196,7 +193,18 @@ fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().t
 fun CreateEventDateAndTimeScreen(navController: NavController) {
     val viewModel: CreateEventViewModel = viewModel()
 
-    //make this column scrollable so that the user can scroll down to see the date and time picker
+    fun convertUtcMillisecondsToFormattedDate(
+        utcMilliseconds: Long?
+    ): LocalDate {
+
+        return Instant
+            .ofEpochMilli(utcMilliseconds!!)
+            .atOffset(
+                ZoneOffset.UTC
+            )
+            .toLocalDate()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -210,52 +218,156 @@ fun CreateEventDateAndTimeScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(8.dp)
         )
-        Text(text = "Date and Time")
-        val dateTime = LocalDateTime.now()
-        val dateRangePickerState = rememberDateRangePickerState(
-            initialSelectedStartDateMillis = dateTime.toMillis(),
-            initialDisplayedMonthMillis = null,
-            initialSelectedEndDateMillis = dateTime.plusDays(3).toMillis(),
-            initialDisplayMode = DisplayMode.Input,
-            yearRange = IntRange(dateTime.year, dateTime.year + 1)
-        )
-        DateRangePicker(state = dateRangePickerState,Modifier.height(400.dp))
+
+        val startDatePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toMillis())
+        val endDatePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = LocalDateTime.now().toMillis())
+        val startTimeDialogState = rememberMaterialDialogState()
+        val endTimeDialogState = rememberMaterialDialogState()
+
+        var pickedStartTime by remember {
+            mutableStateOf(LocalTime.now())
+        }
+        var pickedEndTime by remember {
+            mutableStateOf(LocalTime.now().plusHours(3))
+        }
+        val combinedStartDateAndTime by remember {
+            derivedStateOf {
+                LocalDateTime.of(
+                    convertUtcMillisecondsToFormattedDate(startDatePickerState.selectedDateMillis),
+                    pickedStartTime
+                )
+            }
+        }
+        val combinedEndDateAndTime by remember {
+            derivedStateOf {
+                LocalDateTime.of(
+                    convertUtcMillisecondsToFormattedDate(endDatePickerState.selectedDateMillis),
+                    pickedEndTime
+                )
+            }
+        }
+        val startDateOpenDialog = remember { mutableStateOf(false) }
+        val endDateOpenDialog = remember { mutableStateOf(false) }
+        Text(text = "Selected start date and time:")
+        DisplayFormattedDateTime(combinedStartDateAndTime, Modifier.fillMaxWidth())
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Button(onClick = { startDateOpenDialog.value = true }) {
+                Text(text = "Select start date")
+            }
+            Button(onClick = { startTimeDialogState.show() }) {
+                Text(text = "Select start time")
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(text = "Selected end date and time:")
+        DisplayFormattedDateTime(combinedEndDateAndTime, Modifier.fillMaxWidth())
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Button(onClick = { endDateOpenDialog.value = true }) {
+                Text(text = "Select end date")
+            }
+            Button(onClick = { endTimeDialogState.show() }) {
+                Text(text = "Select end time")
+            }
+        }
+
+        if (startDateOpenDialog.value) {
+            DatePickerDialog(
+                onDismissRequest = {
+                    startDateOpenDialog.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            startDateOpenDialog.value = false
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            startDateOpenDialog.value = false
+                        }
+                    ) {
+                        Text("CANCEL")
+                    }
+                }
+            ) {
+                DatePicker(
+                    state = startDatePickerState
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        MaterialDialog(
+            dialogState = startTimeDialogState,
+            buttons = {
+                positiveButton(text = "Ok") {
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            timepicker(
+                is24HourClock = true,
+                initialTime = LocalTime.now(),
+                title = "Pick a time"
+            ) {
+                pickedStartTime = it
+            }
+        }
+
+
+        if (endDateOpenDialog.value) {
+            DatePickerDialog(
+                onDismissRequest = {
+                    endDateOpenDialog.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            endDateOpenDialog.value = false
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            endDateOpenDialog.value = false
+                        }
+                    ) {
+                        Text("CANCEL")
+                    }
+                }
+            ) {
+                DatePicker(
+                    state = endDatePickerState
+                )
+            }
+        }
         HorizontalDivider()
-
-        val timePickerState = remember {
-            TimePickerState(
-                is24Hour = true,
-                initialHour = dateTime.hour,
-                initialMinute = dateTime.minute
-
-            )
+        MaterialDialog(
+            dialogState = endTimeDialogState,
+            buttons = {
+                positiveButton(text = "Ok") {
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            timepicker(
+                is24HourClock = true,
+                initialTime = LocalTime.now(),
+                title = "Pick a time"
+            ) {
+                pickedEndTime = it
+            }
         }
 
-        TimePicker(
-            state = timePickerState,
-
-            modifier = Modifier
-                .padding(top = 8.dp)
-        )
-
-        //create a localdatetimer to store the date and time from the date and time picker
-        fun convertUtcMillisecondsToFormattedDate(
-            utcMilliseconds: Long,
-            dateFormat: String
-        ): String {
-            val date = Date(utcMilliseconds)
-            val sdf = SimpleDateFormat(dateFormat)
-            sdf.timeZone = TimeZone.getTimeZone("UTC") // Set the desired time zone
-            return sdf.format(date)
-        }
-
-        val date = convertUtcMillisecondsToFormattedDate(
-            dateRangePickerState.selectedStartDateMillis!!,
-            "yyyy-MM-dd"
-        )
-        Log.d("date", date)
-        val time = timePickerState.hour.toString() + ":" + timePickerState.minute.toString()
-        Log.d("time", time)
 
         // Save or submit button
         val context = LocalContext.current
@@ -325,7 +437,6 @@ fun CreateEventDetailsScreen(navController: NavController) {
         }
 
 
-
         val context = LocalContext.current
         // Save or submit button
         Button(
@@ -389,7 +500,10 @@ fun CreateEventImagesScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(8.dp)
         )
-        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp), modifier = Modifier.height(500.dp)) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            modifier = Modifier.height(500.dp)
+        ) {
             items(selectedImageUris) { uri ->
                 AsyncImage(
                     modifier = Modifier
