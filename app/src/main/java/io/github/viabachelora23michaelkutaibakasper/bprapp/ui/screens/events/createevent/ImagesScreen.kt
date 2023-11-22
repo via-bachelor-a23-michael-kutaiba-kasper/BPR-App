@@ -1,26 +1,15 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent
 
-package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
-
-import android.app.Activity
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,18 +22,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,67 +34,93 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.PlaceTypes
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.time.timepicker
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import io.github.viabachelora23michaelkutaibakasper.bprapp.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.R
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
-import kotlin.math.log
-
-
-
-
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventViewModel
 
 
 @Composable
-fun CreateEventInviteFriendsScreen(navController: NavController) {
+fun CreateEventImagesScreen(navController: NavController) {
     val viewModel: CreateEventViewModel = viewModel()
-    var title = viewModel.title.value
-    var description = viewModel.description.value
+    val context = LocalContext.current
+    var selectedImageUris by remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
+    val multiplePhotoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
+    ) {
+        if (it != null) {
+            Log.d("PhotoPicker", "Selected URI: $it")
+            selectedImageUris = it
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ) {
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    )
+    {
         LinearProgressIndicator(
-            progress = { 0.2f * 5 },
+            progress = { 0.2f * 4 },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)
         )
-        Text(text = "Invite Friends")
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            modifier = Modifier.height(500.dp)
+        ) {
+            items(selectedImageUris) { uri ->
+                AsyncImage(
+                    modifier = Modifier
+                        .size(250.dp)
+                        .padding(4.dp),
+                    model = ImageRequest.Builder(LocalContext.current).data(uri)
+                        .crossfade(enable = true).build(),
+                    contentDescription = "Avatar Image",
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Row {
+            Button(onClick = {
+                Toast.makeText(
+                    context,
+                    isPhotoPickerAvailable(context)
+                        .toString(),
+                    Toast.LENGTH_LONG
+                ).show()
+            }) {
+                Text(text = "Availability")
+            }
+
+            Spacer(modifier = Modifier.width(24.dp))
+            Button(onClick = {
+                multiplePhotoPicker.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }) {
+                Text(text = "Pick multiple photo")
+            }
+        }
         val context = LocalContext.current
-        // Save or submit button
         Button(
             onClick = {
-                navController.navigate(BottomNavigationScreens.Map.name)
+                navController.navigate(CreateEventScreens.InviteFriends.name)
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         ) {
-            Text("Create Event")
+            Text("Next")
         }
         Button(
             onClick = {
@@ -134,4 +140,3 @@ fun CreateEventInviteFriendsScreen(navController: NavController) {
         }
     }
 }
-

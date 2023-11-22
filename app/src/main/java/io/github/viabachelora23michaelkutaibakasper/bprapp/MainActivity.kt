@@ -41,13 +41,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventDateAndTimeScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventDetailsScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventImagesScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventInviteFriendsScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventLocationScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventTitleAndDescriptionScreen
+
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDetailsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventImagesScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventLocationScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventTitleAndDescriptionScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
