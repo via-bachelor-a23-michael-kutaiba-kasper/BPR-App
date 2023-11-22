@@ -34,13 +34,15 @@ import com.google.android.libraries.places.api.model.PlaceTypes
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventViewModel
 
 
 @Composable
 fun CreateEventLocationScreen(navController: NavController) {
     val viewModel: CreateEventViewModel = viewModel()
-    var address = viewModel.address.value
+    var location = viewModel.location.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +58,7 @@ fun CreateEventLocationScreen(navController: NavController) {
         val context = LocalContext.current
 
 
-        val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+        val fields = listOf(Place.Field.ID, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG)
 
         fun getMetaDataValue(context: Context, key: String): String? {
             try {
@@ -87,9 +89,7 @@ fun CreateEventLocationScreen(navController: NavController) {
             .setCountries(countries).setTypesFilter(listOf(PlaceTypes.ADDRESS))
             .build(context)
 
-        var address by remember {
-            mutableStateOf("Address")
-        }
+
         var latLng by remember {
             mutableStateOf("LatLng")
         }
@@ -102,8 +102,29 @@ fun CreateEventLocationScreen(navController: NavController) {
                         Log.i(
                             ContentValues.TAG, "Place: ${place.name}, ${place.id}"
                         )
-                        address = place.address?.toString() ?: "Address"
-                        latLng = place.latLng?.toString() ?: "LatLng"
+                        //  address = place.addressComponents?.toString() ?: "Address"
+                        // create location object based on address components
+                        val address = place.addressComponents?.asList()
+                        val streetName = address?.get(1)?.name ?: ""
+                        val streetNumber = address?.get(0)?.name ?: ""
+                        //  val floor = address?.get(4)?.name ?: ""
+                        val city = address?.get(2)?.name ?: ""
+                        val zipCode = address?.get(4)?.name ?: ""
+                        val country = address?.get(3)?.name ?: ""
+                        val lat = place.latLng?.latitude ?: 0.0
+                        val lng = place.latLng?.longitude ?: 0.0
+                        latLng = "Lat: $lat, Lng: $lng"
+                        location = Location(
+                            city,
+                            streetName,
+                            streetNumber,
+                            country,
+                            null,
+                            zipCode,
+                            GeoLocation(lat, lng)
+                        )
+                        Log.i(ContentValues.TAG, "Location: $location")
+                        viewModel.setLocation(location)
                     }
                 } else if (result.resultCode == Activity.RESULT_CANCELED) {
                     // The user canceled the operation.
@@ -116,7 +137,7 @@ fun CreateEventLocationScreen(navController: NavController) {
             Text(text = "Select location")
         }
 
-        Text(text = address)
+        Text(text = location.toString())
         Text(text = latLng)
 
         // Save or submit button

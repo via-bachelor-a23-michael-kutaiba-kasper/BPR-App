@@ -27,6 +27,8 @@ class EventRepository : IEventRepository {
                     streetName = it?.location?.streetNumber,
                     houseNumber = it?.location?.houseNumber,
                     floor = it?.location?.floor,
+                    country = null,
+                    postalCode = null,
                     geoLocation = GeoLocation(
                         lat = it?.location?.geoLocation?.lat?.toDouble(),
                         lng = it?.location?.geoLocation?.lng?.toDouble()

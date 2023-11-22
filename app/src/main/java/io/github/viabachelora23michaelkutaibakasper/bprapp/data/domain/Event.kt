@@ -9,15 +9,17 @@ data class Event(
 )
 
 data class Location(
-    val city: String?,
-    val streetName: String?,
-    val houseNumber: String?,
-    val floor: String?,
-    val geoLocation: GeoLocation?
+    var city: String?,
+    var streetName: String?,
+    var houseNumber: String?,
+    var country: String?,
+    var floor: String?,
+    var postalCode: String?,
+    var geoLocation: GeoLocation?
 )
 
 data class GeoLocation(
-    val lat: Double?,
-    val lng: Double?
+    var lat: Double?,
+    var lng: Double?
 )
 

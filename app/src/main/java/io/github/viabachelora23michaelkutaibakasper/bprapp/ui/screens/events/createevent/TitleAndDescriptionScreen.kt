@@ -2,6 +2,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.cr
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +53,7 @@ fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
             label = { Text("Description") },
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.4f)
                 .padding(all = 8.dp)
         )
 
