@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ import androidx.navigation.navigation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventInviteFriendsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.EventDetailsScreen
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
@@ -52,6 +54,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.cre
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
+@ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
 
 
@@ -178,7 +181,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = BottomNavigationScreens.Map.name,
+                            startDestination = BottomNavigationScreens.EventDetails.name,
                             modifier = Modifier.padding(innerPadding)
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
@@ -212,6 +215,9 @@ class MainActivity : ComponentActivity() {
                             composable(CreateEventScreens.InviteFriends.name) {
                                 CreateEventInviteFriendsScreen(navController = navController)
                             }
+                            composable(BottomNavigationScreens.EventDetails.name) {
+                              EventDetailsScreen(navController = navController)
+                            }
                         }
                     }
                 }
@@ -225,6 +231,7 @@ enum class BottomNavigationScreens() {
     Recommendations,
     Achievements,
     Profile,
+    EventDetails
 }
 
 enum class CreateEventScreens() {
