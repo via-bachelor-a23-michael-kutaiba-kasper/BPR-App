@@ -58,7 +58,7 @@ fun CreateEventLocationScreen(navController: NavController) {
         val context = LocalContext.current
 
 
-        val fields = listOf(Place.Field.ID, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG)
+        val fields = listOf(Place.Field.ADDRESS_COMPONENTS, Place.Field.ADDRESS, Place.Field.LAT_LNG)
 
         fun getMetaDataValue(context: Context, key: String): String? {
             try {
@@ -93,6 +93,9 @@ fun CreateEventLocationScreen(navController: NavController) {
         var latLng by remember {
             mutableStateOf("LatLng")
         }
+        var address1 by remember {
+            mutableStateOf("address")
+        }
         val startAutocomplete =
             rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -105,22 +108,14 @@ fun CreateEventLocationScreen(navController: NavController) {
                         //  address = place.addressComponents?.toString() ?: "Address"
                         // create location object based on address components
                         val address = place.addressComponents?.asList()
-                        val streetName = address?.get(1)?.name ?: ""
-                        val streetNumber = address?.get(0)?.name ?: ""
-                        //  val floor = address?.get(4)?.name ?: ""
                         val city = address?.get(2)?.name ?: ""
-                        val zipCode = address?.get(4)?.name ?: ""
-                        val country = address?.get(3)?.name ?: ""
                         val lat = place.latLng?.latitude ?: 0.0
                         val lng = place.latLng?.longitude ?: 0.0
                         latLng = "Lat: $lat, Lng: $lng"
+                        address1 = place.address ?: "Address"
                         location = Location(
                             city,
-                            streetName,
-                            streetNumber,
-                            country,
-                            null,
-                            zipCode,
+                            address1,
                             GeoLocation(lat, lng)
                         )
                         Log.i(ContentValues.TAG, "Location: $location")
@@ -138,7 +133,6 @@ fun CreateEventLocationScreen(navController: NavController) {
         }
 
         Text(text = location.toString())
-        Text(text = latLng)
 
         // Save or submit button
         Button(

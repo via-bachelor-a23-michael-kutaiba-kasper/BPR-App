@@ -24,21 +24,18 @@ class EventRepository : IEventRepository {
                 url = it?.url,
                 location = Location(
                     city = it?.location?.city,
-                    streetName = it?.location?.streetNumber,
-                    houseNumber = it?.location?.houseNumber,
-                    floor = it?.location?.floor,
-                    country = null,
-                    postalCode = null,
+                    completeAddress = it?.title,
                     geoLocation = GeoLocation(
-                        lat = it?.location?.geoLocation?.lat?.toDouble(),
-                        lng = it?.location?.geoLocation?.lng?.toDouble()
+                        lat = it?.location?.geoLocation?.lat!!.toDouble(),
+                        lng = it?.location?.geoLocation?.lng!!.toDouble()
                     )
                 )
+
             )
         } ?: emptyList()
     }
 
-    override suspend fun getEvent(code: String): Event? {
+    override suspend fun getEvent(eventId: String): Event {
         TODO("Not yet implemented")
     }
 

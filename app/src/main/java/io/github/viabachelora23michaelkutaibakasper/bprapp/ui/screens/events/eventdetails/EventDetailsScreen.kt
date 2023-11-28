@@ -1,10 +1,9 @@
-package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
+package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails
 
-import android.inputmethodservice.Keyboard
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 
 
 import androidx.compose.foundation.layout.Column
@@ -18,28 +17,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.Divider
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -65,6 +55,11 @@ import coil.request.ImageRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import kotlin.math.absoluteValue
 
 
@@ -72,10 +67,31 @@ import kotlin.math.absoluteValue
 @ExperimentalFoundationApi
 @Composable
 fun EventDetailsScreen(navController: NavController) {
+    var response by remember {
+        mutableStateOf<Event>(
+            Event(
+                "",
+                "",
+                "",
+                Location("", "",  GeoLocation(0.0, 0.0))
+            )
+        )
+    }
+    val viewModel: EventDetailsViewModel = viewModel()
+    val event by viewModel.event.collectAsState()
+    val isLoading by viewModel.isLoading
+    response = event
+    Log.d("eventDetailsScreen", "event: $response")
+
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val openDialog = remember { mutableStateOf(false) }
     //create list of my 3 cat images in values folder
     val catList = listOf(R.drawable.cat1, R.drawable.cat2, R.drawable.cat3)
+
+    if (isLoading) {
+        LoadingScreen()
+    } //should display a No Events message
+
     Column {
 
 
@@ -169,9 +185,17 @@ fun EventDetailsScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceEvenly
                 )
                 {
-                    Text(text = "Experience gained: 20", Modifier.padding(8.dp), fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "Experience gained: 20",
+                        Modifier.padding(8.dp),
+                        fontWeight = FontWeight.SemiBold
+                    )
                     VerticalDivider(thickness = 1.dp, color = Color.Black)
-                    Text(text = "Category: Music", Modifier.padding(8.dp), fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "Category: Music",
+                        Modifier.padding(8.dp),
+                        fontWeight = FontWeight.SemiBold
+                    )
 
                 }
             }

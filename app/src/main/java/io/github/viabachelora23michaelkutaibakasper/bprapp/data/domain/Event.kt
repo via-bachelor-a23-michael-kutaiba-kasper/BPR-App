@@ -10,11 +10,7 @@ data class Event(
 
 data class Location(
     var city: String?,
-    var streetName: String?,
-    var houseNumber: String?,
-    var country: String?,
-    var floor: String?,
-    var postalCode: String?,
+    var completeAddress: String?,
     var geoLocation: GeoLocation?
 )
 

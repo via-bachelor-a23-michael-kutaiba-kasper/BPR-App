@@ -21,7 +21,7 @@ class CreateEventViewModel : ViewModel() {
     var _keywords = mutableStateOf(emptyList<String>())
     var _selectedCategory = mutableStateOf("Choose Category")
     var _maxNumberOfAttendees = mutableStateOf(0)
-    val _location = mutableStateOf(Location("", "", "", "", "", "", GeoLocation(0.0, 0.0)))
+    val _location = mutableStateOf(Location("", "", GeoLocation(0.0, 0.0)))
 
     val title: State<String> get() = _title
     val address: State<String> get() = _address
@@ -90,6 +90,7 @@ class CreateEventViewModel : ViewModel() {
         _maxNumberOfAttendees.value = newMaxNumberOfAttendees
         return _maxNumberOfAttendees.value
     }
+
     fun setLocation(newLocation: Location): Location {
         _location.value = newLocation
         return _location.value
