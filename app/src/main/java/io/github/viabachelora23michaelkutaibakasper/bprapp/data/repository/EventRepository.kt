@@ -8,6 +8,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 
 class EventRepository : IEventRepository {
     override suspend fun getEvents(): List<Event> {
@@ -29,8 +30,23 @@ class EventRepository : IEventRepository {
                         lat = it?.location?.geoLocation?.lat!!.toDouble(),
                         lng = it?.location?.geoLocation?.lng!!.toDouble()
                     )
-                )
-
+                ),
+                type = null,
+                isPrivate = null,
+                isPaid = null,
+                isAdultsOnly = null,
+                selectedStartDateTime = null,
+                selectedEndDateTime = null,
+                selectedKeywords = null,
+                selectedCategory = null,
+                maxNumberOfAttendees = null,
+                host = User(
+                    displayName = "Michael Kuta Ibaka",
+                    userId = "123456789",
+                    photoUrl = null
+                ),
+                lastUpdatedDate = null,
+                emptyList()
             )
         } ?: emptyList()
     }
