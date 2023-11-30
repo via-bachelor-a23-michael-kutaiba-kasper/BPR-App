@@ -2,15 +2,12 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain
 
 import android.net.Uri
 import java.time.LocalDateTime
-import java.util.Date
 
 data class Event(
-
     val title: String?,
     val description: String?,
     val url: String?,
     val location: Location?,
-    val type: String?,
     val isPrivate: Boolean?,
     val isPaid: Boolean?,
     val isAdultsOnly: Boolean?,
