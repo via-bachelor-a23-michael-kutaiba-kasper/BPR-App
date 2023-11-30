@@ -1,4 +1,5 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent
+
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,25 +11,29 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class CreateEventViewModel : ViewModel() {
+class CreateEventViewModel() : ViewModel() {
+    val eventCreated = mutableStateOf(false)
+    val createdEventId = mutableStateOf(0)
     private val eventRepository: IEventRepository = EventRepository()
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
     private var _title = mutableStateOf("")
-  private  var _description = mutableStateOf("")
-  private  var _isPrivate = mutableStateOf(false)
+    private var _description = mutableStateOf("")
+    private var _isPrivate = mutableStateOf(false)
     private var _isPaid = mutableStateOf(false)
     private var _isAdultsOnly = mutableStateOf(false)
     private var _selectedStartDateTime = mutableStateOf(LocalDateTime.now())
-    private  var _selectedEndDateTime = mutableStateOf(LocalDateTime.now().plusHours(3))
-    private  var _keywords = mutableStateOf(emptyList<String>())
-    private  var _selectedCategory = mutableStateOf("Choose Category")
-    private  var _maxNumberOfAttendees = mutableStateOf(0)
-    private  val _location = mutableStateOf(Location("Horsens", "Hospitalsgade 4, 8700 Horsens", GeoLocation(0.0, 0.0)))
-    private   val _event = mutableStateOf<Event>(
+    private var _selectedEndDateTime = mutableStateOf(LocalDateTime.now().plusHours(3))
+    private var _keywords = mutableStateOf(emptyList<String>())
+    private var _selectedCategory = mutableStateOf("Choose Category")
+    private var _maxNumberOfAttendees = mutableStateOf(0)
+    private val _location =
+        mutableStateOf(Location("Horsens", "Hospitalsgade 4, 8700 Horsens", GeoLocation(0.0, 0.0)))
+    private val _event = mutableStateOf<Event>(
         Event(
             title = _title.value,
             description = _description.value,
@@ -63,7 +68,7 @@ class CreateEventViewModel : ViewModel() {
         User(
             "",
             "",
-           null
+            null
         )
     )
     val title: State<String> get() = _title
@@ -163,14 +168,17 @@ class CreateEventViewModel : ViewModel() {
         return _event.value
     }
 
+
     fun createEvent() {
         viewModelScope.launch {
             try {
                 val eventId = eventRepository.createEvent(event = _event.value)
-
+                eventCreated.value = true
+                createdEventId.value = eventId
+                Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
                 Log.d("CreateEventViewModel", "createEvent: $eventId")
             } catch (e: Exception) {
-                Log.d("CreateEventViewModel", "createEvent: ${e.message}")
+                Log.d("CreateEventViewModel", "event creation failed: ${e.message}")
             }
         }
     }
@@ -202,6 +210,7 @@ class CreateEventViewModel : ViewModel() {
     }
 
     init {
+        eventCreated.value = false
         getKeywords()
         getCategories()
     }

@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,12 +25,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +61,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eve
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
+import kotlinx.coroutines.launch
 
 @ExperimentalLayoutApi
 @ExperimentalFoundationApi
@@ -101,8 +108,13 @@ class MainActivity : ComponentActivity() {
                     val createEventViewModel: CreateEventViewModel = viewModel()
                     val eventDetailsViewModel: EventDetailsViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
+                    val scope = rememberCoroutineScope()
+                    val snackbarHostState = remember { SnackbarHostState() }
 
                     Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(hostState = snackbarHostState)
+                        },
                         topBar = {
                             TopAppBar(
                                 navigationIcon = {
@@ -183,6 +195,31 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) { innerPadding ->
+                        fun showSnackBar() {
+                            scope.launch {
+                                val result = snackbarHostState
+                                    .showSnackbar(
+                                        message = "Event created successfully",
+                                        actionLabel = "See event",
+                                        // Defaults to SnackbarDuration.Short
+                                        duration = SnackbarDuration.Indefinite,
+                                        withDismissAction = true
+                                    )
+                                when (result) {
+                                    SnackbarResult.ActionPerformed -> {
+                                        /* Handle snackbar action performed */
+                                    }
+
+                                    SnackbarResult.Dismissed -> {
+                                        /* Handle snackbar dismissed */
+                                    }
+                                }
+                            }
+                        }
+                        if (createEventViewModel.eventCreated.value) {
+                            Log.d("MainActivity", "onCreate: event created")
+                            showSnackBar()
+                        }
                         NavHost(
                             navController = navController,
                             startDestination = BottomNavigationScreens.Map.name,
@@ -247,8 +284,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
 
 
 @Preview(showBackground = true)

@@ -58,7 +58,7 @@ class EventRepository : IEventRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createEvent(event: Event): String {
+    override suspend fun createEvent(event: Event): Int {
 
         Log.d("ApolloEventClient", "createEvent: $event")
         //call the apollo client to create the event
@@ -69,8 +69,10 @@ class EventRepository : IEventRepository {
         val response = apolloClient.mutation(
             CreateEventMutation(
                 title = event.title!!,
-                startDate = event.selectedStartDateTime?.atZone(ZoneId.systemDefault())?.withZoneSameInstant(ZoneOffset.UTC).toString(),
-                endDate = event.selectedEndDateTime?.atZone(ZoneId.systemDefault())?.withZoneSameInstant(ZoneOffset.UTC).toString(),
+                startDate = event.selectedStartDateTime?.atZone(ZoneId.systemDefault())
+                    ?.withZoneSameInstant(ZoneOffset.UTC).toString(),
+                endDate = event.selectedEndDateTime?.atZone(ZoneId.systemDefault())
+                    ?.withZoneSameInstant(ZoneOffset.UTC).toString(),
                 createdDate = event.lastUpdatedDate!!.toString(),
                 isPrivate = event.isPrivate!!,
                 adultsOnly = event.isAdultsOnly!!,
@@ -94,6 +96,7 @@ class EventRepository : IEventRepository {
             )
         ).execute()
         Log.d("ApolloEventClient", "createEvent: ${response.data?.createEvent?.event?.id}")
+
         return response.data?.createEvent?.event?.id!!
     }
 
