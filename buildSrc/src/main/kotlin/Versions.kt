@@ -29,6 +29,7 @@ internal object Versions{
     const val JUNIT_EXT= "1.1.5"
     const val JUNIT= "4.13.2"
     const val ANDROID_MATERIAL= "1.10.0"
+    const val JUNIT_COMPOSE= "1.5.4"
 
     // TODO: Add test dependencies here as well
 }
