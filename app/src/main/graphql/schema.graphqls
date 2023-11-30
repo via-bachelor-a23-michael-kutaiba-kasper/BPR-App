@@ -133,7 +133,12 @@ type CreateEventResponse {
 }
 
 type Query {
-  events: [Event]
+  """
+  All arguments are optional filters to apply.
+  from: UTC DateTime string. Fitlers events by endDate >= from
+  hostId: UUID string. Filters events by host.
+  """
+  events(from: String, hostId: String): [Event]
 
   categories: [String]
 

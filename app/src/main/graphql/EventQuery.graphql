@@ -5,9 +5,79 @@ query getCategories{
     categories
 }
 
-mutation CreateEventMutation($title: String!, $startDate: String!,$keywords:[String!]!,
+query getEvent($id:Int!){
+    event(eventId: $id){
+        accessCode
+        adultsOnly
+        attendees
+        category
+        city
+        createdDate
+        description
+        endDate
+        geoLocation {
+            lat
+            lng
+        }
+        host {
+            userId
+            displayName
+            photoUrl
+            lastSeenOnline
+            creationDate
+        }
+        id
+        images
+        isPaid
+        isPrivate
+        keywords
+        lastUpdateDate
+        location
+        maxNumberOfAttendees
+        startDate
+        title
+        url
+    }
+}
+
+query FetchAllEvents($hostId: String, $from: String) {
+    events(hostId: $hostId, from: $from) {
+        id
+        title
+        startDate
+        endDate
+        createdDate
+        lastUpdateDate
+        isPrivate
+        adultsOnly
+        isPaid
+        host {
+            userId
+            displayName
+            photoUrl
+            lastSeenOnline
+            creationDate
+        }
+        maxNumberOfAttendees
+        url
+        description
+        accessCode
+        category
+        keywords
+        images
+        attendees
+        geoLocation {
+            lat
+            lng
+        }
+        city
+        location
+    }
+}
+
+mutation CreateEventMutation($title: String!,$description:String!, $startDate: String!,$keywords:[String!]!,
     $endDate: String!, $createdDate: String!, $isPrivate: Boolean!, $adultsOnly: Boolean!, $isPaid: Boolean!, $host: userInput!, $maxNumberOfAttendees: Int!, $location: String!, $city: String!, $geoLocation: geoLocationInput!, $category: String!) {
-    createEvent(title: $title, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
+    createEvent(title: $title,description: $description, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
         event {
             id
         }
