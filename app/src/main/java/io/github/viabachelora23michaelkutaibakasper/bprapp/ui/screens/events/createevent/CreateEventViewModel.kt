@@ -57,7 +57,9 @@ class CreateEventViewModel() : ViewModel() {
             host = User(
                 displayName = "Michael Kuta Ibaka",
                 userId = "123456789",
-                photoUrl = null
+                photoUrl = null,
+                creationDate = LocalDateTime.now(),
+                lastSeenOnline = LocalDateTime.now()
             ),
             lastUpdatedDate = LocalDateTime.now(),
             photos = emptyList()
@@ -68,7 +70,9 @@ class CreateEventViewModel() : ViewModel() {
         User(
             "",
             "",
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
     )
     val title: State<String> get() = _title

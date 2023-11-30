@@ -13,17 +13,19 @@ data class Event(
     val isAdultsOnly: Boolean?,
     val selectedStartDateTime: LocalDateTime?,
     val selectedEndDateTime: LocalDateTime?,
-    val selectedKeywords: List<String>?,
+    val selectedKeywords: List<String?>?,
     val selectedCategory: String?,
     val maxNumberOfAttendees: Int?,
     val host:User?,
     val lastUpdatedDate: LocalDateTime?,
-    val photos : List<String>?
+    val photos : List<String?>?
 )
 data class User(
     var displayName:String,
     var userId:String,
-    var photoUrl:Uri?
+    var photoUrl:Uri?,
+    var creationDate:LocalDateTime?,
+    var lastSeenOnline:LocalDateTime?
 )
 data class Location(
     var city: String?,

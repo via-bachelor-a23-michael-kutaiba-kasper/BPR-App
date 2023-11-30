@@ -274,7 +274,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                             )
                         ) {
                             Text(
-                                text = keyword,
+                                text = keyword!!,
                                 modifier = Modifier.padding(8.dp),
                                 fontWeight = FontWeight.SemiBold
                             )

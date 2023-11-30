@@ -51,6 +51,9 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidCategory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidKeywords
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 @ExperimentalMaterial3Api
@@ -253,7 +256,20 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
         {
             Button(
                 onClick = {
-                    viewModel.setHost(User(user?.displayName!!, user?.uid!!, user?.photoUrl))
+                    viewModel.setHost(
+                        User(
+                            user?.displayName!!, user?.uid!!, user?.photoUrl,
+                            LocalDateTime.ofInstant(
+                                Instant.ofEpochSecond(user?.metadata?.creationTimestamp!!),
+                                ZoneId.systemDefault()
+                            ),
+                            LocalDateTime.ofInstant(
+                                Instant.ofEpochSecond(user?.metadata?.lastSignInTimestamp!!),
+                                ZoneId.systemDefault()
+                            )
+
+                        )
+                    )
                     if (isValidCategory(selectedCategory) || isValidKeywords(selectedKeywords)) {
                         Toast.makeText(
                             context,
@@ -277,7 +293,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top =4 .dp)
+                    .padding(top = 4.dp)
             ) {
                 Text("Back")
             }
