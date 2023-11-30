@@ -42,14 +42,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Map
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventImagesScreen
@@ -107,6 +110,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val createEventViewModel: CreateEventViewModel = viewModel()
                     val eventDetailsViewModel: EventDetailsViewModel = viewModel()
+                    val mapViewModel: MapViewViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
                     val scope = rememberCoroutineScope()
                     val snackbarHostState = remember { SnackbarHostState() }
@@ -207,7 +211,12 @@ class MainActivity : ComponentActivity() {
                                     )
                                 when (result) {
                                     SnackbarResult.ActionPerformed -> {
-                                        /* Handle snackbar action performed */
+                                        Log.d(
+                                            "snackbarlog",
+                                            "id: ${createEventViewModel.createdEventId.value}"
+                                        )
+
+                                        navController.navigate("${BottomNavigationScreens.EventDetails.name}/${createEventViewModel.createdEventId.value}")
                                     }
 
                                     SnackbarResult.Dismissed -> {
@@ -227,7 +236,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
-                                Map(navController = navController)
+                                Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
                                 Text(text = authentication.getCurrentUser()?.displayName.toString() + ": Recommendations")
@@ -265,11 +274,19 @@ class MainActivity : ComponentActivity() {
                             composable(CreateEventScreens.Images.name) {
                                 CreateEventImagesScreen(navController = navController)
                             }
-                            composable(BottomNavigationScreens.EventDetails.name) {
-                                EventDetailsScreen(
-                                    navController = navController,
-                                    viewModel = eventDetailsViewModel
-                                )
+                            composable("${BottomNavigationScreens.EventDetails.name}/{eventId}",
+                                arguments = listOf(
+                                    navArgument("eventId") {
+                                        type = NavType.IntType
+                                    }
+                                )) {
+                                val param = it.arguments?.getInt("eventId")
+                                param?.let { it1 ->
+                                    EventDetailsScreen(
+                                        navController = navController,
+                                        viewModel = eventDetailsViewModel, param = it1
+                                    )
+                                }
                             }
                             composable(CreateEventScreens.EventSummary.name) {
                                 EventSummaryScreen(
