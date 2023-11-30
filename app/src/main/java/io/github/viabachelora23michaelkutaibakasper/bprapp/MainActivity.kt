@@ -41,9 +41,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsScreen
-
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapView
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Map
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventImagesScreen
@@ -51,6 +51,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.cre
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventTitleAndDescriptionScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.EventSummaryScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
@@ -96,7 +98,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel: CreateEventViewModel = viewModel()
+                    val createEventViewModel: CreateEventViewModel = viewModel()
+                    val eventDetailsViewModel: EventDetailsViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
 
                     Scaffold(
@@ -182,12 +185,12 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = BottomNavigationScreens.EventDetails.name,
+                            startDestination = BottomNavigationScreens.Map.name,
                             modifier = Modifier.padding(innerPadding)
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
-                                MapView().Map(navController = navController)
+                                Map(navController = navController)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
                                 Text(text = authentication.getCurrentUser()?.displayName.toString() + ": Recommendations")
@@ -201,37 +204,40 @@ class MainActivity : ComponentActivity() {
                             composable(CreateEventScreens.Title.name) {
                                 CreateEventTitleAndDescriptionScreen(
                                     navController = navController,
-                                    viewModel = viewModel
+                                    viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Location.name) {
                                 CreateEventLocationScreen(
                                     navController = navController,
-                                    viewModel = viewModel
+                                    viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.DateAndTime.name) {
                                 CreateEventDateAndTimeScreen(
                                     navController = navController,
-                                    viewModel = viewModel
+                                    viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Details.name) {
                                 CreateEventDetailsScreen(
                                     navController = navController,
-                                    viewModel = viewModel
+                                    viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Images.name) {
                                 CreateEventImagesScreen(navController = navController)
                             }
                             composable(BottomNavigationScreens.EventDetails.name) {
-                                EventDetailsScreen(navController = navController)
+                                EventDetailsScreen(
+                                    navController = navController,
+                                    viewModel = eventDetailsViewModel
+                                )
                             }
                             composable(CreateEventScreens.EventSummary.name) {
                                 EventSummaryScreen(
                                     navController = navController,
-                                    viewModel = viewModel
+                                    viewModel = createEventViewModel
                                 )
                             }
                         }
@@ -242,23 +248,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class BottomNavigationScreens() {
-    Map,
-    Recommendations,
-    Achievements,
-    Profile,
-    EventDetails
-}
 
-enum class CreateEventScreens() {
-    Title,
-    Location,
-    DateAndTime,
-    Details,
-    Images,
-    InviteFriends,
-    EventSummary
-}
 
 
 @Preview(showBackground = true)
