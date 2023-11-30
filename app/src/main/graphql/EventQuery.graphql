@@ -1,17 +1,15 @@
-query AllPublicEvents {
-    allPublicEvents {
-        title
-        description
-        url
-        location {
-            city
-            streetNumber
-            houseNumber
-            floor
-            geoLocation {
-                lat
-                lng
-            }
+query GetKeywords{
+    keywords
+}
+query getCategories{
+    categories
+}
+
+mutation CreateEventMutation($title: String!, $startDate: String!,$keywords:[String!]!,
+    $endDate: String!, $createdDate: String!, $isPrivate: Boolean!, $adultsOnly: Boolean!, $isPaid: Boolean!, $host: userInput!, $maxNumberOfAttendees: Int!, $location: String!, $city: String!, $geoLocation: geoLocationInput!, $category: String!) {
+    createEvent(title: $title, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
+        event {
+            id
         }
     }
 }
