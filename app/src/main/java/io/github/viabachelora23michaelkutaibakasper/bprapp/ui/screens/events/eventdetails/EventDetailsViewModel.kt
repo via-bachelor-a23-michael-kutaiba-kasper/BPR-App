@@ -36,7 +36,9 @@ class EventDetailsViewModel : ViewModel() {
             User(
                 "Michael Kuta Ibaka",
                 "123456789",
-                null
+                null,
+                LocalDateTime.now(),
+                LocalDateTime.now()
             ),
             LocalDateTime.now(),
             listOf(
@@ -48,19 +50,19 @@ class EventDetailsViewModel : ViewModel() {
     )
     val event = _event.asStateFlow() //expose the stateflow as a public property
 
-    val isLoading = mutableStateOf(false)
+    val isLoading = mutableStateOf(true)
 
 
-    fun fetchEventData(eventId: String) {
-        isLoading.value = true
+    fun fetchEventData(eventId: Int) {
+
         viewModelScope.launch {
             try {
                 val event = eventRepository.getEvent(eventId)
                 _event.value = event
-                Log.d("EventDetailsViewmodel", "getevents: $event")
+                Log.d("EventDetailsViewmodel", "getevent: $event")
                 isLoading.value = false
             } catch (e: Exception) {
-                Log.d("EventDetailsViewmodel", "fetchEventData: ${e.message}")
+                Log.d("EventDetailsViewmodel", "failed to fetch event: ${e.message}")
             }
         }
     }

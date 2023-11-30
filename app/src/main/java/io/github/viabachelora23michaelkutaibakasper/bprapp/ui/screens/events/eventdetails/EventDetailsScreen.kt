@@ -57,20 +57,19 @@ import kotlin.math.absoluteValue
 @ExperimentalLayoutApi
 @ExperimentalFoundationApi
 @Composable
-fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsViewModel) {
-    val event by viewModel.event.collectAsState()
+fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsViewModel, param: Int) {
+    val event = viewModel.event.value
     val isLoading by viewModel.isLoading
-
     Log.d("eventDetailsScreen", "event: $event")
-
     val user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val openDialog = remember { mutableStateOf(false) }
 
 
     if (isLoading) {
+        viewModel.fetchEventData(param)
         LoadingScreen()
     } else {
-        Column {
+        Column() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -84,41 +83,40 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 val pagerState = rememberPagerState(pageCount = {
                     3
                 })
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 32.dp)
-                ) { page ->
-                    Card(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                            .graphicsLayer {
-                                // Calculate the absolute offset for the current page from the
-                                // scroll position. We use the absolute value which allows us to mirror
-                                // any effects for both directions
-                                val pageOffset = (
-                                        (pagerState.currentPage - page) + pagerState
-                                            .currentPageOffsetFraction
-                                        ).absoluteValue
-                                // We animate the alpha, between 50% and 100%
-                                alpha = lerp(
-                                    start = 0.5f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
-                            }
-                    ) {
-                        AsyncImage(
-                            modifier = Modifier
+                if (viewModel.event.value.photos?.size!! > 0) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(horizontal = 32.dp)
+                    ) { page ->
+                        Card(
+                            Modifier
                                 .fillMaxWidth()
-                                .padding(4.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(viewModel.event.value.photos?.get(page))
-                                .crossfade(enable = true).build(),
-                            contentDescription = "Avatar Image",
-                            contentScale = ContentScale.Crop
-                        )
+                                .height(300.dp)
+                                .graphicsLayer {
+                                    val pageOffset = (
+                                            (pagerState.currentPage - page) + pagerState
+                                                .currentPageOffsetFraction
+                                            ).absoluteValue
+                                    // We animate the alpha, between 50% and 100%
+                                    alpha = lerp(
+                                        start = 0.5f,
+                                        stop = 1f,
+                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                    )
+                                }
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(viewModel.event.value.photos?.get(page))
+                                    .crossfade(enable = true).build(),
+                                contentDescription = "Avatar Image",
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
                 Text(
@@ -337,7 +335,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                             )
                         ) {
                             Text(
-                                text = keyword,
+                                text = keyword!!,
                                 modifier = Modifier.padding(8.dp),
                                 fontWeight = FontWeight.SemiBold
                             )
