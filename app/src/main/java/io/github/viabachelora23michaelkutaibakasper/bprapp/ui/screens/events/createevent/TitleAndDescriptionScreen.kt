@@ -7,84 +7,118 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidDescription
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidTitle
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 
 
 @Composable
-fun CreateEventTitleAndDescriptionScreen(navController: NavController) {
-    val viewModel: CreateEventViewModel = viewModel()
+fun CreateEventTitleAndDescriptionScreen(
+    navController: NavController,
+    viewModel: CreateEventViewModel
+) {
+
     var title = viewModel.title.value
     var description = viewModel.description.value
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        LinearProgressIndicator(
-            progress = { 0f },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-        )
-        // Title
-        TextField(
-            value = title,
-            onValueChange = { title = viewModel.setTitle(it).toString() },
-            label = { Text("Title") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 8.dp)
-        )
+    val context = LocalContext.current
 
-        TextField(
-            value = description,
-            onValueChange = { description = viewModel.setDescription(it).toString() },
-            label = { Text("Description") },
+    Column {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.4f)
-                .padding(all = 8.dp)
-        )
-
-        val context = LocalContext.current
-        // Save or submit button
-        Button(
-            onClick = {
-                navController.navigate(CreateEventScreens.Location.name)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
+                .fillMaxSize().verticalScroll(
+                    rememberScrollState()
+                )
+                .padding(16.dp)
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Next")
+            LinearProgressIndicator(
+                progress = { 0f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+            )
+
+            Text(text = "Title and Description", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+            TextField(
+                value = title,
+                onValueChange = { title = viewModel.setTitle(it).toString() },
+                label = { Text("Title") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 8.dp),
+                isError = isValidTitle(title)
+            )
+
+            TextField(
+                value = description,
+                onValueChange = { description = viewModel.setDescription(it).toString() },
+                label = { Text("Description") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.4f)
+                    .padding(all = 8.dp),
+                isError = isValidDescription(description)
+            )
         }
-        Button(
-            onClick = {
-                Toast.makeText(
-                    context,
-                    "Event creation cancelled",
-                    Toast.LENGTH_SHORT
-                ).show();
-                // pop back to the previous screen (the Map)
-                navController.popBackStack()
-            },
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Text("Cancel")
+        )
+        {
+
+
+            // Save or submit button
+            Button(
+                onClick = {
+                    if (isValidTitle(title) || isValidDescription(description)) {
+                        Toast.makeText(
+                            context,
+                            "Please fill in all fields",
+                            Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        navController.navigate(CreateEventScreens.Location.name)
+                    }
+
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                Text("Next")
+            }
+            Button(
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "Event creation cancelled",
+                        Toast.LENGTH_SHORT
+                    ).show();
+                    // pop back to the previous screen (the Map)
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                Text("Cancel")
+            }
         }
     }
-
 }

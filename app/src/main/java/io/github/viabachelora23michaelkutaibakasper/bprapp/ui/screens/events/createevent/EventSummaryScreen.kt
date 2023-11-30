@@ -1,8 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -26,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,13 +44,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Loa
 @ExperimentalFoundationApi
 @Composable
 fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewModel) {
-    val event = viewModel.event.value
     val isLoading = false
-
-
-    Log.d("eventSummaryScreen", "event: $event")
-
-    var user by remember { mutableStateOf(Firebase.auth.currentUser) }
+    val user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val openDialog = remember { mutableStateOf(false) }
 
 
@@ -71,9 +63,14 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                 horizontalAlignment = Alignment.CenterHorizontally,
             )
             {
-
                 Text(
-                    text = viewModel.event.value?.title!!,
+                    text = "Event Summary",
+                    Modifier.padding(8.dp),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = viewModel.event.value.title!!,
                     Modifier
                         .padding(12.dp)
                         .align(Alignment.Start), fontSize = 24.sp, fontWeight = FontWeight.SemiBold
@@ -81,12 +78,16 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                 Card(
                     Modifier
                         .fillMaxWidth()
-
+                        .padding(8.dp)
                 )
                 {
                     Text(
-                        text = "Time: ${DisplayFormattedDateTime(dateTime = viewModel.event.value.selectedStartDateTime!!)} - ${
-                            DisplayFormattedDateTime(
+                        text = "Time: ${
+                            displayFormattedTime(
+                                dateTime = viewModel.event.value.selectedStartDateTime!!
+                            )
+                        } - ${
+                            displayFormattedTime(
                                 dateTime = viewModel.event.value.selectedEndDateTime!!
                             )
                         }",
@@ -98,7 +99,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                     )
                 }
                 Text(
-                    text = viewModel.event.value.location?.completeAddress!!,
+                    text = "Place: ${viewModel.event.value.location?.completeAddress!!}",
                     Modifier
                         .padding(8.dp)
                         .align(Alignment.Start), fontSize = 16.sp
@@ -106,7 +107,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                 Card(
                     Modifier
                         .fillMaxWidth()
-
+                        .padding(8.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -129,45 +130,50 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                         .fillMaxWidth()
                         .padding(8.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
-                    //  if (user?.photoUrl != null)
-
-                    AsyncImage(
-                        model = viewModel.event.value.host?.photoUrl,
-                        contentDescription = "Profile picture",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    //   if (user!!.displayName != null)
-                    //   {
-                    Column(
-                        modifier = Modifier.padding(
-                            start = 4.dp,
-                            top = 0.dp,
-                            end = 0.dp,
-                            bottom = 0.dp
+                    if (user?.photoUrl != null) {
+                        AsyncImage(
+                            model = viewModel.event.value.host?.photoUrl,
+                            contentDescription = "Profile picture",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
                         )
-                    ) {
-                        viewModel.event.value.host?.displayName?.let {
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    if (user!!.displayName != null) {
+                        Column(
+                            modifier = Modifier.padding(
+                                start = 4.dp,
+                                top = 0.dp,
+                                end = 0.dp,
+                                bottom = 0.dp
+                            )
+                        ) {
+                            viewModel.event.value.host?.displayName?.let {
+                                Text(
+                                    text = it,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                             Text(
-                                text = it,
+                                text = "Host",
                                 textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.SemiBold
                             )
                         }
-                        Text(
-                            text = "Host",
-                            textAlign = TextAlign.Center,
-                        )
                     }
                 }
                 Card(
                     Modifier
                         .fillMaxWidth()
-
+                        .padding(8.dp)
                 ) {
+                    Text(
+                        text = "What is this event about:",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(4.dp)
+                    )
                     Text(
                         text = viewModel.event.value.description!!,
                         Modifier.padding(24.dp)
@@ -188,11 +194,11 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${viewModel.event.value.maxNumberOfAttendees} spots left",
+                            text = if (viewModel.event.value.maxNumberOfAttendees == 0) "Unlimited spots"
+                            else "Spots left: ${viewModel.event.value.maxNumberOfAttendees}",
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
                         )
-
                     }
                     Row(
                         modifier = Modifier
@@ -249,12 +255,8 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                             text = if (isPrivate == true) "Yes" else "No",
                             textAlign = TextAlign.Center,
                         )
-
                     }
-
                 }
-
-
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -280,56 +282,32 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                     }
                 }
                 Text(
-                    text = "Last updated: ${DisplayFormattedDateTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
-                    Modifier.padding(24.dp)
+                    text = "Last updated: ${displayFormattedTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
+                    Modifier.padding(24.dp), fontSize = 12.sp
                 )
 
-            }
 
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .background(Color.LightGray)
             ) {
                 Row {
-                    if (4 == 5) {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(8.dp)
-                        ) {
-                            Text(text = "Edit event")
-                        }
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(8.dp)
-                        ) {
-                            Text(text = "Delete event")
-                        }
-                    }
-                }
-                Row {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(8.dp)
+                            .padding(4.dp)
                     ) {
-                        Text(text = "Delete event")
+                        Text(text = "Back")
                     }
                     Button(
                         onClick = { openDialog.value = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(8.dp)
+                            .padding(4.dp)
                     ) {
                         Text(text = "Create event")
                     }
@@ -350,6 +328,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
 
                         onClick = {
                             openDialog.value = false
+                            viewModel.setEvent()
                             viewModel.createEvent()
                         }) {
                         Text("Yes, Create!")
@@ -366,5 +345,6 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                 }
             )
         }
+
     }
 }

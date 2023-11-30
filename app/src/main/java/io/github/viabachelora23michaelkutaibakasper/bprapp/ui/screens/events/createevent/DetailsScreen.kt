@@ -1,18 +1,23 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent
 
 import android.widget.Toast
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
@@ -38,190 +43,244 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidCategory
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidKeywords
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 
 
 @ExperimentalMaterial3Api
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CreateEventDetailsScreen(navController: NavController) {
-    val viewModel: CreateEventViewModel = viewModel()
+fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEventViewModel) {
+    val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+    val context = LocalContext.current
     var isPrivate = viewModel.isPrivate.value
     var isAdultsOnly = viewModel.isAdultsOnly.value
     var isPaid = viewModel.isPaid.value
-    val predefinedKeywords = listOf("Android", "Jetpack", "Compose", "Kotlin", "UI", "Development")
+    val predefinedKeywords = viewModel.predefinedKeywords.value
+    val predefinedCategories = viewModel.predefinedCategories.value
     var selectedKeywords = viewModel.selectedKeywords.value
-    val coffeeDrinks = arrayOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
+
     var categoryExpanded by remember { mutableStateOf(false) }
-    var selectedCategory = viewModel.selectedCategory.value
-    var maxNumberOfAttendees = viewModel.maxNumberOfAttendees.value
+    val selectedCategory = viewModel.selectedCategory.value
+    val maxNumberOfAttendees = viewModel.maxNumberOfAttendees.value
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-
-        LinearProgressIndicator(
-            progress = { 0.2f * 3 },
+    Column {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-        )
-        Text(text = "Details")
+                .fillMaxSize()
+                .padding(16.dp)
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
 
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Category: ", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp))
-            Box(
+            LinearProgressIndicator(
+                progress = { 0.33f * 3 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
-            ) {
-                ExposedDropdownMenuBox(
-                    expanded = categoryExpanded,
-                    onExpandedChange = {
-                        categoryExpanded = !categoryExpanded
-                    }
-                ) {
-                    TextField(
-                        value = selectedCategory,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
-                        modifier = Modifier.menuAnchor()
-                    )
+                    .height(8.dp)
+            )
+            Text(text = "Details", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
 
-                    ExposedDropdownMenu(
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Category: ",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    ExposedDropdownMenuBox(
                         expanded = categoryExpanded,
-                        onDismissRequest = { categoryExpanded = false }
+                        onExpandedChange = {
+                            categoryExpanded = !categoryExpanded
+                        }
                     ) {
-                        coffeeDrinks.forEach { item ->
-                            DropdownMenuItem(
-                                text = { Text(text = item) },
-                                onClick = {
-                                    viewModel.setCategory(item)
-                                    categoryExpanded = false
-                                }
-                            )
+                        TextField(
+                            value = selectedCategory,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = categoryExpanded,
+                            onDismissRequest = { categoryExpanded = false }
+                        ) {
+                            predefinedCategories.forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = item) },
+                                    onClick = {
+                                        viewModel.setCategory(item)
+                                        categoryExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Max number of attendees: ", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp))
-            TextField(
-                value = maxNumberOfAttendees.toString(),
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() } && it.isNotEmpty() && it.toInt() <= 10000) {
-                        viewModel.setMaxNumberOfAttendees(it.toInt())
-                    }
-                },
-                label = { Text("Enter Number") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-        }
-
-
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Private", fontWeight = FontWeight.Bold)
-            Switch(
-                checked = isPrivate,
-                onCheckedChange = { isPrivate = viewModel.setIsPrivate(it) }
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Paid event", fontWeight = FontWeight.Bold)
-            Switch(
-                checked = isPaid,
-                onCheckedChange = { isPaid = viewModel.setIsPaid(it) }
-            )
-        }
-
-
-        Text("Select Keywords: ", fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 8.dp))
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-        ) {
-            for (keyword in predefinedKeywords) {
-                FilterChip(
-                    modifier = Modifier.padding(4.dp),
-                    label = { Text(keyword) },
-                    selected = selectedKeywords.contains(keyword),
-                    onClick = {
-                        selectedKeywords = if (selectedKeywords.contains(keyword)) {
-                            viewModel.setKeywords(selectedKeywords - keyword)
-                        } else {
-                            viewModel.setKeywords(selectedKeywords + keyword)
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Max number of attendees: ",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                TextField(
+                    value = maxNumberOfAttendees.toString(),
+                    onValueChange = {
+                        if (it.all { char -> char.isDigit() } && it.isNotEmpty() && it.toInt() <= 10000) {
+                            viewModel.setMaxNumberOfAttendees(it.toInt())
                         }
                     },
-                    leadingIcon = if (selectedKeywords.contains(keyword)) {
-                        {
-                            Icon(
-                                imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
-                        }
-                    } else {
-                        null
-                    }
+                    label = { Text("Enter Number") },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Private", fontWeight = FontWeight.Bold)
+                Switch(
+                    checked = isPrivate,
+                    onCheckedChange = { isPrivate = viewModel.setIsPrivate(it) }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Paid event", fontWeight = FontWeight.Bold)
+                Switch(
+                    checked = isPaid,
+                    onCheckedChange = { isPaid = viewModel.setIsPaid(it) }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Adult event", fontWeight = FontWeight.Bold)
+                Switch(
+                    checked = isAdultsOnly,
+                    onCheckedChange = { isAdultsOnly = viewModel.setIsAdultsOnly(it) }
+                )
+            }
+            Text(
+                "Select 3-5 Keywords ",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .horizontalScroll(rememberScrollState())
+            ) {
+                FlowColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(bottom = 8.dp)
+                ) {
+                    for (keyword in predefinedKeywords) {
+                        FilterChip(
+                            modifier = Modifier.padding(4.dp),
+                            label = { Text(keyword) },
+                            selected = selectedKeywords.contains(keyword),
+                            onClick = {
+                                selectedKeywords = if (selectedKeywords.contains(keyword)) {
+                                    viewModel.setKeywords(selectedKeywords - keyword)
+                                } else {
+                                    if (selectedKeywords.size >= 5) {
+                                        Toast.makeText(
+                                            context,
+                                            "You can only select up to 5 keywords",
+                                            Toast.LENGTH_SHORT
+                                        ).show();
+                                        selectedKeywords
+                                    } else {
+                                        viewModel.setKeywords(selectedKeywords + keyword)
+                                    }
+                                }
+                            },
+                            leadingIcon = if (selectedKeywords.contains(keyword)) {
+                                {
+                                    Icon(
+                                        imageVector = Icons.Filled.Done,
+                                        contentDescription = "Done icon",
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(52.dp))
         }
 
-
-        val context = LocalContext.current
-        Button(
-            onClick = {
-                navController.navigate(CreateEventScreens.Images.name)
-            },
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text("Next")
-        }
-        Button(
-            onClick = {
-                Toast.makeText(
-                    context,
-                    "Event creation cancelled",
-                    Toast.LENGTH_SHORT
-                ).show();
-                // pop back to the previous screen (the Map)
-                navController.popBackStack()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Text("Back")
+        )
+        {
+            Button(
+                onClick = {
+                    viewModel.setHost(User(user?.displayName!!, user?.uid!!, user?.photoUrl))
+                    if (isValidCategory(selectedCategory) || isValidKeywords(selectedKeywords)) {
+                        Toast.makeText(
+                            context,
+                            "Please fill in all fields",
+                            Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        viewModel.setEvent()
+                        navController.navigate(CreateEventScreens.EventSummary.name)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                Text("Next")
+            }
+            Button(
+                onClick = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top =4 .dp)
+            ) {
+                Text("Back")
+            }
         }
     }
 }

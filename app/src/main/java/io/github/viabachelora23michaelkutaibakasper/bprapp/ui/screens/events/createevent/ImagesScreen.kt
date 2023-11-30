@@ -4,10 +4,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,18 +19,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -57,8 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.CreateEventViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import java.io.File
 
 
@@ -381,20 +372,8 @@ fun UploadImagePlaceHolder() {
 
 @Composable
 fun CreateEventImagesScreen(navController: NavController) {
-    val viewModel: CreateEventViewModel = viewModel()
-    val context = LocalContext.current
     var selectedImageUris by remember {
         mutableStateOf<List<Uri>>(emptyList())
-    }
-    val multiplePhotoPicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
-    ) {
-        if (it != null) {
-            Log.d("PhotoPicker", "Selected URI: $it")
-            selectedImageUris = it
-        } else {
-            Log.d("PhotoPicker", "No media selected")
-        }
     }
     Column(
         modifier = Modifier
