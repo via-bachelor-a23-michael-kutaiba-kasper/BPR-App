@@ -5,6 +5,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +46,9 @@ import androidx.navigation.NavController
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -62,7 +66,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Map(navController: NavController, modifier: Modifier = Modifier) {
+fun Map(navController: NavController, modifier: Modifier = Modifier, viewModel: MapViewViewModel) {
     Column(modifier = Modifier)
     {
         val mapView = 0
@@ -89,12 +93,12 @@ fun Map(navController: NavController, modifier: Modifier = Modifier) {
                 MapEvents(
                     navController = navController,
                     LatLng(55.862207, 9.844651),
-                    Modifier.fillMaxSize()
+                    Modifier.fillMaxSize(), viewModel = viewModel
                 )
             }
 
             listView -> {
-                EventList()
+                EventList(viewModel)
             }
         }
     }
@@ -102,10 +106,9 @@ fun Map(navController: NavController, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun EventList() {
+fun EventList(viewModel: MapViewViewModel) {
     var response by remember { mutableStateOf<List<Event>>(emptyList()) }
 
-    val viewModel: MapViewViewModel = viewModel()
     val events by viewModel.eventList.collectAsState(emptyList())
     val isLoading by viewModel.isLoading
     response = events
@@ -128,11 +131,13 @@ fun EventList() {
                             Text(text = "Description:", fontWeight = Bold)
                             Text(text = event.description ?: "No description")
                             val context = LocalContext.current
-                            val intent =
-                                remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
-                            Button(onClick = { context.startActivity(intent) })
-                            {
-                                Text(text = "Link to event")
+                            if (!event.url.isNullOrEmpty()) {
+                                val intent =
+                                    remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
+                                Button(onClick = { context.startActivity(intent) })
+                                {
+                                    Text(text = "Link to event")
+                                }
                             }
                         }
                     }
@@ -145,8 +150,14 @@ fun EventList() {
 }
 
 @Composable
-fun MapEvents(navController: NavController, latLng: LatLng, modifier: Modifier = Modifier) {
+fun MapEvents(
+    navController: NavController,
+    latLng: LatLng,
+    modifier: Modifier = Modifier,
+    viewModel: MapViewViewModel
+) {
     val context = LocalContext.current
+    val user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(latLng, 15f)
     }
@@ -235,10 +246,19 @@ fun MapEvents(navController: NavController, latLng: LatLng, modifier: Modifier =
         }
         FloatingActionButton(
             onClick = {
-                navController.navigate(CreateEventScreens.Title.name)
+                if (user != null) {
+                    navController.navigate(CreateEventScreens.Title.name)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "You need to be logged in to create an event",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
             }, content = {
                 Column {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
+                    Icon(Icons.Default.Add, contentDescription = "Create event")
                 }
             }, modifier = Modifier
                 .padding(16.dp)
