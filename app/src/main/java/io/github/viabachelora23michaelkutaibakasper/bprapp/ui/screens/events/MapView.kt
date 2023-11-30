@@ -37,21 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMapOptions
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.clustering.ClusterItem
-import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
@@ -59,106 +53,102 @@ import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.clustering.Clustering
-import com.google.maps.android.compose.googleMapFactory
 import com.google.maps.android.compose.rememberCameraPositionState
-import io.github.viabachelora23michaelkutaibakasper.bprapp.BottomNavigationScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 
-class MapView {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun Map(navController: NavController) {
-        Column(modifier = Modifier.fillMaxSize())
-        {
-            val mapView = 0
-            val listView = 1
-            val tabs = listOf("Map", "List")
-            val selectedIndex = remember { mutableIntStateOf(0) }
-            PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(text = { Text(text = title) },
-                        selected = selectedIndex.intValue == index,
-                        onClick = { selectedIndex.intValue = index },
-                        icon = {
-                            when (index) {
-                                mapView -> Icon(Icons.Default.Place, contentDescription = "Map")
-                                listView -> Icon(Icons.Default.Menu, contentDescription = "List")
-                            }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Map(navController: NavController, modifier: Modifier = Modifier) {
+    Column(modifier = Modifier)
+    {
+        val mapView = 0
+        val listView = 1
+        val tabs = listOf("Map", "List")
+        val selectedIndex = remember { mutableIntStateOf(0) }
+        PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
+            tabs.forEachIndexed { index, title ->
+                Tab(text = { Text(text = title) },
+                    selected = selectedIndex.intValue == index,
+                    onClick = { selectedIndex.intValue = index },
+                    icon = {
+                        when (index) {
+                            mapView -> Icon(Icons.Default.Place, contentDescription = "Map")
+                            listView -> Icon(Icons.Default.Menu, contentDescription = "List")
                         }
-                    )
-                }
-
-            }
-
-            when (selectedIndex.intValue) {
-                mapView -> {
-                    MapEvents(navController = navController)
-                }
-
-                listView -> {
-                    EventList()
-                }
-            }
-        }
-    }
-
-
-    @Composable
-    fun EventList() {
-        var response by remember { mutableStateOf<List<Event>>(emptyList()) }
-
-        val viewModel: MapViewViewModel = viewModel()
-        val events by viewModel.eventList.collectAsState(emptyList())
-        val isLoading by viewModel.isLoading
-        response = events
-        Log.d("eventlist", "events: $response")
-
-        if (isLoading) {
-            LoadingScreen()
-        } //should display a No Events message
-        else {
-            LazyColumn {
-                items(response) { event ->
-                    Column {
-                        Row(Modifier.padding(4.dp)) {
-                            Column {
-                                Row {
-                                    //text title in bold
-                                    Text(text = "Title: ", fontWeight = Bold)
-                                    Text(text = event.title ?: "No title")
-                                }
-                                Text(text = "Description:", fontWeight = Bold)
-                                Text(text = event.description ?: "No description")
-                                val context = LocalContext.current
-                                val intent =
-                                    remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
-                                Button(onClick = { context.startActivity(intent) })
-                                {
-                                    Text(text = "Link to event")
-                                }
-                            }
-                        }
-                        HorizontalDivider()
                     }
-                }
+                )
             }
         }
 
+        when (selectedIndex.intValue) {
+            mapView -> {
+                MapEvents(
+                    navController = navController,
+                    LatLng(55.862207, 9.844651),
+                    Modifier.fillMaxSize()
+                )
+            }
+
+            listView -> {
+                EventList()
+            }
+        }
     }
 }
 
-@Composable
-fun MapEvents(navController: NavController) {
-    val context = LocalContext.current
-    val horsens = LatLng(55.862207, 9.844651)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(horsens, 15f)
 
+@Composable
+fun EventList() {
+    var response by remember { mutableStateOf<List<Event>>(emptyList()) }
+
+    val viewModel: MapViewViewModel = viewModel()
+    val events by viewModel.eventList.collectAsState(emptyList())
+    val isLoading by viewModel.isLoading
+    response = events
+    Log.d("eventlist", "events: $response")
+
+    if (isLoading) {
+        LoadingScreen()
+    } //should display a No Events message
+    else {
+        LazyColumn {
+            items(response) { event ->
+                Column {
+                    Row(Modifier.padding(4.dp)) {
+                        Column {
+                            Row {
+                                //text title in bold
+                                Text(text = "Title: ", fontWeight = Bold)
+                                Text(text = event.title ?: "No title")
+                            }
+                            Text(text = "Description:", fontWeight = Bold)
+                            Text(text = event.description ?: "No description")
+                            val context = LocalContext.current
+                            val intent =
+                                remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
+                            Button(onClick = { context.startActivity(intent) })
+                            {
+                                Text(text = "Link to event")
+                            }
+                        }
+                    }
+                    HorizontalDivider()
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun MapEvents(navController: NavController, latLng: LatLng, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(latLng, 15f)
     }
     val uiSettings by remember {
         mutableStateOf(
@@ -167,14 +157,15 @@ fun MapEvents(navController: NavController) {
                 zoomControlsEnabled = false,
                 compassEnabled = true,
                 mapToolbarEnabled = true,
-                rotationGesturesEnabled = true, tiltGesturesEnabled = true
+                rotationGesturesEnabled = true,
+                tiltGesturesEnabled = true
             )
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier) {
         GoogleMap(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier,
             cameraPositionState = cameraPositionState,
             googleMapOptionsFactory = { GoogleMapOptions().mapId(context.getString(R.string.map_id)) },
             uiSettings = uiSettings,
@@ -182,7 +173,6 @@ fun MapEvents(navController: NavController) {
                 isMyLocationEnabled = true
             )
         ) {
-            //create Markers for each event
 
             var response by remember { mutableStateOf<List<Event>>(emptyList()) }
             val viewModel: MapViewViewModel = viewModel()
@@ -207,31 +197,31 @@ fun MapEvents(navController: NavController) {
                 mutableStateListOf(
                     EventClusterItem(
                         lat = 55.862207,
-                        lng = 9.345575,
+                        lng = 9.844651,
                         title = "Event 1",
                         snippet = "Event 1"
                     ),
                     EventClusterItem(
                         lat = 55.862207,
-                        lng = 9.344654,
+                        lng = 9.844651,
                         title = "Event 2",
                         snippet = "Event 2"
                     ),
                     EventClusterItem(
                         lat = 55.862207,
-                        lng = 9.346653,
+                        lng = 9.844651,
                         title = "Event 3",
                         snippet = "Event 3"
                     ),
                     EventClusterItem(
                         lat = 55.862207,
-                        lng = 9.341652,
+                        lng = 9.844651,
                         title = "Event 4",
                         snippet = "Event 4"
                     ),
                     EventClusterItem(
                         lat = 55.862207,
-                        lng = 9.342651,
+                        lng = 9.844651,
                         title = "Event 5",
                         snippet = "Event 5"
                     )
@@ -240,6 +230,7 @@ fun MapEvents(navController: NavController) {
             }
             Clustering(
                 items = clusterEvents,
+                //on cluster click zoom in on the cluster
             )
         }
         FloatingActionButton(
