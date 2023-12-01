@@ -7,7 +7,7 @@ fun isInvalidTitle(text: String): Boolean {
 }
 
 fun isInvalidDescription(text: String): Boolean {
-    return true
+    return false
 }
 
 fun isInvalidAddress(address: String): Boolean {
@@ -26,5 +26,5 @@ fun isInvalidStartAndEndDate(
     startDate: LocalDateTime,
     endDate: LocalDateTime
 ): Boolean {
-    return endDate.isBefore(startDate)
+    return endDate.isBefore(startDate) || endDate.isEqual(startDate)
 }
