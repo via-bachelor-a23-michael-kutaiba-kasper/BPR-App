@@ -330,7 +330,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                         onClick = {
                             openDialog.value = false
                             viewModel.setEvent()
-                            viewModel.createEvent()
+                            viewModel.createEvent(viewModel.event.value)
                             navController.navigate(BottomNavigationScreens.Map.name)
                         }) {
                         Text("Yes, Create!")
