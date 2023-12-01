@@ -20,16 +20,15 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInv
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class CreateEventViewModel() : ViewModel() {
+class CreateEventViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
     val eventCreated = mutableStateOf(false)
     val createdEventId = mutableStateOf(0)
-    private val eventRepository: IEventRepository = EventRepository()
+    private val eventRepository = repository
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
 
     private var _title = mutableStateOf("")
     var validTitle = isInvalidTitle(_title.value)
-
 
     private var _description = mutableStateOf("")
     var validDescription = (isInvalidDescription(_description.value))
@@ -82,7 +81,8 @@ class CreateEventViewModel() : ViewModel() {
                 lastSeenOnline = LocalDateTime.now()
             ),
             lastUpdatedDate = LocalDateTime.now(),
-            photos = emptyList()
+            photos = emptyList(),
+            0
         )
     )
     val event: State<Event> get() = _event
@@ -221,18 +221,20 @@ class CreateEventViewModel() : ViewModel() {
             maxNumberOfAttendees = _maxNumberOfAttendees.value,
             host = _host.value,
             lastUpdatedDate = LocalDateTime.now(),
-            photos = emptyList()
+            photos = emptyList(),
+            0
         )
         return _event.value
     }
 
 
-    fun createEvent() {
-        if (!validTitle && validDescription && !validStartAndEndDate && !validKeywords && !validCategory && !validAddress) {
+    fun createEvent(event: Event): Int {
+        var eventId: Int = 0
+        if (!validTitle && !validDescription && !validStartAndEndDate && !validKeywords && !validCategory && !validAddress) {
+
             viewModelScope.launch {
                 try {
-
-                    val eventId = eventRepository.createEvent(event = _event.value)
+                    eventId = eventRepository.createEvent(event = event)
                     eventCreated.value = true
                     createdEventId.value = eventId
                     Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
@@ -248,7 +250,7 @@ class CreateEventViewModel() : ViewModel() {
                 "event creation failed: ${validTitle} ${validDescription} ${validStartAndEndDate} ${validKeywords} ${validCategory} ${validAddress}"
             )
         }
-
+        return eventId
 
     }
 
