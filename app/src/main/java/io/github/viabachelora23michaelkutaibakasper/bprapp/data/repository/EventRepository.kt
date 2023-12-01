@@ -59,7 +59,8 @@ class EventRepository : IEventRepository {
                     lastSeenOnline = parseUtcStringToLocalDateTime(it.host.lastSeenOnline!!)
                 ),
                 lastUpdatedDate = parseUtcStringToLocalDateTime(it.lastUpdateDate!!),
-                photos = it.images ?: emptyList()
+                photos = it.images ?: emptyList(),
+                eventId = it.id!!
             )
         } ?: emptyList()
     }
@@ -98,7 +99,8 @@ class EventRepository : IEventRepository {
                 lastSeenOnline = parseUtcStringToLocalDateTime(response.data?.event?.host?.lastSeenOnline!!)
             ),
             lastUpdatedDate = parseUtcStringToLocalDateTime(response.data?.event?.lastUpdateDate!!),
-            photos = response.data?.event?.images ?: emptyList()
+            photos = response.data?.event?.images ?: emptyList(),
+            eventId = response.data?.event?.id!!
         )
     }
 
