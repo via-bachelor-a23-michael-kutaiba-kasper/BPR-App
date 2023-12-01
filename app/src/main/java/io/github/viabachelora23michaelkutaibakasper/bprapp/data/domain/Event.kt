@@ -18,7 +18,8 @@ data class Event(
     val maxNumberOfAttendees: Int?,
     val host:User?,
     val lastUpdatedDate: LocalDateTime?,
-    val photos : List<String?>?
+    val photos : List<String?>?,
+    val eventId:Int
 )
 data class User(
     var displayName:String,
