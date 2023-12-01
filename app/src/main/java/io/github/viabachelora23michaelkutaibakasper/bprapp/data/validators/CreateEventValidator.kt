@@ -2,24 +2,27 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators
 
 import java.time.LocalDateTime
 
-fun isValidTitle(text: String): Boolean {
+fun isInvalidTitle(text: String): Boolean {
     return text.isEmpty()
 }
 
-fun isValidDescription(text: String): Boolean {
-    return text.isEmpty()
+fun isInvalidDescription(text: String): Boolean {
+    return true
 }
-fun isValidAddress(address: String): Boolean {
+
+fun isInvalidAddress(address: String): Boolean {
     return address.isEmpty()
 }
-fun isValidCategory(category: String): Boolean {
-    return category == "Choose Category"
+
+fun isInvalidCategory(category: String): Boolean {
+    return category == "Choose Category" || category.isEmpty()
 }
 
-fun isValidKeywords(keywords: List<String>): Boolean {
-    return keywords.size < 3 || keywords.size > 5
+fun isInvalidKeywords(keywords: List<String>): Boolean {
+    return keywords.isEmpty() || keywords.size < 3 || keywords.size > 5
 }
-fun isEndDateBeforeStartDate(
+
+fun isInvalidStartAndEndDate(
     startDate: LocalDateTime,
     endDate: LocalDateTime
 ): Boolean {
