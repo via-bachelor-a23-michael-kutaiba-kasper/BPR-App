@@ -11,24 +11,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MapViewViewModel : ViewModel() {
-    //make a viewmodel that holds the list of events. the viewmodel should use kotlin stateflow to hold the list of events
-    //the viewmodel should have a function that loads the list of events from the repository
-
-    private val eventRepository: IEventRepository = EventRepository()
+class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
+    private val eventRepository: IEventRepository = repository
     private val _eventList = MutableStateFlow<List<Event>>(emptyList())
-    val eventList = _eventList.asStateFlow() //expose the stateflow as a public property
+    val eventList = _eventList.asStateFlow()
 
     private val _event = MutableStateFlow<Event?>(null)
-    val event = _event.asStateFlow() //expose the stateflow as a public property
+    val event = _event.asStateFlow()
 
     val isLoading = mutableStateOf(false)
 
     init {
-        fetchEventData()
+        getEvents()
     }
 
-    fun fetchEventData() {
+    fun getEvents() {
         isLoading.value = true
         viewModelScope.launch {
             try {
