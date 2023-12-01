@@ -48,8 +48,6 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidCategory
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidKeywords
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import java.time.Instant
 import java.time.LocalDateTime
@@ -125,6 +123,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                                     text = { Text(text = item) },
                                     onClick = {
                                         viewModel.setCategory(item)
+                                        viewModel.setValidCategory(item)
                                         categoryExpanded = false
                                     }
                                 )
@@ -230,6 +229,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                                         viewModel.setKeywords(selectedKeywords + keyword)
                                     }
                                 }
+                                viewModel.setValidKeywords(selectedKeywords)
                             },
                             leadingIcon = if (selectedKeywords.contains(keyword)) {
                                 {
@@ -270,10 +270,11 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
 
                         )
                     )
-                    if (isValidCategory(selectedCategory) || isValidKeywords(selectedKeywords)) {
+
+                    if (viewModel.validCategory || viewModel.validKeywords) {
                         Toast.makeText(
                             context,
-                            "Please fill in all fields",
+                            "Please select a category and 3-5 keywords",
                             Toast.LENGTH_SHORT
                         ).show();
                     } else {
