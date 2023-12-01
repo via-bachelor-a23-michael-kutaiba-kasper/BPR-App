@@ -47,6 +47,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
@@ -108,7 +110,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val createEventViewModel: CreateEventViewModel = viewModel()
+                    val repository: IEventRepository = EventRepository()
+                    val createEventViewModel: CreateEventViewModel =
+                        viewModel()
                     val eventDetailsViewModel: EventDetailsViewModel = viewModel()
                     val mapViewModel: MapViewViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
