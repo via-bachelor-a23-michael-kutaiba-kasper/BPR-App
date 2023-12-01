@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidDescription
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidTitle
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidDescription
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidTitle
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 
 
@@ -39,7 +39,8 @@ fun CreateEventTitleAndDescriptionScreen(
     Column {
         Column(
             modifier = Modifier
-                .fillMaxSize().verticalScroll(
+                .fillMaxSize()
+                .verticalScroll(
                     rememberScrollState()
                 )
                 .padding(16.dp)
@@ -56,23 +57,29 @@ fun CreateEventTitleAndDescriptionScreen(
             Text(text = "Title and Description", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
             TextField(
                 value = title,
-                onValueChange = { title = viewModel.setTitle(it).toString() },
+                onValueChange = {
+                    title = viewModel.setTitle(it).toString()
+                    viewModel.setValidTitle(it)
+                },
                 label = { Text("Title") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 8.dp),
-                isError = isValidTitle(title)
+                isError = viewModel.validTitle
             )
 
             TextField(
                 value = description,
-                onValueChange = { description = viewModel.setDescription(it).toString() },
+                onValueChange = {
+                    description = viewModel.setDescription(it).toString()
+                    viewModel.setValidDescription(it)
+                },
                 label = { Text("Description") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.4f)
                     .padding(all = 8.dp),
-                isError = isValidDescription(description)
+                isError = !viewModel.validDescription
             )
         }
 
@@ -86,10 +93,10 @@ fun CreateEventTitleAndDescriptionScreen(
             // Save or submit button
             Button(
                 onClick = {
-                    if (isValidTitle(title) || isValidDescription(description)) {
+                    if (isInvalidTitle(title) || !isInvalidDescription(description)) {
                         Toast.makeText(
                             context,
-                            "Please fill in all fields",
+                            "Please fill in title field",
                             Toast.LENGTH_SHORT
                         ).show();
                     } else {
