@@ -37,7 +37,6 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isEndDateBeforeStartDate
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import java.time.Instant
 import java.time.LocalDate
@@ -75,7 +74,6 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
             )
             .toLocalDate()
     }
-
 
 
     var pickedStartTime by remember {
@@ -250,49 +248,50 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
                 }
             }
         }
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Button(
+                onClick = {
+                    viewModel.setValidStartAndEndDate(
+                        combinedStartDateAndTime,
+                        combinedEndDateAndTime
+                    )
+                    if (viewModel.validStartAndEndDate) {
+                        Toast.makeText(
+                            context,
+                            "End date cannot be before start date",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    } else {
+                        viewModel.setSelectedDateTime(combinedStartDateAndTime)
+                        viewModel.setSelectedEndDateTime(combinedEndDateAndTime)
+
+                        navController.navigate(CreateEventScreens.Details.name)
+                    }
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-            )
-            {
-                Button(
-                    onClick = {
-                        if (isEndDateBeforeStartDate(
-                                combinedStartDateAndTime,
-                                combinedEndDateAndTime
-                            )
-                        ) {
-                            Toast.makeText(
-                                context,
-                                "End date cannot be before start date",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        } else {
-                            viewModel.setSelectedDateTime(combinedStartDateAndTime)
-                            viewModel.setSelectedEndDateTime(combinedEndDateAndTime)
-                            navController.navigate(CreateEventScreens.Details.name)
-                        }
-
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                ) {
-                    Text("Next")
-                }
-                Button(
-                    onClick = {
-
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                ) {
-                    Text("Back")
-                }
+                    .padding(top = 4.dp)
+            ) {
+                Text("Next")
             }
+            Button(
+                onClick = {
+
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                Text("Back")
+            }
+        }
 
     }
 }
