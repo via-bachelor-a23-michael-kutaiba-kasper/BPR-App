@@ -40,7 +40,6 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isValidAddress
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 
 
@@ -141,7 +140,8 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
             {
                 Button(
                     onClick = {
-                        if (isValidAddress(location.completeAddress.toString())) {
+                        location.completeAddress?.let { viewModel.setValidAddress(it) }
+                        if (viewModel.validAddress) {
                             Toast.makeText(
                                 context,
                                 "Please provide a location",
