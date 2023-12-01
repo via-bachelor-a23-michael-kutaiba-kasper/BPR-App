@@ -11,7 +11,12 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
-import kotlinx.coroutines.CoroutineScope
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidAddress
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidCategory
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidDescription
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidKeywords
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidStartAndEndDate
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidTitle
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -21,18 +26,33 @@ class CreateEventViewModel() : ViewModel() {
     private val eventRepository: IEventRepository = EventRepository()
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
+
     private var _title = mutableStateOf("")
+    var validTitle = isInvalidTitle(_title.value)
+
+
     private var _description = mutableStateOf("")
+    var validDescription = (isInvalidDescription(_description.value))
     private var _isPrivate = mutableStateOf(false)
     private var _isPaid = mutableStateOf(false)
     private var _isAdultsOnly = mutableStateOf(false)
     private var _selectedStartDateTime = mutableStateOf(LocalDateTime.now())
     private var _selectedEndDateTime = mutableStateOf(LocalDateTime.now().plusHours(3))
+    var validStartAndEndDate =
+        (
+                isInvalidStartAndEndDate(
+                    _selectedStartDateTime.value,
+                    _selectedEndDateTime.value
+                )
+                )
     private var _keywords = mutableStateOf(emptyList<String>())
+    var validKeywords = (isInvalidKeywords(_keywords.value))
     private var _selectedCategory = mutableStateOf("Choose Category")
+    var validCategory = (isInvalidCategory(_selectedCategory.value))
     private var _maxNumberOfAttendees = mutableStateOf(0)
     private val _location =
-        mutableStateOf(Location("Horsens", "Hospitalsgade 4, 8700 Horsens", GeoLocation(0.0, 0.0)))
+        mutableStateOf(Location("", "", GeoLocation(0.0, 0.0)))
+    var validAddress = (isInvalidAddress(_location.value.completeAddress!!))
     private val _event = mutableStateOf<Event>(
         Event(
             title = _title.value,
@@ -92,8 +112,18 @@ class CreateEventViewModel() : ViewModel() {
         _title.value = newTitle
     }
 
+    fun setValidTitle(newTitle: String): Boolean {
+        validTitle = isInvalidTitle(newTitle)
+        return validTitle
+    }
+
     fun setDescription(newDescription: String) {
         _description.value = newDescription
+    }
+
+    fun setValidDescription(newDescription: String): Boolean {
+        validDescription = isInvalidDescription(newDescription)
+        return validDescription
     }
 
     fun setIsPrivate(newIsPrivate: Boolean): Boolean {
@@ -114,14 +144,33 @@ class CreateEventViewModel() : ViewModel() {
         _selectedEndDateTime.value = newSelectedEndDateTime
     }
 
+    fun setValidStartAndEndDate(
+        newSelectedStartDateTime: LocalDateTime,
+        newSelectedEndDateTime: LocalDateTime
+    ): Boolean {
+        validStartAndEndDate =
+            isInvalidStartAndEndDate(newSelectedStartDateTime, newSelectedEndDateTime)
+        return validStartAndEndDate
+    }
+
     fun setKeywords(newKeywords: List<String>): List<String> {
         _keywords.value = newKeywords
         return _keywords.value
     }
 
+    fun setValidKeywords(newKeywords: List<String>): Boolean {
+        validKeywords = isInvalidKeywords(newKeywords)
+        return validKeywords
+    }
+
     fun setCategory(newCategory: String): String {
         _selectedCategory.value = newCategory
         return _selectedCategory.value
+    }
+
+    fun setValidCategory(newCategory: String): Boolean {
+        validCategory = isInvalidCategory(newCategory)
+        return validCategory
     }
 
     fun setIsPaid(newIsPaid: Boolean): Boolean {
@@ -137,6 +186,11 @@ class CreateEventViewModel() : ViewModel() {
     fun setLocation(newLocation: Location): Location {
         _location.value = newLocation
         return _location.value
+    }
+
+    fun setValidAddress(newAddress: String): Boolean {
+        validAddress = isInvalidAddress(newAddress)
+        return validAddress
     }
 
     fun setHost(newHost: User): User {
@@ -174,17 +228,28 @@ class CreateEventViewModel() : ViewModel() {
 
 
     fun createEvent() {
-        viewModelScope.launch {
-            try {
-                val eventId = eventRepository.createEvent(event = _event.value)
-                eventCreated.value = true
-                createdEventId.value = eventId
-                Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
-                Log.d("CreateEventViewModel", "createEvent: $eventId")
-            } catch (e: Exception) {
-                Log.d("CreateEventViewModel", "event creation failed: ${e.message}")
+        if (!validTitle && validDescription && !validStartAndEndDate && !validKeywords && !validCategory && !validAddress) {
+            viewModelScope.launch {
+                try {
+
+                    val eventId = eventRepository.createEvent(event = _event.value)
+                    eventCreated.value = true
+                    createdEventId.value = eventId
+                    Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
+                    Log.d("CreateEventViewModel", "createEvent: $eventId")
+                } catch (e: Exception) {
+                    Log.d("CreateEventViewModel", "event creation failed: ${e.message}")
+                }
             }
+        } else {
+            eventCreated.value = false
+            Log.d(
+                "CreateEventViewModel",
+                "event creation failed: ${validTitle} ${validDescription} ${validStartAndEndDate} ${validKeywords} ${validCategory} ${validAddress}"
+            )
         }
+
+
     }
 
     private fun getKeywords(): List<String> {
