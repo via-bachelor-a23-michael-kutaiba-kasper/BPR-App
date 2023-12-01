@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -16,9 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class EventDetailsViewModel : ViewModel() {
+class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
 
-    private val eventRepository: IEventRepository = EventRepository()
+    private val eventRepository: IEventRepository = repository
     private val _event = MutableStateFlow<Event>(
         Event(
             "title",
@@ -41,7 +40,7 @@ class EventDetailsViewModel : ViewModel() {
                 LocalDateTime.now()
             ),
             LocalDateTime.now(),
-           null
+            null, 0
         )
     )
     val event = _event.asStateFlow() //expose the stateflow as a public property
@@ -49,7 +48,7 @@ class EventDetailsViewModel : ViewModel() {
     val isLoading = mutableStateOf(true)
 
 
-    fun fetchEventData(eventId: Int) {
+    fun getEvent(eventId: Int) {
 
         viewModelScope.launch {
             try {
