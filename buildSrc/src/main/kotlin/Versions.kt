@@ -30,6 +30,7 @@ internal object Versions{
     const val JUNIT= "4.13.2"
     const val ANDROID_MATERIAL= "1.10.0"
     const val JUNIT_COMPOSE= "1.5.4"
+    const val KOTLINX_COROUTINES_TEST= "1.6.4"
 
     // TODO: Add test dependencies here as well
 }

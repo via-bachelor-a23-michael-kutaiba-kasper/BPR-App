@@ -35,3 +35,4 @@ fun DependencyHandler.`espresso-core`(version: String=Versions.ESPRESSO) = "andr
 fun DependencyHandler.`junit-ext`(version: String=Versions.JUNIT_EXT) = "androidx.test.ext:junit:${version}"
 fun DependencyHandler.`junit`(version: String=Versions.JUNIT) = "junit:junit:${version}"
 fun DependencyHandler.`android-material`(version: String=Versions.ANDROID_MATERIAL) = "com.google.android.material:material:${version}"
+fun DependencyHandler.`kotlinx-coroutines-test`(version: String=Versions.KOTLINX_COROUTINES_TEST) = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${version}"

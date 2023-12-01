@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.Packaging
 
 plugins {
     id("com.android.application")
@@ -62,6 +63,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/NOTICE*"
         }
     }
 }
@@ -98,4 +101,5 @@ dependencies {
     implementation(`apollo-runtime`())
     implementation (`dialog-datetime`())
     implementation (`google-places`())
+    testImplementation (`kotlinx-coroutines-test`())
 }
