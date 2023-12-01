@@ -41,11 +41,7 @@ class EventDetailsViewModel : ViewModel() {
                 LocalDateTime.now()
             ),
             LocalDateTime.now(),
-            listOf(
-                R.drawable.cat1.toString(),
-                R.drawable.cat2.toString(),
-                R.drawable.cat3.toString()
-            )
+           null
         )
     )
     val event = _event.asStateFlow() //expose the stateflow as a public property
