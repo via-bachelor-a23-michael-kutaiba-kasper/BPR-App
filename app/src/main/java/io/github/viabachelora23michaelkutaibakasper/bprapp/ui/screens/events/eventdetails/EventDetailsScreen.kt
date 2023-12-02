@@ -1,5 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -48,8 +50,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.displayFormattedTime
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import kotlin.math.absoluteValue
 
 
@@ -62,7 +65,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
     Log.d("eventDetailsScreen", "event: $event")
     val user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val openDialog = remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
 
     if (isLoading) {
         viewModel.getEvent(param)
@@ -82,7 +85,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 val pagerState = rememberPagerState(pageCount = {
                     3
                 })
-                if (viewModel.event.value.photos?.size!! > 0) {
+
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier.fillMaxWidth(),
@@ -109,21 +112,16 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(4.dp),
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(viewModel.event.value.photos?.get(page))
-                                    .crossfade(enable = true).build(),
+                                model = if (event.photos?.isEmpty() != true
+                                ) event.photos?.get(page) else ImageRequest.Builder(LocalContext.current)
+                                    .data(R.mipmap.no_photo).build(),
                                 contentDescription = "Avatar Image",
                                 contentScale = ContentScale.Crop
                             )
                         }
                     }
-                }
-                Text(
-                    text = "Event Summary",
-                    Modifier.padding(8.dp),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+
+
                 Text(
                     text = viewModel.event.value.title!!,
                     Modifier
@@ -140,11 +138,11 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 {
                     Text(
                         text = "Time: ${
-                            displayFormattedTime(
+                            DisplayFormattedTime(
                                 dateTime = viewModel.event.value.selectedStartDateTime!!
                             )
                         } - ${
-                            displayFormattedTime(
+                            DisplayFormattedTime(
                                 dateTime = viewModel.event.value.selectedEndDateTime!!
                             )
                         }",
@@ -342,8 +340,16 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         }
                     }
                 }
+                if (!event.url.isNullOrEmpty()) {
+                    val intent =
+                        remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
+                    Button(onClick = { context.startActivity(intent) })
+                    {
+                        Text(text = "Link to event")
+                    }
+                }
                 Text(
-                    text = "Last updated: ${displayFormattedTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
+                    text = "Last updated: ${DisplayFormattedTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
                     Modifier.padding(24.dp), fontSize = 12.sp
                 )
             }
