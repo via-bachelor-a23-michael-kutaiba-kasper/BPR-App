@@ -39,6 +39,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 
 
 @ExperimentalLayoutApi
@@ -84,11 +86,11 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                 {
                     Text(
                         text = "Time: ${
-                            displayFormattedTime(
+                            DisplayFormattedTime(
                                 dateTime = viewModel.event.value.selectedStartDateTime!!
                             )
                         } - ${
-                            displayFormattedTime(
+                            DisplayFormattedTime(
                                 dateTime = viewModel.event.value.selectedEndDateTime!!
                             )
                         }",
@@ -283,7 +285,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                     }
                 }
                 Text(
-                    text = "Last updated: ${displayFormattedTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
+                    text = "Last updated: ${DisplayFormattedTime(dateTime = viewModel.event.value.lastUpdatedDate!!)}",
                     Modifier.padding(24.dp), fontSize = 12.sp
                 )
 
@@ -332,6 +334,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                             viewModel.setEvent()
                             viewModel.createEvent(viewModel.event.value)
                             navController.navigate(BottomNavigationScreens.Map.name)
+
                         }) {
                         Text("Yes, Create!")
                     }

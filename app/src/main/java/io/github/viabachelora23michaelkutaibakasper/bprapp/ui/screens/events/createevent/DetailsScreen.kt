@@ -271,7 +271,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                         )
                     )
 
-                    if (viewModel.validCategory || viewModel.validKeywords) {
+                    if (viewModel.invalidCategory || viewModel.invalidKeywords) {
                         Toast.makeText(
                             context,
                             "Please select a category and 3-5 keywords",

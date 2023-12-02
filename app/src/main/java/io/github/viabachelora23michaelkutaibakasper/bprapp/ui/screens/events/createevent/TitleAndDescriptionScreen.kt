@@ -65,7 +65,7 @@ fun CreateEventTitleAndDescriptionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 8.dp),
-                isError = viewModel.validTitle
+                isError = viewModel.invalidTitle
             )
 
             TextField(
@@ -79,7 +79,7 @@ fun CreateEventTitleAndDescriptionScreen(
                     .fillMaxWidth()
                     .fillMaxHeight(0.4f)
                     .padding(all = 8.dp),
-                isError = viewModel.validDescription
+                isError = viewModel.invalidDescription
             )
         }
 
@@ -93,7 +93,7 @@ fun CreateEventTitleAndDescriptionScreen(
             // Save or submit button
             Button(
                 onClick = {
-                    if (isInvalidTitle(title) || isInvalidDescription(description)) {
+                    if (viewModel.invalidTitle || viewModel.invalidDescription) {
                         Toast.makeText(
                             context,
                             "Please fill in title field",

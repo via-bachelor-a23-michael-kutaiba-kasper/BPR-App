@@ -38,15 +38,13 @@ import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 
 
 fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -123,7 +121,7 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
 
             Text(
                 text = "Selected start date and time: ${
-                    displayFormattedTime(
+                    DisplayFormattedTime(
                         combinedStartDateAndTime
                     )
                 }", Modifier.fillMaxWidth(), fontSize = 16.sp, fontWeight = FontWeight.SemiBold
@@ -137,7 +135,7 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Selected end date and time: ${
-                    displayFormattedTime(
+                    DisplayFormattedTime(
                         combinedEndDateAndTime
                     )
                 }",
@@ -259,7 +257,7 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
                         combinedStartDateAndTime,
                         combinedEndDateAndTime
                     )
-                    if (viewModel.validStartAndEndDate) {
+                    if (viewModel.invalidStartAndEndDate) {
                         Toast.makeText(
                             context,
                             "End date cannot be before start date",
@@ -296,11 +294,4 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
     }
 }
 
-fun displayFormattedTime(
-    dateTime: LocalDateTime
-): String {
-    val formatter = DateTimeFormatter
-        .ofLocalizedDateTime(FormatStyle.SHORT)
-        .withLocale(Locale.UK)
-    return dateTime.format(formatter)
-}
+

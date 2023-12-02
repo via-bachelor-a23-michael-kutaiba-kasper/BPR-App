@@ -141,7 +141,7 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
                 Button(
                     onClick = {
                         location.completeAddress?.let { viewModel.setValidAddress(it) }
-                        if (viewModel.validAddress) {
+                        if (viewModel.invalidAddress) {
                             Toast.makeText(
                                 context,
                                 "Please provide a location",
