@@ -7,6 +7,7 @@ interface IEventRepository {
     suspend fun getEvents(): List<MinimalEvent>
     suspend fun getEvent(eventId: Int): Event
     suspend fun createEvent(event: Event): Int
+    suspend fun joinEvent(eventId: Int, userId: String)
 
     suspend fun getKeywords(): List<String>
     suspend fun getCategories(): List<String>

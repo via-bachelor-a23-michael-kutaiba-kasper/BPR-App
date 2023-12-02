@@ -9,6 +9,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -129,6 +130,14 @@ class EventRepository : IEventRepository {
         Log.d("ApolloEventClient", "createEvent: ${response.data?.createEvent?.event?.id}")
 
         return response.data?.createEvent?.event?.id!!
+    }
+
+    override suspend fun joinEvent(eventId: Int, userId: String) {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.mutation(JoinEventMutation(eventId, userId = userId)).execute()
+        Log.d("ApolloEventClient", "joinEvent: ${response.data?.joinEvent?.id}")
     }
 
     override suspend fun getKeywords(): List<String> {
