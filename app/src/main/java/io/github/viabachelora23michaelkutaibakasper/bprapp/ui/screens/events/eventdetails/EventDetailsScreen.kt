@@ -86,40 +86,40 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     3
                 })
 
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(horizontal = 32.dp)
-                    ) { page ->
-                        Card(
-                            Modifier
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 32.dp)
+                ) { page ->
+                    Card(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .graphicsLayer {
+                                val pageOffset = (
+                                        (pagerState.currentPage - page) + pagerState
+                                            .currentPageOffsetFraction
+                                        ).absoluteValue
+                                // We animate the alpha, between 50% and 100%
+                                alpha = lerp(
+                                    start = 0.5f,
+                                    stop = 1f,
+                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                )
+                            }
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp)
-                                .graphicsLayer {
-                                    val pageOffset = (
-                                            (pagerState.currentPage - page) + pagerState
-                                                .currentPageOffsetFraction
-                                            ).absoluteValue
-                                    // We animate the alpha, between 50% and 100%
-                                    alpha = lerp(
-                                        start = 0.5f,
-                                        stop = 1f,
-                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                    )
-                                }
-                        ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp),
-                                model = if (event.photos?.isEmpty() != true
-                                ) event.photos?.get(page) else ImageRequest.Builder(LocalContext.current)
-                                    .data(R.mipmap.no_photo).build(),
-                                contentDescription = "Avatar Image",
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                                .padding(4.dp),
+                            model = if (event.photos?.isEmpty() != true
+                            ) event.photos?.get(page) else ImageRequest.Builder(LocalContext.current)
+                                .data(R.mipmap.no_photo).build(),
+                            contentDescription = "Avatar Image",
+                            contentScale = ContentScale.Crop
+                        )
                     }
+                }
 
 
                 Text(
@@ -418,6 +418,10 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
 
                         onClick = {
                             openDialog.value = false
+                            viewModel.joinEvent(
+                                eventId = viewModel.event.value.eventId,
+                                userId = user!!.uid
+                            )
                         }) {
                         Text("Yes, join!")
                     }
