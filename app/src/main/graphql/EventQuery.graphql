@@ -45,33 +45,17 @@ query FetchAllEvents($hostId: String, $from: String) {
         id
         title
         startDate
-        endDate
-        createdDate
-        lastUpdateDate
-        isPrivate
-        adultsOnly
         isPaid
-        host {
-            userId
-            displayName
-            photoUrl
-            lastSeenOnline
-            creationDate
-        }
-        maxNumberOfAttendees
-        url
         description
-        accessCode
+        url
         category
-        keywords
         images
-        attendees
+        city
+        location
         geoLocation {
             lat
             lng
         }
-        city
-        location
     }
 }
 
