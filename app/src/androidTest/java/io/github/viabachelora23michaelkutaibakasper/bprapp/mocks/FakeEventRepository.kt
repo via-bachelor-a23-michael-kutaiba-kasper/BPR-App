@@ -3,14 +3,15 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.mocks
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import java.time.LocalDateTime
 
 class FakeEventRepository : IEventRepository {
-    override suspend fun getEvents(): List<Event> {
+    override suspend fun getEvents(): List<MinimalEvent> {
         return listOf(
-            Event(
+            MinimalEvent(
                 title = "Run Event",
                 description = "Run for 5km",
                 location = Location(
@@ -19,24 +20,13 @@ class FakeEventRepository : IEventRepository {
                     geoLocation = GeoLocation(55.860916, 9.850000)
                 ),
                 selectedCategory = "Music",
-                selectedKeywords = listOf("Dance", "Gaming", "Fitness"),
-                selectedStartDateTime = LocalDateTime.now().plusHours(3),
-                selectedEndDateTime = LocalDateTime.now().plusHours(5),
-                photos = null,
-                url = null,
-                isPrivate = false,
-                isAdultsOnly = false,
-                isPaid = false,
-                maxNumberOfAttendees = 10,
-                host = User(
-                    displayName = "Michael",
-                    userId = "123456",
-                    photoUrl = null,
-                    creationDate = LocalDateTime.now(),
-                    lastSeenOnline = LocalDateTime.now(),
-                ), lastUpdatedDate = LocalDateTime.now().plusHours(3), eventId = 1
 
-            ), Event(
+                selectedStartDateTime = LocalDateTime.now().plusHours(3),
+
+                photos = null,
+                eventId = 1
+
+            ), MinimalEvent(
                 title = "Run Event3",
                 description = "Run for 5km",
                 location = Location(
@@ -45,24 +35,12 @@ class FakeEventRepository : IEventRepository {
                     geoLocation = GeoLocation(55.860916, 9.850000)
                 ),
                 selectedCategory = "Music",
-                selectedKeywords = listOf("Dance", "Gaming", "Fitness"),
-                selectedStartDateTime = LocalDateTime.now().plusHours(3),
-                selectedEndDateTime = LocalDateTime.now().plusHours(5),
-                photos = null,
-                url = null,
-                isPrivate = false,
-                isAdultsOnly = false,
-                isPaid = false,
-                maxNumberOfAttendees = 10,
-                host = User(
-                    displayName = "Michael",
-                    userId = "123456",
-                    photoUrl = null,
-                    creationDate = LocalDateTime.now(),
-                    lastSeenOnline = LocalDateTime.now(),
-                ), lastUpdatedDate = LocalDateTime.now().plusHours(3), eventId = 2
 
-            ), Event(
+                selectedStartDateTime = LocalDateTime.now().plusHours(3),
+
+                photos = null, eventId = 2
+
+            ), MinimalEvent(
                 title = "Run Event4",
                 description = "Run for 5km",
                 location = Location(
@@ -71,22 +49,9 @@ class FakeEventRepository : IEventRepository {
                     geoLocation = GeoLocation(55.860916, 9.850000)
                 ),
                 selectedCategory = "Music",
-                selectedKeywords = listOf("Dance", "Gaming", "Fitness"),
                 selectedStartDateTime = LocalDateTime.now().plusHours(3),
-                selectedEndDateTime = LocalDateTime.now().plusHours(5),
                 photos = null,
-                url = null,
-                isPrivate = false,
-                isAdultsOnly = false,
-                isPaid = false,
-                maxNumberOfAttendees = 10,
-                host = User(
-                    displayName = "Michael",
-                    userId = "123456",
-                    photoUrl = null,
-                    creationDate = LocalDateTime.now(),
-                    lastSeenOnline = LocalDateTime.now(),
-                ), lastUpdatedDate = LocalDateTime.now().plusHours(3), eventId = 3
+                eventId = 3
 
             )
         )
@@ -124,6 +89,10 @@ class FakeEventRepository : IEventRepository {
 
     override suspend fun createEvent(event: Event): Int {
         return 1
+    }
+
+    override suspend fun joinEvent(eventId: Int, userId: String) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getKeywords(): List<String> {
