@@ -18,16 +18,28 @@ data class Event(
     val maxNumberOfAttendees: Int?,
     val host:User?,
     val lastUpdatedDate: LocalDateTime?,
-    val photos : List<String?>?,
-    val eventId:Int
+    val photos: List<String?>?,
+    val eventId: Int
 )
+
+data class MinimalEvent(
+    val title: String,
+    val selectedStartDateTime: LocalDateTime,
+    val eventId: Int,
+    val description: String?,
+    val selectedCategory: String,
+    val photos: List<String?>?,
+    val location: Location
+)
+
 data class User(
-    var displayName:String,
-    var userId:String,
-    var photoUrl:Uri?,
-    var creationDate:LocalDateTime?,
-    var lastSeenOnline:LocalDateTime?
+    var displayName: String,
+    var userId: String,
+    var photoUrl: Uri?,
+    var creationDate: LocalDateTime?,
+    var lastSeenOnline: LocalDateTime?
 )
+
 data class Location(
     var city: String?,
     var completeAddress: String?,

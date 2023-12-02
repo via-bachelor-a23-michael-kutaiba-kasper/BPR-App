@@ -10,57 +10,43 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.GeoLocationInput
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.UserInput
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.parseUtcStringToLocalDateTime
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class EventRepository : IEventRepository {
-    fun parseUtcStringToLocalDateTime(utcString: String): LocalDateTime {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-        return LocalDateTime.parse(utcString, formatter)
-    }
 
-    override suspend fun getEvents(): List<Event> {
+
+    override suspend fun getEvents(): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.query(FetchAllEventsQuery()).execute()
         Log.d("ApolloEventClient", "getEvent UwWU: ${response.data?.events}")
         return response.data?.events?.map {
-            Event(
-                title = it?.title,
-                description = it?.description,
-                url = it?.url,
-                location = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location(
-                    city = it?.city,
-                    completeAddress = it?.location,
-                    geoLocation = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation(
-                        lat = it?.geoLocation?.lat!!.toDouble(),
+            MinimalEvent(
+                title = it?.title!!,
+                selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
+                eventId = it.id!!,
+                selectedCategory = it.category!!,
+                photos = it.images,
+                description = it.description,
+                location = Location(
+                    city = it.city,
+                    completeAddress = it.location,
+                    geoLocation = GeoLocation(
+                        lat = it.geoLocation?.lat!!.toDouble(),
                         lng = it.geoLocation.lng!!.toDouble()
                     )
-                ),
-                isPrivate = it.isPrivate,
-                isPaid = it.isPaid,
-                isAdultsOnly = it.adultsOnly,
-                selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
-                selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!),
-                selectedKeywords = it.keywords,
-                selectedCategory = it.category,
-                maxNumberOfAttendees = it.maxNumberOfAttendees,
-                host = User(
-                    displayName = it.host?.displayName!!,
-                    userId = it.host.userId!!,
-                    photoUrl = it.host.photoUrl?.let { Uri.parse(it) },
-                    creationDate = parseUtcStringToLocalDateTime(it.host.creationDate!!),
-                    lastSeenOnline = parseUtcStringToLocalDateTime(it.host.lastSeenOnline!!)
-                ),
-                lastUpdatedDate = parseUtcStringToLocalDateTime(it.lastUpdateDate!!),
-                photos = it.images ?: emptyList(),
-                eventId = it.id!!
+                )
             )
         } ?: emptyList()
     }
