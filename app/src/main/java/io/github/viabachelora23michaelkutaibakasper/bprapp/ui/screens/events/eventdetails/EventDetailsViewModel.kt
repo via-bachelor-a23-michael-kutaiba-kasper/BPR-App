@@ -49,7 +49,6 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
 
 
     fun getEvent(eventId: Int) {
-
         viewModelScope.launch {
             try {
                 val event = eventRepository.getEvent(eventId)
@@ -58,6 +57,17 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
                 isLoading.value = false
             } catch (e: Exception) {
                 Log.d("EventDetailsViewmodel", "failed to fetch event: ${e.message}")
+            }
+        }
+    }
+
+    fun joinEvent(eventId: Int, userId: String) {
+        viewModelScope.launch {
+            try {
+                eventRepository.joinEvent(eventId, userId)
+                Log.d("EventDetailsViewmodel", "joined event: $eventId")
+            } catch (e: Exception) {
+                Log.d("EventDetailsViewmodel", "failed to join event: ${e.message}")
             }
         }
     }
