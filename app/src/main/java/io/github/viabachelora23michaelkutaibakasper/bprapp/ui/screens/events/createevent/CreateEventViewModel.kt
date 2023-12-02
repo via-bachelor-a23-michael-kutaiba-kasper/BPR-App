@@ -17,6 +17,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInv
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidKeywords
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidStartAndEndDate
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidTitle
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -26,32 +27,28 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     private val eventRepository = repository
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
-
     private var _title = mutableStateOf("")
-    var validTitle = isInvalidTitle(_title.value)
-
+    var invalidTitle = isInvalidTitle(_title.value)
     private var _description = mutableStateOf("")
-    var validDescription = (isInvalidDescription(_description.value))
+    var invalidDescription = (isInvalidDescription(_description.value))
     private var _isPrivate = mutableStateOf(false)
     private var _isPaid = mutableStateOf(false)
     private var _isAdultsOnly = mutableStateOf(false)
     private var _selectedStartDateTime = mutableStateOf(LocalDateTime.now())
     private var _selectedEndDateTime = mutableStateOf(LocalDateTime.now().plusHours(3))
-    var validStartAndEndDate =
-        (
-                isInvalidStartAndEndDate(
-                    _selectedStartDateTime.value,
-                    _selectedEndDateTime.value
-                )
-                )
+    var invalidStartAndEndDate =
+        (isInvalidStartAndEndDate(
+            _selectedStartDateTime.value,
+            _selectedEndDateTime.value
+        ))
     private var _keywords = mutableStateOf(emptyList<String>())
-    var validKeywords = (isInvalidKeywords(_keywords.value))
+    var invalidKeywords = (isInvalidKeywords(_keywords.value))
     private var _selectedCategory = mutableStateOf("Choose Category")
-    var validCategory = (isInvalidCategory(_selectedCategory.value))
+    var invalidCategory = (isInvalidCategory(_selectedCategory.value))
     private var _maxNumberOfAttendees = mutableStateOf(0)
     private val _location =
         mutableStateOf(Location("", "", GeoLocation(0.0, 0.0)))
-    var validAddress = (isInvalidAddress(_location.value.completeAddress!!))
+    var invalidAddress = (isInvalidAddress(_location.value.completeAddress!!))
     private val _event = mutableStateOf<Event>(
         Event(
             title = _title.value,
@@ -86,7 +83,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
         )
     )
     val event: State<Event> get() = _event
-    val _host = mutableStateOf(
+    private val _host = mutableStateOf(
         User(
             "",
             "",
@@ -113,8 +110,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     }
 
     fun setValidTitle(newTitle: String): Boolean {
-        validTitle = isInvalidTitle(newTitle)
-        return validTitle
+        invalidTitle = isInvalidTitle(newTitle)
+        return invalidTitle
     }
 
     fun setDescription(newDescription: String) {
@@ -122,8 +119,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     }
 
     fun setValidDescription(newDescription: String): Boolean {
-        validDescription = isInvalidDescription(newDescription)
-        return validDescription
+        invalidDescription = isInvalidDescription(newDescription)
+        return invalidDescription
     }
 
     fun setIsPrivate(newIsPrivate: Boolean): Boolean {
@@ -148,9 +145,9 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
         newSelectedStartDateTime: LocalDateTime,
         newSelectedEndDateTime: LocalDateTime
     ): Boolean {
-        validStartAndEndDate =
+        invalidStartAndEndDate =
             isInvalidStartAndEndDate(newSelectedStartDateTime, newSelectedEndDateTime)
-        return validStartAndEndDate
+        return invalidStartAndEndDate
     }
 
     fun setKeywords(newKeywords: List<String>): List<String> {
@@ -159,8 +156,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     }
 
     fun setValidKeywords(newKeywords: List<String>): Boolean {
-        validKeywords = isInvalidKeywords(newKeywords)
-        return validKeywords
+        invalidKeywords = isInvalidKeywords(newKeywords)
+        return invalidKeywords
     }
 
     fun setCategory(newCategory: String): String {
@@ -169,8 +166,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     }
 
     fun setValidCategory(newCategory: String): Boolean {
-        validCategory = isInvalidCategory(newCategory)
-        return validCategory
+        invalidCategory = isInvalidCategory(newCategory)
+        return invalidCategory
     }
 
     fun setIsPaid(newIsPaid: Boolean): Boolean {
@@ -189,8 +186,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     }
 
     fun setValidAddress(newAddress: String): Boolean {
-        validAddress = isInvalidAddress(newAddress)
-        return validAddress
+        invalidAddress = isInvalidAddress(newAddress)
+        return invalidAddress
     }
 
     fun setHost(newHost: User): User {
@@ -230,7 +227,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
 
     fun createEvent(event: Event): Int {
         var eventId: Int = 0
-        if (!validTitle && !validDescription && !validStartAndEndDate && !validKeywords && !validCategory && !validAddress) {
+        if (!invalidTitle && !invalidDescription && !invalidStartAndEndDate && !invalidKeywords && !invalidCategory && !invalidAddress) {
 
             viewModelScope.launch {
                 try {
@@ -247,7 +244,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             eventCreated.value = false
             Log.d(
                 "CreateEventViewModel",
-                "event creation failed: ${validTitle} ${validDescription} ${validStartAndEndDate} ${validKeywords} ${validCategory} ${validAddress}"
+                "event creation failed: ${invalidTitle} ${invalidDescription} ${invalidStartAndEndDate} ${invalidKeywords} ${invalidCategory} ${invalidAddress}"
             )
         }
         return eventId
