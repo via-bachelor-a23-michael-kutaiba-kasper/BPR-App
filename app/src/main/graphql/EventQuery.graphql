@@ -67,3 +67,10 @@ mutation CreateEventMutation($title: String!,$description:String!, $startDate: S
         }
     }
 }
+
+
+mutation JoinEvent($eventId: Int!, $userId: String!) {
+    joinEvent(eventId: $eventId, userId: $userId) {
+        id
+    }
+}
