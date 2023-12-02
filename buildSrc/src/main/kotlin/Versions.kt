@@ -20,7 +20,17 @@ internal object Versions{
     const val NAVIGATION_COMPOSE= "2.7.4"
     const val FIREBASE_BOM= "32.4.0"
     const val PLAY_SERVICES_AUTH= "20.7.0"
-    const val COIL_COMPOSE= "2.2.2"
+    const val COIL_COMPOSE= "2.3.0"
+    const val PLACES= "3.3.0"
+    const val DATETIME= "0.8.1-rc"
+    const val MAPS_COMPOSE_UTILS= "4.1.1"
+    const val RUNTIME_COMPOSE= "2.6.2"
+    const val ESPRESSO= "3.5.1"
+    const val JUNIT_EXT= "1.1.5"
+    const val JUNIT= "4.13.2"
+    const val ANDROID_MATERIAL= "1.10.0"
+    const val JUNIT_COMPOSE= "1.5.4"
+    const val KOTLINX_COROUTINES_TEST= "1.6.4"
 
     // TODO: Add test dependencies here as well
 }

@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.Packaging
 
 plugins {
     id("com.android.application")
@@ -62,17 +63,16 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/NOTICE*"
         }
     }
 }
 
 dependencies {
-    // Android
     implementation(`androidx-core-ktx`())
     implementation(`androidx-lifecycle-runtime-ktx`())
     implementation(`androidx-activity-compose`())
-
-    // Compose
     implementation(platform(`androidx-compose-bom`()))
     implementation(`androidx-compose-ui`())
     implementation(`androidx-compose-ui-graphics`())
@@ -81,31 +81,25 @@ dependencies {
     implementation(platform(`firebase-bom`()))
     implementation(`firebase-auth-ktx`())
     implementation(`play-services-auth`())
-    // TODO: Move rest of dependencies into Versions.kt and Dependencies.kt
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation(`android-material`())
+    testImplementation(junit())
+    androidTestImplementation(`junit-ext`())
+    androidTestImplementation(`espresso-core`())
+    androidTestImplementation(`junit-compose`())
+    debugImplementation(`compose-ui-test-tooling`())
+    debugImplementation(`test-manifest`())
     implementation(`lifecycle-viewmodel-compose`())
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-
+    implementation(`runtime-compose`())
+    implementation (`maps-compose-utils`())
     implementation(`navigation-compose`())
-    //image caching
     implementation (`coil-compose`())
-    // Google maps
     implementation(`play-services-maps`())
     implementation(`play-services-location`())
-    // Google maps for compose
     implementation(`maps-compose`())
-
-    // KTX for the Maps SDK for Android
     implementation(`maps-ktx`())
-    // KTX for the Maps SDK for Android Utility Library
     implementation(`maps-utils-ktx`())
-    //apollo
     implementation(`apollo-runtime`())
-
+    implementation (`dialog-datetime`())
+    implementation (`google-places`())
+    testImplementation (`kotlinx-coroutines-test`())
 }

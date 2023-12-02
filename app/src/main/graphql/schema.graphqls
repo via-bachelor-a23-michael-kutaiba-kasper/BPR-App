@@ -1,13 +1,38 @@
-type GeoLocation {
-  lat: String
+input userInput {
+  userId: String!
 
-  lng: String
+  photoUrl: String
+
+  displayName: String!
+
+  dateOfBirth: String!
+
+  LastSeenOnline: String
+
+  CreationDate: String!
 }
 
 """
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 """
 scalar String
+
+input geoLocationInput {
+  lat: Float!
+
+  lng: Float!
+}
+
+"""
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+"""
+scalar Float
+
+type GeoLocation {
+  lat: String
+
+  lng: String
+}
 
 type Location {
   country: String
@@ -25,24 +50,60 @@ type Location {
   geoLocation: GeoLocation
 }
 
-type Event {
-  title: String
+type User {
+  userId: String
 
-  location: Location
+  displayName: String
 
-  url: String
+  photoUrl: String
 
-  description: String
+  lastSeenOnline: String
+
+  creationDate: String
 }
 
-type Todo {
-  userId: Int
-
+type Event {
   id: Int
 
   title: String
 
-  completed: Boolean
+  startDate: String
+
+  endDate: String
+
+  createdDate: String
+
+  lastUpdateDate: String
+
+  isPrivate: Boolean
+
+  adultsOnly: Boolean
+
+  isPaid: Boolean
+
+  host: User
+
+  maxNumberOfAttendees: Int
+
+  url: String
+
+  description: String
+
+  accessCode: String
+
+  category: String
+
+  keywords: [String]
+
+  images: [String]
+
+  attendees: [String]
+
+  geoLocation: GeoLocation
+
+  city: String
+
+  location: String
 }
 
 """
@@ -55,14 +116,55 @@ The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
 
+type Post {
+  userId: Int
+
+  id: Int
+
+  title: String
+
+  body: String
+}
+
+type CreateEventResponse {
+  event: Event
+
+  code: String
+}
+
 type Query {
-  events: [Event]
+  """
+  All arguments are optional filters to apply.
+  from: UTC DateTime string. Fitlers events by endDate >= from
+  hostId: UUID string. Filters events by host.
+  """
+  events(from: String, hostId: String): [Event]
+
+  categories: [String]
+
+  keywords: [String]
 
   allPublicEvents: [Event]
 
-  event(id: Int): Event
+  event(eventId: Int): Event
 
-  todos: [Todo]
+  posts(userId: Int): [Post]
+
+  post(id: Int!): Post
+}
+
+type Mutation {
+  createPost(userId: Int!, title: String!, body: String!): Post
+
+  """
+  Adds user as attendee to event. Does not return anything.
+  """
+  joinEvent(eventId: Int!, userId: String!): Event
+
+  """
+  Create new event. Returns CreateEventResposne.
+  """
+  createEvent(title: String!, startDate: String!, endDate: String!, createdDate: String!, lastUpdateDate: String, isPrivate: Boolean!, adultsOnly: Boolean!, isPaid: Boolean!, host: userInput!, maxNumberOfAttendees: Int!, url: String, description: String, location: String!, city: String!, geoLocation: geoLocationInput!, category: String!, keywords: [String!]): CreateEventResponse
 }
 
 """
@@ -358,4 +460,5 @@ directive @specifiedBy ("The URL that specifies the behavior of this scalar." ur
 
 schema {
   query: Query
+  mutation: Mutation
 }

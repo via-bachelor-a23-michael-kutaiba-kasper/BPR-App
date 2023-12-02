@@ -36,11 +36,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthent
 
 
 @Composable
-fun ProfileScreen(
-    // state: SignInState
-    //  onSignInClick: () -> Unit
-) {
-    val viewModel: ProfileViewModel = viewModel()
+fun ProfileScreen(){
     val authenticationClient: IAuthenticationClient = AuthenticationClient()
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val launcher = authenticationClient.signIn(

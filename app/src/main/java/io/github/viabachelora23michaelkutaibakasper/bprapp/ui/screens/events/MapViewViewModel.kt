@@ -4,50 +4,98 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.clustering.ClusterItem
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
-class MapViewViewModel : ViewModel() {
-    //make a viewmodel that holds the list of events. the viewmodel should use kotlin stateflow to hold the list of events
-    //the viewmodel should have a function that loads the list of events from the repository
-
-    private val eventRepository: IEventRepository = EventRepository()
-    private val _eventList = MutableStateFlow<List<Event>>(emptyList())
-    val eventList = _eventList.asStateFlow() //expose the stateflow as a public property
-
+class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
+    private val eventRepository: IEventRepository = repository
+    private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
+    val eventList = _eventList.asStateFlow()
     private val _event = MutableStateFlow<Event?>(null)
-    val event = _event.asStateFlow() //expose the stateflow as a public property
-
+    val event = _event.asStateFlow()
     val isLoading = mutableStateOf(false)
+    val clusterClicked = mutableStateOf(false)
+    val currentClusterItems = mutableStateOf<List<EventClusterItem>>(emptyList())
 
     init {
-        fetchEventData()
-    }
-//q: how do i await the response from the repository? i need to update isLoading to false after the response is received
-    //a: use a try catch finally block
-    //a: but what if the repository call is also async?
-//a: use a coroutine
-    //a: but what if the repository call is also async?
-    //show me the code
+        getEvents()
 
-    fun fetchEventData() {
-        try {
-            viewModelScope.launch {
+    }
+
+    fun getEvents() {
+        viewModelScope.launch {
+            try {
                 isLoading.value = true
                 val events = eventRepository.getEvents()
                 _eventList.value = events
                 Log.d("mapviewmodel", "getevents: $events")
+                isLoading.value = false
+            } catch (e: Exception) {
+                Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
             }
-        } catch (e: Exception) {
-            Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
         }
-        finally {
-            isLoading.value = false
+    }
+
+    public class EventClusterItem(
+        lat: Double,
+        lng: Double,
+        title: String,
+        eventId: Int,
+        selectedStartDateTime: LocalDateTime,
+        description: String?,
+        selectedCategory: String,
+        photos: List<String?>?,
+    ) : ClusterItem {
+
+        val title1: String
+        var selectedStartDateTime: LocalDateTime = LocalDateTime.now()
+        var eventId: Int = 0
+        private val position: LatLng
+        var description: String? = null
+        var selectedCategory: String = ""
+        var photos: List<String?>? = null
+        val location: Location = Location(
+            city = "",
+            completeAddress = "",
+            geoLocation = null
+        )
+
+        override fun getPosition(): LatLng {
+            return position
         }
 
+        override fun getTitle(): String? {
+            return title1
+        }
+
+
+        override fun getSnippet(): String {
+            return description.toString()
+        }
+
+        override fun getZIndex(): Float? {
+            return 0f
+        }
+
+        init {
+            position = LatLng(lat, lng)
+            this.title1 = title
+            this.description = description
+            this.selectedStartDateTime = selectedStartDateTime
+            this.eventId = eventId
+            this.selectedCategory = selectedCategory
+            this.photos = photos
+
+
+        }
     }
 }

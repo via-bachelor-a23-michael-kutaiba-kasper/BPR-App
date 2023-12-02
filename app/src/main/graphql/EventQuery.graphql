@@ -1,17 +1,76 @@
-query AllPublicEvents {
-    allPublicEvents {
+query GetKeywords{
+    keywords
+}
+query getCategories{
+    categories
+}
+
+query getEvent($id:Int!){
+    event(eventId: $id){
+        accessCode
+        adultsOnly
+        attendees
+        category
+        city
+        createdDate
+        description
+        endDate
+        geoLocation {
+            lat
+            lng
+        }
+        host {
+            userId
+            displayName
+            photoUrl
+            lastSeenOnline
+            creationDate
+        }
+        id
+        images
+        isPaid
+        isPrivate
+        keywords
+        lastUpdateDate
+        location
+        maxNumberOfAttendees
+        startDate
         title
+        url
+    }
+}
+
+query FetchAllEvents($hostId: String, $from: String) {
+    events(hostId: $hostId, from: $from) {
+        id
+        title
+        startDate
+        isPaid
         description
         url
-        location {
-            city
-            streetNumber
-            houseNumber
-            floor
-            geoLocation {
-                lat
-                lng
-            }
+        category
+        images
+        city
+        location
+        geoLocation {
+            lat
+            lng
         }
+    }
+}
+
+mutation CreateEventMutation($title: String!,$description:String!, $startDate: String!,$keywords:[String!]!,
+    $endDate: String!, $createdDate: String!, $isPrivate: Boolean!, $adultsOnly: Boolean!, $isPaid: Boolean!, $host: userInput!, $maxNumberOfAttendees: Int!, $location: String!, $city: String!, $geoLocation: geoLocationInput!, $category: String!) {
+    createEvent(title: $title,description: $description, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
+        event {
+            id
+        }
+    }
+}
+
+
+mutation JoinEvent($eventId: Int!, $userId: String!) {
+    joinEvent(eventId: $eventId, userId: $userId) {
+        id
     }
 }
