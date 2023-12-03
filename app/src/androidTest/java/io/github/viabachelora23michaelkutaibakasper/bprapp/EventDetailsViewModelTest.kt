@@ -64,4 +64,21 @@ class EventDetailsViewModelTest {
         TestCase.assertEquals(event, viewModel.event.value)
     }
 
+    @Test
+    fun joinEvent_returnsNothing() {
+        val viewModel =
+            EventDetailsViewModel(repository = repository)
+        composeTestRule.runOnIdle {
+            viewModel.joinEvent(2, "123456")
+        }
+        composeTestRule.waitForIdle()
+
+        // Verify the updated state
+        //test it does not return anything because it is a suspend function
+        //
+
+
+        TestCase.assertEquals(viewModel.joinEvent(2, "123456"  ),Unit)
+    }
+
 }

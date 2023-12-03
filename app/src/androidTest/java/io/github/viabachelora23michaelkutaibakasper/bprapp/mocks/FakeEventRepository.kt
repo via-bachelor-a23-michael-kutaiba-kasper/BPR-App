@@ -92,7 +92,7 @@ class FakeEventRepository : IEventRepository {
     }
 
     override suspend fun joinEvent(eventId: Int, userId: String) {
-        TODO("Not yet implemented")
+
     }
 
     override suspend fun getKeywords(): List<String> {
