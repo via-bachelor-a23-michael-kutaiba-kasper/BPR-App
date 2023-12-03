@@ -30,27 +30,29 @@ class EventRepository : IEventRepository {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
-        val response = apolloClient.query(FetchAllEventsQuery()).execute()
-        Log.d("ApolloEventClient", "getEvent UwWU: ${response.data?.events}")
-        return response.data?.events?.map {
-            MinimalEvent(
-                title = it?.title!!,
-                selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
-                eventId = it.id!!,
-                selectedCategory = it.category!!,
-                photos = it.images,
-                description = it.description,
-                location = Location(
-                    city = it.city,
-                    completeAddress = it.location,
-                    geoLocation = GeoLocation(
-                        lat = it.geoLocation?.lat!!.toDouble(),
-                        lng = it.geoLocation.lng!!.toDouble()
+
+            val response = apolloClient.query(FetchAllEventsQuery()).execute()
+            Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
+            return response.data?.events?.map {
+                MinimalEvent(
+                    title = it?.title!!,
+                    selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
+                    eventId = it.id!!,
+                    selectedCategory = it.category!!,
+                    photos = it.images,
+                    description = it.description,
+                    location = Location(
+                        city = it.city,
+                        completeAddress = it.location,
+                        geoLocation = GeoLocation(
+                            lat = it.geoLocation?.lat!!.toDouble(),
+                            lng = it.geoLocation.lng!!.toDouble()
+                        )
                     )
                 )
-            )
-        } ?: emptyList()
-    }
+            } ?: emptyList()
+        }
+
 
     override suspend fun getEvent(eventId: Int): Event {
         val apolloClient = ApolloClient.Builder()
@@ -145,6 +147,7 @@ class EventRepository : IEventRepository {
             .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.query(GetKeywordsQuery()).execute()
+        Log.d("ApolloEventClient", "getKeywords: ${response.data?.keywords}")
         return response.data?.keywords?.map { it!! } ?: emptyList()
     }
 
@@ -153,6 +156,7 @@ class EventRepository : IEventRepository {
             .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.query(GetCategoriesQuery()).execute()
+        Log.d("ApolloEventClient", "getCategories: ${response.data?.categories}")
         return response.data?.categories?.map { it!! } ?: emptyList()
     }
 
