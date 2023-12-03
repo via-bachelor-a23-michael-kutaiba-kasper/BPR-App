@@ -18,6 +18,7 @@ import java.time.LocalDateTime
 class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
 
     private val eventRepository: IEventRepository = repository
+    val errorFetchingEvent = mutableStateOf(false)
     private val _event = MutableStateFlow<Event>(
         Event(
             "title",
@@ -45,18 +46,22 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
     )
     val event = _event.asStateFlow() //expose the stateflow as a public property
 
-    val isLoading = mutableStateOf(true)
+    val isLoading = mutableStateOf(false)
 
 
     fun getEvent(eventId: Int) {
         viewModelScope.launch {
             try {
+                isLoading.value = true
+                errorFetchingEvent.value = false
                 val event = eventRepository.getEvent(eventId)
                 _event.value = event
                 Log.d("EventDetailsViewmodel", "getevent: $event")
                 isLoading.value = false
             } catch (e: Exception) {
                 Log.d("EventDetailsViewmodel", "failed to fetch event: ${e.message}")
+                isLoading.value = false
+                errorFetchingEvent.value = true
             }
         }
     }
