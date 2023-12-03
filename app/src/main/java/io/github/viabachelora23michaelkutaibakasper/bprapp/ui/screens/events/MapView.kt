@@ -5,12 +5,15 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +35,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
@@ -68,6 +75,7 @@ import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
+import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -82,13 +90,13 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Map(navController: NavController, modifier: Modifier = Modifier, viewModel: MapViewViewModel) {
+    val mapView = 0
+    val listView = 1
+    val tabs = listOf("Map", "List")
+    val selectedIndex = remember { mutableIntStateOf(0) }
+
     Column(modifier = Modifier)
     {
-        val mapView = 0
-        val listView = 1
-
-        val tabs = listOf("Map", "List")
-        val selectedIndex = remember { mutableIntStateOf(0) }
         PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
             tabs.forEachIndexed { index, title ->
                 Tab(text = { Text(text = title) },
@@ -130,13 +138,35 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
 
     val events by viewModel.eventList.collectAsState(emptyList())
     val isLoading by viewModel.isLoading
+    val errorFetchingEvents by viewModel.errorFetchingEvent
     response = events
     Log.d("eventlist", "events: $response")
 
     if (isLoading) {
         LoadingScreen()
-    } //should display a No Events message
-    else {
+    } else if (errorFetchingEvents) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Error fetching events")
+            Button(onClick = { viewModel.getEvents() }) {
+                Text(text = "Refresh")
+            }
+        }
+    } else if (response.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "no events :(")
+            Button(onClick = { viewModel.getEvents() }) {
+                Text(text = "Refresh")
+            }
+        }
+    } else {
         Button(onClick = { viewModel.getEvents() }) {
             Text(text = "Refresh")
         }
@@ -146,9 +176,7 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             }
         }
     }
-
 }
-
 
 @ExperimentalMaterial3Api
 @Composable
@@ -164,6 +192,9 @@ fun MapEvents(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(initialZoomPosition, 10f)
     }
+    val fetchedEvents by viewModel.clusterEvents.collectAsState(emptyList())
+    Log.d("events for makers", "getEvents: $fetchedEvents")
+
     val uiSettings by remember {
         mutableStateOf(
             MapUiSettings(
@@ -187,113 +218,24 @@ fun MapEvents(
                 isMyLocationEnabled = true
             )
         ) {
-            val fetchedEvents by viewModel.eventList.collectAsState(emptyList())
-            val visibleEvents = fetchedEvents
-            Log.d("events for makers", "getEvents: $fetchedEvents")
-            fetchedEvents.forEach { event ->
-                MarkerInfoWindowContent(
-                    state = MarkerState(
-                        position = LatLng(
-                            event.location.geoLocation?.lat ?: 0.0,
-                            event.location.geoLocation?.lng ?: 0.0
-                        )
-                    ),
-                    onInfoWindowClick = { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }
+            Clustering(
+                items = fetchedEvents,
+                onClusterClick = {
+                    // Handle cluster click
+                    viewModel.clusterClicked.value = true
+                    viewModel.currentClusterItems.value =
+                        it.items.map { item -> item as MapViewViewModel.EventClusterItem }
+                    true
+                },
+                onClusterItemInfoWindowClick = {
+                    // Handle cluster item info window click
+                    navController.navigate("${BottomNavigationScreens.EventDetails.name}/${it.eventId}")
+                    true
+                },
+
                 )
-                {
-                    Row(Modifier.padding(4.dp)) {
-                        Image(
-                            painter = if (event.photos?.isNotEmpty() != true
-                            )  painterResource(id = R.mipmap.no_photo) else{
-                                rememberAsyncImagePainter(event.photos?.get(0))
-                            },
-                            contentDescription = "Profile picture",
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(4.dp)
-                        ) {
-                            Row {
-                                Text(text = "Title: ", fontWeight = Bold)
-                                Text(text = event.title ?: "No title")
-                            }
-                            Row {
-                                Text(text = "Description: ", fontWeight = Bold)
-                                Text(text = event.description ?: "No description")
-                            }
-                            Row {
-                                Text(text = "Location: ", fontWeight = Bold)
-                                Text(text = event.location.completeAddress ?: "No location")
-                            }
-                            Row {
-                                Text(text = "Category: ", fontWeight = Bold)
-                                Text(text = event.selectedCategory ?: "No category")
-                            }
-                            Row {
-                                Text(text = "Start date: ", fontWeight = Bold)
-                                Text(
-                                    text = DisplayFormattedTime(event.selectedStartDateTime)
-                                        ?: "No start date"
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            val clusterEvents = remember {
-                mutableStateListOf<MapViewViewModel.EventClusterItem>(
-                    MapViewViewModel.EventClusterItem(
-                        lat = 0.0,
-                        lng = 0.0,
-                        title = "",
-                        description = "",
-                        eventId = 0,
-                        selectedStartDateTime = LocalDateTime.now(),
-                        selectedCategory = "",
-                        photos = listOf(""),
-                    )
-                )
-            }
-            //create clusters of events with same location
-
-            val groupedByLocation = fetchedEvents.groupBy { it.location }
-            groupedByLocation.forEach { (location, events) ->
-                Log.d("grouped by location", "getEvents: $location")
-
-                if (events.size > 2) {
-                    events.forEach { event ->
-                        Log.d("the events", "getEvents: $event")
-                        clusterEvents.add(
-                            MapViewViewModel.EventClusterItem(
-                                lat = event.location.geoLocation?.lat ?: 0.0,
-                                lng = event.location.geoLocation?.lng ?: 0.0,
-                                title = event.title ?: "No title",
-                                description = event.description ?: "No description",
-                                eventId = event.eventId,
-                                selectedStartDateTime = event.selectedStartDateTime,
-                                selectedCategory = event.selectedCategory,
-                                photos = event.photos,
-                            )
-                        )
-                        Clustering(
-                            items = clusterEvents, onClusterClick = {
-                                // Handle cluster click
-                                viewModel.clusterClicked.value = true
-                                viewModel.currentClusterItems.value =
-                                    it.items.map { item -> item as MapViewViewModel.EventClusterItem }
-                                true
-                            }
-                        )
-                        //remove event from list
-                    }
-                }
-            }
         }
+
         if (viewModel.clusterClicked.value) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -302,14 +244,15 @@ fun MapEvents(
                 sheetState = sheetState
             ) {
                 // Sheet content
-
                 LazyColumn(content = {
                     items(viewModel.currentClusterItems.value) { event ->
                         ClusterModalItem(navController, event, viewModel)
                     }
                 })
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
+
         FloatingActionButton(
             onClick = {
                 if (user != null) {
