@@ -226,13 +226,14 @@ class MainActivity : ComponentActivity() {
                                             "snackbarlog",
                                             "id: ${createEventViewModel.createdEventId.value}"
                                         )
-
                                         navController.navigate("${BottomNavigationScreens.EventDetails.name}/${createEventViewModel.createdEventId.value}")
+                                        createEventViewModel.eventCreated.value = false
                                     }
 
                                     SnackbarResult.Dismissed -> {
-
+                                        createEventViewModel.eventCreated.value = false
                                     }
+
                                 }
                             }
                         }
@@ -249,6 +250,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
+                                mapViewModel.getEvents()
                                 Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
@@ -295,6 +297,7 @@ class MainActivity : ComponentActivity() {
                                 )) {
                                 val param = it.arguments?.getInt("eventId")
                                 param?.let { it1 ->
+                                    eventDetailsViewModel.getEvent(it1)
                                     EventDetailsScreen(
                                         navController = navController,
                                         viewModel = eventDetailsViewModel, param = it1

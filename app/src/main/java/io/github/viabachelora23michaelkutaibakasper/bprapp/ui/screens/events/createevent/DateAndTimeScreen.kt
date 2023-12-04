@@ -36,15 +36,13 @@ import androidx.navigation.NavController
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
-import java.time.Instant
-import java.time.LocalDate
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.convertUtcMillisecondsToFormattedDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZoneOffset
+
 
 
 fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -61,17 +59,7 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
         rememberDatePickerState(initialSelectedDateMillis = selectedEndDateTime.toMillis())
     val startTimeDialogState = rememberMaterialDialogState()
     val endTimeDialogState = rememberMaterialDialogState()
-    fun convertUtcMillisecondsToFormattedDate(
-        utcMilliseconds: Long?
-    ): LocalDate {
 
-        return Instant
-            .ofEpochMilli(utcMilliseconds!!)
-            .atOffset(
-                ZoneOffset.UTC
-            )
-            .toLocalDate()
-    }
 
 
     var pickedStartTime by remember {

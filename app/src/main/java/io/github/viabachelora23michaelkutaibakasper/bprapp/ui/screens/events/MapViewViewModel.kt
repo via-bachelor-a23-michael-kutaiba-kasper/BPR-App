@@ -1,10 +1,14 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.model.LocalDate
 import com.google.maps.android.clustering.ClusterItem
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -20,11 +24,14 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
     private val eventRepository: IEventRepository = repository
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     val eventList = _eventList.asStateFlow()
+    private val _clusterEvents = MutableStateFlow<List<EventClusterItem>>(emptyList())
+    val clusterEvents = _clusterEvents.asStateFlow()
     private val _event = MutableStateFlow<Event?>(null)
     val event = _event.asStateFlow()
     val isLoading = mutableStateOf(false)
     val clusterClicked = mutableStateOf(false)
     val currentClusterItems = mutableStateOf<List<EventClusterItem>>(emptyList())
+    val errorFetchingEvent = mutableStateOf(false)
 
     init {
         getEvents()
@@ -37,10 +44,30 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
                 isLoading.value = true
                 val events = eventRepository.getEvents()
                 _eventList.value = events
+                val clusterEvents = mutableListOf<EventClusterItem>()
+                _eventList.value.forEach { event ->
+                    Log.d("the events", "getEvents: $event")
+                    clusterEvents.add(
+                        EventClusterItem(
+                            lat = event.location.geoLocation?.lat ?: 0.0,
+                            lng = event.location.geoLocation?.lng ?: 0.0,
+                            title = event.title,
+                            description = event.description ?: "No description",
+                            eventId = event.eventId,
+                            selectedStartDateTime = event.selectedStartDateTime,
+                            selectedCategory = event.selectedCategory,
+                            photos = event.photos,
+                        )
+                    )
+                }
+                _clusterEvents.value = clusterEvents
+
                 Log.d("mapviewmodel", "getevents: $events")
                 isLoading.value = false
             } catch (e: Exception) {
-                Log.d("MapViewViewModel", "fetchEventData: ${e.message}")
+                Log.d("MapViewViewModel", "error message: ${e.message}")
+                isLoading.value = false
+                errorFetchingEvent.value = true
             }
         }
     }

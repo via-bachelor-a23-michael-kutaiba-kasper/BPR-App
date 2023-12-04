@@ -64,12 +64,24 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
     val isLoading by viewModel.isLoading
     Log.d("eventDetailsScreen", "event: $event")
     val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+    val errorFetchingEvent by viewModel.errorFetchingEvent
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+
     if (isLoading) {
-        viewModel.getEvent(param)
         LoadingScreen()
+    } else if (errorFetchingEvent) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Error fetching events")
+            Button(onClick = { viewModel.getEvent(event.eventId) }) {
+                Text(text = "Refresh")
+            }
+        }
     } else {
         Column() {
             Column(
