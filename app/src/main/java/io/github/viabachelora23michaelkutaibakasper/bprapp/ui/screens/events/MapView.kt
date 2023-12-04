@@ -347,7 +347,7 @@ fun LoadingScreen() {
 fun EventListItem(event: MinimalEvent, navController: NavController) {
     Column(modifier = Modifier.clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
 
-        Row(Modifier.padding(4.dp)) {
+        Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
                 ) event.photos?.get(0) else ImageRequest.Builder(LocalContext.current)

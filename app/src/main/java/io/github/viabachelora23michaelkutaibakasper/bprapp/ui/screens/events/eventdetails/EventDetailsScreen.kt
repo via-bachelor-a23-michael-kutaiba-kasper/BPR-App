@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -77,7 +78,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Error fetching events")
+            Text(text = "Error fetching event :(")
             Button(onClick = { viewModel.getEvent(event.eventId) }) {
                 Text(text = "Refresh")
             }
@@ -351,6 +352,58 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
 
                         }
                     }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth().height(300.dp)
+                        .padding(8.dp)) {
+                   //creaate lazy column of attendees
+                    LazyColumn(content = {
+                        items(viewModel.event.value.attendees!!.size) { index ->
+                            val attendee = viewModel.event.value.attendees!![index]
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                if (attendee?.photoUrl != null) {
+                                    AsyncImage(
+                                        model = attendee.photoUrl,
+                                        contentDescription = "Profile picture",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                if (attendee!!.displayName != null) {
+                                    Column(
+                                        modifier = Modifier.padding(
+                                            start = 4.dp,
+                                            top = 0.dp,
+                                            end = 0.dp,
+                                            bottom = 0.dp
+                                        )
+                                    ) {
+                                        attendee.displayName?.let {
+                                            Text(
+                                                text = it,
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                        Text(
+                                            text = "Attendee",
+                                            textAlign = TextAlign.Center,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    })
                 }
                 if (!event.url.isNullOrEmpty()) {
                     val intent =

@@ -260,11 +260,11 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                         User(
                             user?.displayName!!, user?.uid!!, user?.photoUrl,
                             LocalDateTime.ofInstant(
-                                Instant.ofEpochSecond(user?.metadata?.creationTimestamp!!),
+                                Instant.ofEpochMilli(user?.metadata?.creationTimestamp!!),
                                 ZoneId.systemDefault()
                             ),
                             LocalDateTime.ofInstant(
-                                Instant.ofEpochSecond(user?.metadata?.lastSignInTimestamp!!),
+                                Instant.ofEpochMilli(user?.metadata?.lastSignInTimestamp!!),
                                 ZoneId.systemDefault()
                             )
 

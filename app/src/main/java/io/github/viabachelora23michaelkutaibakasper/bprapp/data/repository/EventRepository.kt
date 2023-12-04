@@ -33,7 +33,7 @@ class EventRepository : IEventRepository {
 
             val response = apolloClient.query(FetchAllEventsQuery()).execute()
             Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
-            return response.data?.events?.map {
+            return response.data?.events?.result?.map{
                 MinimalEvent(
                     title = it?.title!!,
                     selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
@@ -59,37 +59,46 @@ class EventRepository : IEventRepository {
             .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.query(GetEventQuery(eventId)).execute()
-        Log.d("ApolloEventClient", "getEvent UwWU: ${response.data?.event}")
+        Log.d("ApolloEventClient", "getEvent UwWU: ${response.data?.event?.result}")
         return Event(
-            title = response.data?.event?.title,
-            description = response.data?.event?.description,
-            url = response.data?.event?.url,
+            title = response.data?.event?.result?.title,
+            description = response.data?.event?.result?.description,
+            url = response.data?.event?.result?.url,
             location = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location(
-                city = response.data?.event?.city,
-                completeAddress = response.data?.event?.location,
+                city = response.data?.event?.result?.city,
+                completeAddress = response.data?.event?.result?.location,
                 geoLocation = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation(
-                    lat = response.data?.event?.geoLocation?.lat!!.toDouble(),
-                    lng = response.data?.event?.geoLocation?.lng!!.toDouble()
+                    lat = response.data?.event?.result?.geoLocation?.lat!!.toDouble(),
+                    lng = response.data?.event?.result?.geoLocation?.lng!!.toDouble()
                 )
             ),
-            isPrivate = response.data?.event?.isPrivate,
-            isPaid = response.data?.event?.isPaid,
-            isAdultsOnly = response.data?.event?.adultsOnly,
-            selectedStartDateTime = parseUtcStringToLocalDateTime(response.data?.event?.startDate!!),
-            selectedEndDateTime = parseUtcStringToLocalDateTime(response.data?.event?.endDate!!),
-            selectedKeywords = response.data?.event?.keywords,
-            selectedCategory = response.data?.event?.category,
-            maxNumberOfAttendees = response.data?.event?.maxNumberOfAttendees,
+            isPrivate = response.data?.event?.result?.isPrivate,
+            isPaid = response.data?.event?.result?.isPaid,
+            isAdultsOnly = response.data?.event?.result?.adultsOnly,
+            selectedStartDateTime = parseUtcStringToLocalDateTime(response.data?.event?.result?.startDate!!),
+            selectedEndDateTime = parseUtcStringToLocalDateTime(response.data?.event?.result?.endDate!!),
+            selectedKeywords = response.data?.event?.result?.keywords,
+            selectedCategory = response.data?.event?.result?.category,
+            maxNumberOfAttendees = response.data?.event?.result?.maxNumberOfAttendees,
             host = User(
-                displayName = response.data?.event?.host?.displayName!!,
-                userId = response.data?.event?.host?.userId!!,
-                photoUrl = response.data?.event?.host?.photoUrl?.let { Uri.parse(it) },
-                creationDate = parseUtcStringToLocalDateTime(response.data?.event?.host?.creationDate!!),
-                lastSeenOnline = parseUtcStringToLocalDateTime(response.data?.event?.host?.lastSeenOnline!!)
+                displayName = response.data?.event?.result?.host?.displayName!!,
+                userId = response.data?.event?.result?.host?.userId!!,
+                photoUrl = response.data?.event?.result?.host?.photoUrl?.let { Uri.parse(it) },
+                creationDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.creationDate!!),
+                lastSeenOnline = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.lastSeenOnline!!)
             ),
-            lastUpdatedDate = parseUtcStringToLocalDateTime(response.data?.event?.lastUpdateDate!!),
-            photos = response.data?.event?.images ?: emptyList(),
-            eventId = response.data?.event?.id!!
+            lastUpdatedDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.lastUpdateDate!!),
+            photos = response.data?.event?.result?.images ?: emptyList(),
+            eventId = response.data?.event?.result?.id!!,
+            attendees = response.data?.event?.result?.attendees?.map {
+                User(
+                    displayName = it?.displayName!!,
+                    userId = it.userId!!,
+                    photoUrl = it.photoUrl?.let { Uri.parse(it) },
+                    creationDate = parseUtcStringToLocalDateTime(it.creationDate!!),
+                    lastSeenOnline = parseUtcStringToLocalDateTime(it.lastSeenOnline!!)
+                )
+            } ?: emptyList()
         )
     }
 
@@ -129,9 +138,9 @@ class EventRepository : IEventRepository {
                 description = event.description!!,
             )
         ).execute()
-        Log.d("ApolloEventClient", "createEvent: ${response.data?.createEvent?.event?.id}")
+        Log.d("ApolloEventClient", "createEvent: ${response.data?.createEvent?.result?.id}")
 
-        return response.data?.createEvent?.event?.id!!
+        return response.data?.createEvent?.result?.id!!
     }
 
     override suspend fun joinEvent(eventId: Int, userId: String) {
@@ -139,7 +148,7 @@ class EventRepository : IEventRepository {
             .serverUrl(BuildConfig.API_URL)
             .build()
         val response = apolloClient.mutation(JoinEventMutation(eventId, userId = userId)).execute()
-        Log.d("ApolloEventClient", "joinEvent: ${response.data?.joinEvent?.id}")
+        Log.d("ApolloEventClient", "joinEvent: ${response.data?.joinEvent?.result?.id}")
     }
 
     override suspend fun getKeywords(): List<String> {
@@ -148,7 +157,7 @@ class EventRepository : IEventRepository {
             .build()
         val response = apolloClient.query(GetKeywordsQuery()).execute()
         Log.d("ApolloEventClient", "getKeywords: ${response.data?.keywords}")
-        return response.data?.keywords?.map { it!! } ?: emptyList()
+        return response.data?.keywords?.result?.map { it!! } ?: emptyList()
     }
 
     override suspend fun getCategories(): List<String> {
@@ -157,7 +166,7 @@ class EventRepository : IEventRepository {
             .build()
         val response = apolloClient.query(GetCategoriesQuery()).execute()
         Log.d("ApolloEventClient", "getCategories: ${response.data?.categories}")
-        return response.data?.categories?.map { it!! } ?: emptyList()
+        return response.data?.categories?.result?.map { it!! } ?: emptyList()
     }
 
 

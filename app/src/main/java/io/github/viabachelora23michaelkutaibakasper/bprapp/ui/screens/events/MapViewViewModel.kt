@@ -46,7 +46,6 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
                 _eventList.value = events
                 val clusterEvents = mutableListOf<EventClusterItem>()
                 _eventList.value.forEach { event ->
-                    Log.d("the events", "getEvents: $event")
                     clusterEvents.add(
                         EventClusterItem(
                             lat = event.location.geoLocation?.lat ?: 0.0,
