@@ -262,7 +262,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (viewModel.event.value.maxNumberOfAttendees == 0) "Unlimited spots"
+                            text = if (viewModel.event.value.maxNumberOfAttendees == -1) "Unlimited spots"
                             else "Spots left: ${viewModel.event.value.maxNumberOfAttendees}",
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
@@ -353,11 +353,20 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         }
                     }
                 }
+                Text(
+                    text = "Attendees",
+                    Modifier
+                        .padding(12.dp)
+                        .align(Alignment.Start),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth().height(300.dp)
-                        .padding(8.dp)) {
-                   //creaate lazy column of attendees
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(8.dp)
+                ) {
                     LazyColumn(content = {
                         items(viewModel.event.value.attendees!!.size) { index ->
                             val attendee = viewModel.event.value.attendees!![index]
@@ -366,7 +375,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                     .fillMaxWidth()
                                     .padding(8.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.Start
                             ) {
                                 if (attendee?.photoUrl != null) {
                                     AsyncImage(
@@ -423,7 +432,6 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(Color.LightGray)
             ) {
                 Row {
                     if (4 == 5) {
