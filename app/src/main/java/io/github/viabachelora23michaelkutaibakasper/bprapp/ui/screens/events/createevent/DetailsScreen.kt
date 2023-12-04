@@ -143,6 +143,9 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                     onValueChange = {
                         if (it.all { char -> char.isDigit() } && it.isNotEmpty() && it.toInt() <= 10000) {
                             viewModel.setMaxNumberOfAttendees(it.toInt())
+                            if (viewModel.maxNumberOfAttendees.value == 0) {
+                                viewModel.setMaxNumberOfAttendees(-1)
+                            }
                         }
                     },
                     label = { Text("Enter Number") },
