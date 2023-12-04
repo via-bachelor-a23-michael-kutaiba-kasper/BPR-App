@@ -28,6 +28,17 @@ The `Float` scalar type represents signed double-precision fractional values as 
 """
 scalar Float
 
+type Status {
+  code: Int
+
+  message: String
+}
+
+"""
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+"""
+scalar Int
+
 type GeoLocation {
   lat: String
 
@@ -97,7 +108,7 @@ type Event {
 
   images: [String]
 
-  attendees: [String]
+  attendees: [User]
 
   geoLocation: GeoLocation
 
@@ -107,29 +118,32 @@ type Event {
 }
 
 """
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-"""
-scalar Int
-
-"""
 The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
 
-type Post {
-  userId: Int
+type EventResponse {
+  result: Event
 
-  id: Int
-
-  title: String
-
-  body: String
+  status: Status
 }
 
-type CreateEventResponse {
-  event: Event
+type EventsResponse {
+  result: [Event]
 
-  code: String
+  status: Status
+}
+
+type KeywordsResponse {
+  result: [String]
+
+  status: Status
+}
+
+type CategoriesResponse {
+  result: [String]
+
+  status: Status
 }
 
 type Query {
@@ -138,33 +152,27 @@ type Query {
   from: UTC DateTime string. Fitlers events by endDate >= from
   hostId: UUID string. Filters events by host.
   """
-  events(from: String, hostId: String): [Event]
+  events(from: String, hostId: String): EventsResponse
 
-  categories: [String]
+  categories: CategoriesResponse
 
-  keywords: [String]
+  keywords: KeywordsResponse
 
-  allPublicEvents: [Event]
+  allPublicEvents: EventsResponse
 
-  event(eventId: Int): Event
-
-  posts(userId: Int): [Post]
-
-  post(id: Int!): Post
+  event(eventId: Int): EventResponse
 }
 
 type Mutation {
-  createPost(userId: Int!, title: String!, body: String!): Post
-
   """
   Adds user as attendee to event. Does not return anything.
   """
-  joinEvent(eventId: Int!, userId: String!): Event
+  joinEvent(eventId: Int!, userId: String!): EventResponse
 
   """
   Create new event. Returns CreateEventResposne.
   """
-  createEvent(title: String!, startDate: String!, endDate: String!, createdDate: String!, lastUpdateDate: String, isPrivate: Boolean!, adultsOnly: Boolean!, isPaid: Boolean!, host: userInput!, maxNumberOfAttendees: Int!, url: String, description: String, location: String!, city: String!, geoLocation: geoLocationInput!, category: String!, keywords: [String!]): CreateEventResponse
+  createEvent(title: String!, startDate: String!, endDate: String!, createdDate: String!, lastUpdateDate: String, isPrivate: Boolean!, adultsOnly: Boolean!, isPaid: Boolean!, host: userInput!, maxNumberOfAttendees: Int!, url: String, description: String, location: String!, city: String!, geoLocation: geoLocationInput!, category: String!, keywords: [String!]): EventResponse
 }
 
 """

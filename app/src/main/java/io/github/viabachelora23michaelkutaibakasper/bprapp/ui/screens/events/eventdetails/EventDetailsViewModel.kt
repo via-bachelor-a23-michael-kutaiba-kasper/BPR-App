@@ -33,15 +33,17 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
             emptyList<String>(),
             "Music",
             50,
-            User(
+           host =  User(
                 "Michael Kuta Ibaka",
                 "123456789",
                 null,
                 LocalDateTime.now(),
                 LocalDateTime.now()
             ),
-            LocalDateTime.now(),
-            null, 0
+            photos = emptyList(),
+            attendees = emptyList(),
+            lastUpdatedDate = LocalDateTime.now(),
+            eventId = 1
         )
     )
     val event = _event.asStateFlow() //expose the stateflow as a public property

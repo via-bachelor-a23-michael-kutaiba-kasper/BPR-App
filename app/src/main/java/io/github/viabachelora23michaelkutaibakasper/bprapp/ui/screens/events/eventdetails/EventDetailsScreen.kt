@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -77,7 +78,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Error fetching events")
+            Text(text = "Error fetching event :(")
             Button(onClick = { viewModel.getEvent(event.eventId) }) {
                 Text(text = "Refresh")
             }
@@ -261,7 +262,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (viewModel.event.value.maxNumberOfAttendees == 0) "Unlimited spots"
+                            text = if (viewModel.event.value.maxNumberOfAttendees == -1) "Unlimited spots"
                             else "Spots left: ${viewModel.event.value.maxNumberOfAttendees}",
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
@@ -352,6 +353,67 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         }
                     }
                 }
+                Text(
+                    text = "Attendees",
+                    Modifier
+                        .padding(12.dp)
+                        .align(Alignment.Start),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(8.dp)
+                ) {
+                    LazyColumn(content = {
+                        items(viewModel.event.value.attendees!!.size) { index ->
+                            val attendee = viewModel.event.value.attendees!![index]
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                if (attendee?.photoUrl != null) {
+                                    AsyncImage(
+                                        model = attendee.photoUrl,
+                                        contentDescription = "Profile picture",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                if (attendee!!.displayName != null) {
+                                    Column(
+                                        modifier = Modifier.padding(
+                                            start = 4.dp,
+                                            top = 0.dp,
+                                            end = 0.dp,
+                                            bottom = 0.dp
+                                        )
+                                    ) {
+                                        attendee.displayName?.let {
+                                            Text(
+                                                text = it,
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                        Text(
+                                            text = "Attendee",
+                                            textAlign = TextAlign.Center,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
                 if (!event.url.isNullOrEmpty()) {
                     val intent =
                         remember { Intent(Intent.ACTION_VIEW, Uri.parse(event.url)) }
@@ -370,7 +432,6 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(Color.LightGray)
             ) {
                 Row {
                     if (4 == 5) {

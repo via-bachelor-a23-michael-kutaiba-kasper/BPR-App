@@ -79,7 +79,8 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             ),
             lastUpdatedDate = LocalDateTime.now(),
             photos = emptyList(),
-            0
+            eventId = 0,
+            attendees = emptyList()
         )
     )
     val event: State<Event> get() = _event
@@ -219,24 +220,28 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             host = _host.value,
             lastUpdatedDate = LocalDateTime.now(),
             photos = emptyList(),
-            0
+            eventId = 0,
+            attendees = emptyList()
         )
         return _event.value
     }
 
 
     fun createEvent(event: Event): Int {
-        var eventId: Int = 0
+        Log.d("CreateEventViewModel", "try this event: $event")
+        var eventId = 0
         if (!invalidTitle && !invalidDescription && !invalidStartAndEndDate && !invalidKeywords && !invalidCategory && !invalidAddress) {
 
             viewModelScope.launch {
                 try {
+
                     eventId = eventRepository.createEvent(event = event)
                     eventCreated.value = true
                     createdEventId.value = eventId
                     Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
                     Log.d("CreateEventViewModel", "createEvent: $eventId")
                 } catch (e: Exception) {
+                    Log.d("CreateEventViewModel", "createEvent: ${e.printStackTrace()}")
                     Log.d("CreateEventViewModel", "event creation failed: ${e.message}")
                 }
             }

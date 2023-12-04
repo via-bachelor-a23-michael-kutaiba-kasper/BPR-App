@@ -143,6 +143,9 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                     onValueChange = {
                         if (it.all { char -> char.isDigit() } && it.isNotEmpty() && it.toInt() <= 10000) {
                             viewModel.setMaxNumberOfAttendees(it.toInt())
+                            if (viewModel.maxNumberOfAttendees.value == 0) {
+                                viewModel.setMaxNumberOfAttendees(-1)
+                            }
                         }
                     },
                     label = { Text("Enter Number") },
@@ -260,11 +263,11 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                         User(
                             user?.displayName!!, user?.uid!!, user?.photoUrl,
                             LocalDateTime.ofInstant(
-                                Instant.ofEpochSecond(user?.metadata?.creationTimestamp!!),
+                                Instant.ofEpochMilli(user?.metadata?.creationTimestamp!!),
                                 ZoneId.systemDefault()
                             ),
                             LocalDateTime.ofInstant(
-                                Instant.ofEpochSecond(user?.metadata?.lastSignInTimestamp!!),
+                                Instant.ofEpochMilli(user?.metadata?.lastSignInTimestamp!!),
                                 ZoneId.systemDefault()
                             )
 

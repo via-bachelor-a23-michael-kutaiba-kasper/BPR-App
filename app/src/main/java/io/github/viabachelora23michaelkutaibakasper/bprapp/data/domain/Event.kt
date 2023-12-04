@@ -16,6 +16,7 @@ data class Event(
     val selectedKeywords: List<String?>?,
     val selectedCategory: String?,
     val maxNumberOfAttendees: Int?,
+    val attendees: List<User?>?,
     val host:User?,
     val lastUpdatedDate: LocalDateTime?,
     val photos: List<String?>?,

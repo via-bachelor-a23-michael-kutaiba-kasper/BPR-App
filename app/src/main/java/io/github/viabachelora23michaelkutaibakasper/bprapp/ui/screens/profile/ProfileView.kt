@@ -1,5 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile
 
+import android.util.Log
+import android.widget.RatingBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
