@@ -53,7 +53,7 @@ class EventRepository : IEventRepository {
                         lat = it.geoLocation?.lat!!.toDouble(),
                         lng = it.geoLocation.lng!!.toDouble()
                     )
-                )
+                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!)
             )
         } ?: emptyList()
     }

@@ -71,6 +71,7 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
             id
             title
             startDate
+            endDate
             isPaid
             description
             url

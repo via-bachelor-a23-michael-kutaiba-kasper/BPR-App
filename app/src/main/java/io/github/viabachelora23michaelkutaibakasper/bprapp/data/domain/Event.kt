@@ -17,7 +17,7 @@ data class Event(
     val selectedCategory: String?,
     val maxNumberOfAttendees: Int?,
     val attendees: List<User?>?,
-    val host:User?,
+    val host: User?,
     val lastUpdatedDate: LocalDateTime?,
     val photos: List<String?>?,
     val eventId: Int
@@ -26,6 +26,7 @@ data class Event(
 data class MinimalEvent(
     val title: String,
     val selectedStartDateTime: LocalDateTime,
+    val selectedEndDateTime: LocalDateTime?,
     val eventId: Int,
     val description: String?,
     val selectedCategory: String,

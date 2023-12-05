@@ -54,6 +54,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Eve
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
+import java.time.LocalDateTime
 
 
 @Composable
@@ -171,28 +172,39 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                         Text(text = event.selectedCategory ?: "No category")
                                     }
                                     Row {
-                                        Text(text = "Start date: ", fontWeight = FontWeight.Bold)
+                                        Text(text = "Date: ", fontWeight = FontWeight.Bold)
                                         Text(
                                             text = DisplayFormattedTime(event.selectedStartDateTime)
                                         )
                                     }
+
+                                    Row {
+                                        Text(text = "Status: ", fontWeight = FontWeight.Bold)
+                                        Text(
+                                            text = if (event.selectedEndDateTime?.isBefore(
+                                                    LocalDateTime.now()
+                                                ) == true
+                                            ) "Ended" else "Ongoing"
+                                        )
+                                    }
                                 }
                             }
-                            HorizontalDivider()
                         }
+                        HorizontalDivider()
                     }
                 }
             }
-            Button(onClick = {
-                authenticationClient.signOut()
-                viewModel.user.value = null
-            }) {
-                Text(text = "Sign out")
-            }
-
         }
+        Button(onClick = {
+            authenticationClient.signOut()
+            viewModel.user.value = null
+        }) {
+            Text(text = "Sign out")
+        }
+
     }
 }
+
 
 @Composable
 private fun RefreshButton(
