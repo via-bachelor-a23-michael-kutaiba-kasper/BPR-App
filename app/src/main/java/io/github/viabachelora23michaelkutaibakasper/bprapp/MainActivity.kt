@@ -71,6 +71,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.cre
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 import kotlinx.coroutines.launch
 
@@ -79,19 +80,17 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
 
-            }
         }
+    }
 
     private fun askPermissions() = when {
         ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            this, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED -> {
 
         }
@@ -113,107 +112,94 @@ class MainActivity : ComponentActivity() {
             BPRAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    val createEventViewModel: CreateEventViewModel =
-                        viewModel()
+                    val createEventViewModel: CreateEventViewModel = viewModel()
                     val eventDetailsViewModel: EventDetailsViewModel = viewModel()
+                    val profileViewModel: ProfileViewModel = viewModel()
                     val mapViewModel: MapViewViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
                     val scope = rememberCoroutineScope()
                     val snackbarHostState = remember { SnackbarHostState() }
 
 
-                    Scaffold(
-                        snackbarHost = {
-                            SnackbarHost(hostState = snackbarHostState)
-                        },
-                        topBar = {
-                            TopAppBar(
-                                navigationIcon = {
-                                    if (navController.previousBackStackEntry != null) {
-                                        IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
-                                        }
-                                    }
-                                },
-                                title = {
-                                    Text("VibeVerse")
+                    Scaffold(snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    }, topBar = {
+                        TopAppBar(navigationIcon = {
+                            if (navController.previousBackStackEntry != null) {
+                                IconButton(onClick = { navController.popBackStack() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
                                 }
-                            )
-                        },
-                        bottomBar = {
-                            val selectedIndex = remember { mutableIntStateOf(0) }
-                            NavigationBar(
-                                contentColor = MaterialTheme.colorScheme.secondary,
-                                content = {
-                                    val isDarkTheme = isSystemInDarkTheme()
-                                    NavigationBarItem(
-                                        label = { Text("Home") },
-                                        selected = (selectedIndex.intValue == 0),
-                                        onClick = {
-                                            selectedIndex.intValue = 0;
-                                            navController.navigate(BottomNavigationScreens.Map.name)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = Icons.Filled.LocationOn,
-                                                contentDescription = "Map",
-                                                tint = if (isDarkTheme) Color.White else Color.Black
-                                            )
-                                        })
-                                    NavigationBarItem(
-                                        label = { Text("Recomm.") },
-                                        selected = (selectedIndex.intValue == 1),
-                                        onClick = {
-                                            selectedIndex.intValue =
-                                                1; navController.navigate(BottomNavigationScreens.Recommendations.name)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = Icons.Filled.ThumbUp,
-                                                contentDescription = "Achievements",
-                                                tint = if (isDarkTheme) Color.White else Color.Black
-                                            )
-                                        })
-                                    NavigationBarItem(
-                                        label = { Text("Medals") },
-                                        selected = (selectedIndex.intValue == 2),
-                                        onClick = {
-                                            selectedIndex.intValue =
-                                                2; navController.navigate(BottomNavigationScreens.Achievements.name)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = Icons.Filled.Star,
-                                                contentDescription = "Achievements",
-                                                tint = if (isDarkTheme) Color.White else Color.Black
-                                            )
-                                        })
-                                    NavigationBarItem(
-                                        label = { Text("Profile") },
-                                        selected = (selectedIndex.intValue == 3),
-                                        onClick = {
-                                            selectedIndex.intValue = 3;
-                                            navController.navigate(BottomNavigationScreens.Profile.name)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = Icons.Filled.Person,
-                                                contentDescription = "Profile",
-                                                tint = if (isDarkTheme) Color.White else Color.Black
-                                            )
-                                        })
-                                }
-                            )
-                        }
-                    ) { innerPadding ->
+                            }
+                        }, title = {
+                            Text("VibeVerse")
+                        })
+                    }, bottomBar = {
+                        val selectedIndex = remember { mutableIntStateOf(0) }
+                        NavigationBar(contentColor = MaterialTheme.colorScheme.secondary,
+                            content = {
+                                val isDarkTheme = isSystemInDarkTheme()
+                                NavigationBarItem(label = { Text("Home") },
+                                    selected = (selectedIndex.intValue == 0),
+                                    onClick = {
+                                        selectedIndex.intValue = 0;
+                                        navController.navigate(BottomNavigationScreens.Map.name)
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Filled.LocationOn,
+                                            contentDescription = "Map",
+                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                        )
+                                    })
+                                NavigationBarItem(label = { Text("Recomm.") },
+                                    selected = (selectedIndex.intValue == 1),
+                                    onClick = {
+                                        selectedIndex.intValue = 1; navController.navigate(
+                                        BottomNavigationScreens.Recommendations.name
+                                    )
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Filled.ThumbUp,
+                                            contentDescription = "Achievements",
+                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                        )
+                                    })
+                                NavigationBarItem(label = { Text("Medals") },
+                                    selected = (selectedIndex.intValue == 2),
+                                    onClick = {
+                                        selectedIndex.intValue = 2; navController.navigate(
+                                        BottomNavigationScreens.Achievements.name
+                                    )
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Filled.Star,
+                                            contentDescription = "Achievements",
+                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                        )
+                                    })
+                                NavigationBarItem(label = { Text("Profile") },
+                                    selected = (selectedIndex.intValue == 3),
+                                    onClick = {
+                                        selectedIndex.intValue = 3;
+                                        navController.navigate(BottomNavigationScreens.Profile.name)
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Filled.Person,
+                                            contentDescription = "Profile",
+                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                        )
+                                    })
+                            })
+                    }) { innerPadding ->
 
                         fun showSnackBar() {
                             scope.launch {
-                                val result = snackbarHostState
-                                    .showSnackbar(
+                                val result = snackbarHostState.showSnackbar(
                                         message = "Event created successfully",
                                         actionLabel = "See event",
                                         // Defaults to SnackbarDuration.Short
@@ -260,54 +246,48 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "Achievements")
                             }
                             composable(BottomNavigationScreens.Profile.name) {
-                                ProfileScreen()
+                                ProfileScreen(navController, profileViewModel)
                             }
                             composable(CreateEventScreens.Title.name) {
                                 CreateEventTitleAndDescriptionScreen(
-                                    navController = navController,
-                                    viewModel = createEventViewModel
+                                    navController = navController, viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Location.name) {
                                 CreateEventLocationScreen(
-                                    navController = navController,
-                                    viewModel = createEventViewModel
+                                    navController = navController, viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.DateAndTime.name) {
                                 CreateEventDateAndTimeScreen(
-                                    navController = navController,
-                                    viewModel = createEventViewModel
+                                    navController = navController, viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Details.name) {
                                 CreateEventDetailsScreen(
-                                    navController = navController,
-                                    viewModel = createEventViewModel
+                                    navController = navController, viewModel = createEventViewModel
                                 )
                             }
                             composable(CreateEventScreens.Images.name) {
                                 CreateEventImagesScreen(navController = navController)
                             }
                             composable("${BottomNavigationScreens.EventDetails.name}/{eventId}",
-                                arguments = listOf(
-                                    navArgument("eventId") {
-                                        type = NavType.IntType
-                                    }
-                                )) {
+                                arguments = listOf(navArgument("eventId") {
+                                    type = NavType.IntType
+                                })) {
                                 val param = it.arguments?.getInt("eventId")
                                 param?.let { it1 ->
                                     eventDetailsViewModel.getEvent(it1)
                                     EventDetailsScreen(
                                         navController = navController,
-                                        viewModel = eventDetailsViewModel, param = it1
+                                        viewModel = eventDetailsViewModel,
+                                        param = it1
                                     )
                                 }
                             }
                             composable(CreateEventScreens.EventSummary.name) {
                                 EventSummaryScreen(
-                                    navController = navController,
-                                    viewModel = createEventViewModel
+                                    navController = navController, viewModel = createEventViewModel
                                 )
                             }
                         }
@@ -322,6 +302,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    BPRAppTheme {
-    }
+    BPRAppTheme {}
 }

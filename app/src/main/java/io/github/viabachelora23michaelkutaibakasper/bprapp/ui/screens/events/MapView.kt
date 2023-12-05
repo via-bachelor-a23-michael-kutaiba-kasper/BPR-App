@@ -406,7 +406,8 @@ fun GreetingPreview() {
                         lat = 0.0,
                         lng = 0.0
                     )
-                ), description = "Description"
+                ), description = "Description",
+                selectedEndDateTime = LocalDateTime.now()
             ), navController = NavController(LocalContext.current)
         )
     }

@@ -35,14 +35,13 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
 
     init {
         getEvents()
-
     }
 
     fun getEvents() {
         viewModelScope.launch {
             try {
                 isLoading.value = true
-                val events = eventRepository.getEvents()
+                val events = eventRepository.getEvents(includePrivate = false)
                 _eventList.value = events
                 val clusterEvents = mutableListOf<EventClusterItem>()
                 _eventList.value.forEach { event ->

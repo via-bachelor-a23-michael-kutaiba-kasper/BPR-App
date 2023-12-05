@@ -53,7 +53,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -107,7 +108,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -161,7 +163,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -215,7 +218,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -269,7 +273,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -323,7 +328,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -377,7 +383,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -432,7 +439,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -487,7 +495,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
@@ -542,7 +551,8 @@ class CreateEventViewModelTest {
                 creationDate = LocalDateTime.now(),
                 lastSeenOnline = LocalDateTime.now(),
             ), lastUpdatedDate = LocalDateTime.now().plusHours(3),
-            eventId = 0
+            eventId = 0,
+            attendees = emptyList()
 
         )
         viewModel.setValidTitle(event.title!!)
