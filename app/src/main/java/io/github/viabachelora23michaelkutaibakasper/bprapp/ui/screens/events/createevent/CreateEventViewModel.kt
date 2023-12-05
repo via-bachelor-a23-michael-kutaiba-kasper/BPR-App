@@ -17,7 +17,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInv
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidKeywords
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidStartAndEndDate
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidTitle
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -64,7 +63,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             ),
             isPrivate = _isPrivate.value,
             isPaid = _isPaid.value,
-            isAdultsOnly = _isAdultsOnly.value,
+            adultsOnly = _isAdultsOnly.value,
             selectedStartDateTime = _selectedStartDateTime.value,
             selectedEndDateTime = _selectedEndDateTime.value,
             selectedKeywords = _keywords.value,
@@ -211,7 +210,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             ),
             isPrivate = _isPrivate.value,
             isPaid = _isPaid.value,
-            isAdultsOnly = _isAdultsOnly.value,
+            adultsOnly = _isAdultsOnly.value,
             selectedStartDateTime = _selectedStartDateTime.value,
             selectedEndDateTime = _selectedEndDateTime.value,
             selectedKeywords = _keywords.value,

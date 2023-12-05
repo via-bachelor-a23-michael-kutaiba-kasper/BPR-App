@@ -10,8 +10,6 @@ buildscript {
         classpath(`secrets-gradle-plugin`())
         classpath(`build-gradle`())
         classpath(`kotlin-gradle-plugin`())
-
-
     }
 }
 

@@ -18,10 +18,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.GeoLocationInput
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.UserInput
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.parseUtcStringToLocalDateTime
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 class EventRepository : IEventRepository {
 
@@ -74,7 +72,7 @@ class EventRepository : IEventRepository {
             ),
             isPrivate = response.data?.event?.result?.isPrivate,
             isPaid = response.data?.event?.result?.isPaid,
-            isAdultsOnly = response.data?.event?.result?.adultsOnly,
+            adultsOnly = response.data?.event?.result?.adultsOnly,
             selectedStartDateTime = parseUtcStringToLocalDateTime(response.data?.event?.result?.startDate!!),
             selectedEndDateTime = parseUtcStringToLocalDateTime(response.data?.event?.result?.endDate!!),
             selectedKeywords = response.data?.event?.result?.keywords,
@@ -117,7 +115,7 @@ class EventRepository : IEventRepository {
                     ?.withZoneSameInstant(ZoneOffset.UTC).toString(),
                 createdDate = event.lastUpdatedDate!!.toString(),
                 isPrivate = event.isPrivate!!,
-                adultsOnly = event.isAdultsOnly!!,
+                adultsOnly = event.adultsOnly!!,
                 isPaid = event.isPaid!!,
                 host = UserInput(
                     displayName = event.host?.displayName!!,

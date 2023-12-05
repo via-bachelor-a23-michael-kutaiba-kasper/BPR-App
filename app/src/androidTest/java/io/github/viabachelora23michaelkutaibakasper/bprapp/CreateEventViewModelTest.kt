@@ -9,7 +9,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventViewModel
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +43,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -98,7 +97,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -152,7 +151,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -206,7 +205,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -260,7 +259,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -314,7 +313,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -368,7 +367,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -423,7 +422,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -478,7 +477,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
@@ -533,7 +532,7 @@ class CreateEventViewModelTest {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
