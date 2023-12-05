@@ -466,7 +466,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     }
                 }
             }
-            if (user?.uid != viewModel.event.value.host?.userId) {
+
                 Row {
                     Button(
                         onClick = { /*TODO*/ },
@@ -477,6 +477,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     ) {
                         Text(text = "Share event")
                     }
+                    if (user?.uid != viewModel.event.value.host?.userId) {
                     Button(
                         onClick = { openDialog.value = true },
                         modifier = Modifier
