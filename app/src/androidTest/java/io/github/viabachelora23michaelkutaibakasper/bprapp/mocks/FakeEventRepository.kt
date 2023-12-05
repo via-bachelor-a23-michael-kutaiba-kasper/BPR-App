@@ -83,7 +83,8 @@ class FakeEventRepository : IEventRepository {
                 creationDate = LocalDateTime.of(2021, 5, 1, 12, 0),
                 lastSeenOnline = LocalDateTime.of(2021, 5, 1, 12, 0)
             ), lastUpdatedDate = LocalDateTime.of(2021, 5, 1, 12, 0).plusHours(3),
-            eventId = 4
+            eventId = 4,
+            attendees = emptyList()
         )
     }
 
