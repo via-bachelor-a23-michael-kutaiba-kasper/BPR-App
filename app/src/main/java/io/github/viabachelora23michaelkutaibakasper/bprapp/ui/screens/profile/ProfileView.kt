@@ -127,7 +127,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             } else if (events.isEmpty()) {
                 RefreshButton(message = "No events created :(")
             }
-            Button(onClick = { viewModel.getEvents(user!!.uid) }) {
+            Button(onClick = { viewModel.getEvents(hostId = user!!.uid, includePrivate = true) }) {
                 Text(text = "Refresh")
             }
             Column(
