@@ -260,9 +260,9 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             try {
                 val keywords = eventRepository.getKeywords()
                 predefinedKeywords.value = keywords
-                Log.d("CreateEventViewModel", "getKeywords: $keywords")
+                Log.d("CreateEventViewModel", "failed to getKeywords: $keywords")
             } catch (e: Exception) {
-                Log.d("CreateEventViewModel", "getKeywords: ${e.message}")
+                Log.d("CreateEventViewModel", "failed to getKeywords: ${e.message}")
             }
         }
         return emptyList()
@@ -273,9 +273,9 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             try {
                 val categories = eventRepository.getCategories()
                 predefinedCategories.value = categories
-                Log.d("CreateEventViewModel", "getCategories: $categories")
+                Log.d("CreateEventViewModel", "failed to getCategories: $categories")
             } catch (e: Exception) {
-                Log.d("CreateEventViewModel", "getCategories: ${e.message}")
+                Log.d("CreateEventViewModel", "failed to getCategories: ${e.message}")
             }
         }
         return emptyList()
