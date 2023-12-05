@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 import android.net.Uri
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
@@ -24,32 +25,33 @@ import java.time.ZoneOffset
 class EventRepository : IEventRepository {
 
 
-    override suspend fun getEvents(): List<MinimalEvent> {
+    override suspend fun getEvents(hostId: String?): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
 
-            val response = apolloClient.query(FetchAllEventsQuery()).execute()
-            Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
-            return response.data?.events?.result?.map{
-                MinimalEvent(
-                    title = it?.title!!,
-                    selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
-                    eventId = it.id!!,
-                    selectedCategory = it.category!!,
-                    photos = it.images,
-                    description = it.description,
-                    location = Location(
-                        city = it.city,
-                        completeAddress = it.location,
-                        geoLocation = GeoLocation(
-                            lat = it.geoLocation?.lat!!.toDouble(),
-                            lng = it.geoLocation.lng!!.toDouble()
-                        )
+        val response =
+            apolloClient.query(FetchAllEventsQuery(Optional.presentIfNotNull(hostId))).execute()
+        Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
+        return response.data?.events?.result?.map {
+            MinimalEvent(
+                title = it?.title!!,
+                selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
+                eventId = it.id!!,
+                selectedCategory = it.category!!,
+                photos = it.images,
+                description = it.description,
+                location = Location(
+                    city = it.city,
+                    completeAddress = it.location,
+                    geoLocation = GeoLocation(
+                        lat = it.geoLocation?.lat!!.toDouble(),
+                        lng = it.geoLocation.lng!!.toDouble()
                     )
                 )
-            } ?: emptyList()
-        }
+            )
+        } ?: emptyList()
+    }
 
 
     override suspend fun getEvent(eventId: Int): Event {
@@ -120,7 +122,7 @@ class EventRepository : IEventRepository {
                 host = UserInput(
                     displayName = event.host?.displayName!!,
                     userId = event.host.userId,
-                    photoUrl = com.apollographql.apollo3.api.Optional.present(event.host.photoUrl.toString()),
+                    photoUrl = Optional.present(event.host.photoUrl.toString()),
                     CreationDate = event.lastUpdatedDate.toString(),
                     dateOfBirth = event.lastUpdatedDate.toString()
                 ),
