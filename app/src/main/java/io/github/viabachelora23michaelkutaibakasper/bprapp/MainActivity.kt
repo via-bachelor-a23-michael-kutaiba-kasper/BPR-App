@@ -72,6 +72,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eve
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 import kotlinx.coroutines.launch
 
@@ -118,6 +120,7 @@ class MainActivity : ComponentActivity() {
                     val eventDetailsViewModel: EventDetailsViewModel = viewModel()
                     val profileViewModel: ProfileViewModel = viewModel()
                     val mapViewModel: MapViewViewModel = viewModel()
+                    val recommendationsViewModel: RecommendationsViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
                     val scope = rememberCoroutineScope()
                     val snackbarHostState = remember { SnackbarHostState() }
@@ -240,7 +243,7 @@ class MainActivity : ComponentActivity() {
                                 Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
-                                Text(text = authentication.getCurrentUser()?.displayName.toString() + ": Recommendations")
+                                RecommendationsScreen(recommendationsViewModel)
                             }
                             composable(BottomNavigationScreens.Achievements.name) {
                                 Text(text = "Achievements")

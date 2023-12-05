@@ -61,7 +61,7 @@ import java.time.LocalDateTime
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val authenticationClient: IAuthenticationClient = AuthenticationClient()
     val user by viewModel.user
-    val isLoading by remember { viewModel.isLoading }
+    val isLoading by viewModel.isLoading
     val events by viewModel.eventList.collectAsState()
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
