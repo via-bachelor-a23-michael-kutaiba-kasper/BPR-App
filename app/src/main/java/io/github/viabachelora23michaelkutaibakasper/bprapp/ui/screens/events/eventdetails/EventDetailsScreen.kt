@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 
 
@@ -299,7 +298,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
                         )
-                        val adultsOnly = viewModel.event.value.isAdultsOnly
+                        val adultsOnly = viewModel.event.value.adultsOnly
                         Text(
                             text = if (adultsOnly == true) "Yes" else "No",
                             textAlign = TextAlign.Center,
@@ -427,34 +426,37 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     Modifier.padding(24.dp), fontSize = 12.sp
                 )
             }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Row {
-                    if (4 == 5) {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(8.dp)
-                        ) {
-                            Text(text = "Edit event")
-                        }
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(8.dp)
-                        ) {
-                            Text(text = "Delete event")
+            if (user?.uid == viewModel.event.value.host?.userId) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    Row {
+                        if (user?.uid == viewModel.event.value.host?.userId) {
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
+                                Text(text = "Edit event")
+                            }
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
+                                Text(text = "Delete event")
+                            }
                         }
                     }
                 }
+            }
+            if (user?.uid != viewModel.event.value.host?.userId) {
                 Row {
                     Button(
                         onClick = { /*TODO*/ },
