@@ -10,7 +10,7 @@ data class Event(
     val location: Location?,
     val isPrivate: Boolean?,
     val isPaid: Boolean?,
-    val isAdultsOnly: Boolean?,
+    val adultsOnly: Boolean?,
     val selectedStartDateTime: LocalDateTime?,
     val selectedEndDateTime: LocalDateTime?,
     val selectedKeywords: List<String?>?,

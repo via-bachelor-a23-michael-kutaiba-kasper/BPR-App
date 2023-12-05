@@ -39,7 +39,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 
 
@@ -234,7 +233,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
                         )
-                        val adultsOnly = viewModel.event.value.isAdultsOnly
+                        val adultsOnly = viewModel.event.value.adultsOnly
                         Text(
                             text = if (adultsOnly == true) "Yes" else "No",
                             textAlign = TextAlign.Center,

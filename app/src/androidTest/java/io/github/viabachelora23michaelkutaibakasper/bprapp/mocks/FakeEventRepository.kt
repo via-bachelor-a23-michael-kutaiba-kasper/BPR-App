@@ -73,7 +73,7 @@ class FakeEventRepository : IEventRepository {
             photos = null,
             url = null,
             isPrivate = false,
-            isAdultsOnly = false,
+            adultsOnly = false,
             isPaid = false,
             maxNumberOfAttendees = 10,
             host = User(
