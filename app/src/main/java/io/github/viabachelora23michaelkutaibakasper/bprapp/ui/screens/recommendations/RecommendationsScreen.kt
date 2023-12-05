@@ -48,170 +48,184 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel) {
     val isLoading by viewModel.isSurveyFilled
     val user = viewModel.user
     val context = LocalContext.current
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
 
-        ) {
-        Text(
-            text = "Interest Survey",
+
+    if (viewModel.isSurveyFilled.value) {
+        Text(text = "Survey filled")
+    } else {
+        Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(16.dp)
-                .fillMaxWidth(),
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "Please select 3 of these Categories that interest you the most",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
-        {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                FlowColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(bottom = 8.dp)
-                ) {
-                    for (category in predefinedCategories) {
-                        FilterChip(
-                            modifier = Modifier.padding(4.dp),
-                            label = { Text(category) },
-                            selected = selectedCategories.contains(category),
-                            onClick = {
-                                selectedCategories = if (selectedCategories.contains(category)) {
-                                    viewModel.setCategories(selectedCategories - category)
-                                } else {
-                                    if (selectedCategories.size >= 3) {
-                                        Toast.makeText(
-                                            context,
-                                            "You can only select 3 categories",
-                                            Toast.LENGTH_SHORT
-                                        ).show();
-                                        selectedCategories
-                                    } else {
-                                        viewModel.setCategories(selectedCategories + category)
-                                    }
-                                }
-                            },
-                            leadingIcon = if (selectedCategories.contains(category)) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "liked icon",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        Text(
-            text = "And select 3 of these keywords that interest you the most",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
-        {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                FlowColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(bottom = 8.dp)
-                ) {
-                    for (keyword in predefinedKeywords) {
-                        FilterChip(
-                            modifier = Modifier.padding(4.dp),
-                            label = { Text(keyword) },
-                            selected = selectedKeywords.contains(keyword),
-                            onClick = {
-                                selectedKeywords = if (selectedKeywords.contains(keyword)) {
-                                    viewModel.setKeywords(selectedKeywords - keyword)
-                                } else {
-                                    if (selectedKeywords.size >= 3) {
-                                        Toast.makeText(
-                                            context,
-                                            "You can only select 3 keywords",
-                                            Toast.LENGTH_SHORT
-                                        ).show();
-                                        selectedKeywords
-                                    } else {
-                                        viewModel.setKeywords(selectedKeywords + keyword)
-                                    }
-                                }
-                            },
-                            leadingIcon = if (selectedKeywords.contains(keyword)) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "liked icon",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        Button(
-            onClick = {
-                if (selectedCategories.size != 3 || selectedKeywords.size != 3) {
-                    Toast.makeText(
-                        context,
-                        "Please select 3 categories and 3 keywords",
-                        Toast.LENGTH_SHORT
-                    ).show();
-                } else {
-                    /*TODO*/
-                }
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Text(text = "Submit Survey")
-        }
-        Text(text = "Recommendations")
-        if (viewModel.isSurveyFilled.value) {
-            Text(text = "Survey filled")
-        } else {
-            Text(text = "Survey not filled")
-            Button(onClick = { viewModel.setSurveyFilled(hostId = user.value?.uid ?: "") }) {
-                Text(text = "Click me")
+            Text(
+                text = "Interest Survey",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Please complete this survey to get the best recommendations for you!",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Please select 3 of these Categories that interest you the most",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+            {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .horizontalScroll(rememberScrollState())
+                ) {
+                    FlowColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        for (category in predefinedCategories) {
+                            FilterChip(
+                                modifier = Modifier.padding(4.dp),
+                                label = { Text(category) },
+                                selected = selectedCategories.contains(category),
+                                onClick = {
+                                    selectedCategories =
+                                        if (selectedCategories.contains(category)) {
+                                            viewModel.setCategories(selectedCategories - category)
+                                        } else {
+                                            if (selectedCategories.size >= 3) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "You can only select 3 categories",
+                                                    Toast.LENGTH_SHORT
+                                                ).show();
+                                                selectedCategories
+                                            } else {
+                                                viewModel.setCategories(selectedCategories + category)
+                                            }
+                                        }
+                                },
+                                leadingIcon = if (selectedCategories.contains(category)) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Filled.Favorite,
+                                            contentDescription = "liked icon",
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    }
+                                } else {
+                                    null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            Text(
+                text = "And select 3 of these keywords that interest you the most",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+            {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .horizontalScroll(rememberScrollState())
+                ) {
+                    FlowColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        for (keyword in predefinedKeywords) {
+                            FilterChip(
+                                modifier = Modifier.padding(4.dp),
+                                label = { Text(keyword) },
+                                selected = selectedKeywords.contains(keyword),
+                                onClick = {
+                                    selectedKeywords = if (selectedKeywords.contains(keyword)) {
+                                        viewModel.setKeywords(selectedKeywords - keyword)
+                                    } else {
+                                        if (selectedKeywords.size >= 3) {
+                                            Toast.makeText(
+                                                context,
+                                                "You can only select 3 keywords",
+                                                Toast.LENGTH_SHORT
+                                            ).show();
+                                            selectedKeywords
+                                        } else {
+                                            viewModel.setKeywords(selectedKeywords + keyword)
+                                        }
+                                    }
+                                },
+                                leadingIcon = if (selectedKeywords.contains(keyword)) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Filled.Favorite,
+                                            contentDescription = "liked icon",
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    }
+                                } else {
+                                    null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            Button(
+                onClick = {
+                    if (selectedCategories.size != 3 || selectedKeywords.size != 3) {
+                        Toast.makeText(
+                            context,
+                            "Please select 3 categories and 3 keywords",
+                            Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        /*TODO*/
+                    }
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Submit Survey")
+            }
+            Text(text = "Recommendations")
+            if (viewModel.isSurveyFilled.value) {
+                Text(text = "Survey filled")
+            } else {
+                Text(text = "Survey not filled")
+                Button(onClick = { viewModel.setSurveyFilled(hostId = user.value?.uid ?: "") }) {
+                    Text(text = "Click me")
+                }
             }
         }
-
 
     }
 }
