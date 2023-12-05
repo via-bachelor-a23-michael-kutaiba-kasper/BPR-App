@@ -65,8 +65,8 @@ query getEvent($id:Int!){
     }
 }
 
-query FetchAllEvents($hostId: String, $from: String) {
-    events(hostId: $hostId, from: $from) {
+query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Boolean) {
+    events(hostId: $hostId, from: $from, includePrivateEvents: $includePrivateEvents) {
         result {
             id
             title
