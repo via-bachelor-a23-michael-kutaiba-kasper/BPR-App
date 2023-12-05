@@ -4,7 +4,11 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 
 interface IEventRepository {
-    suspend fun getEvents(hostId:String?=null): List<MinimalEvent>
+    suspend fun getEvents(
+        hostId: String? = null,
+        includePrivate: Boolean? = null
+    ): List<MinimalEvent>
+
     suspend fun getEvent(eventId: Int): Event
     suspend fun createEvent(event: Event): Int
     suspend fun joinEvent(eventId: Int, userId: String)

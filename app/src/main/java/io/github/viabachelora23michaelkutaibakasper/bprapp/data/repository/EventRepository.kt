@@ -25,13 +25,18 @@ import java.time.ZoneOffset
 class EventRepository : IEventRepository {
 
 
-    override suspend fun getEvents(hostId: String?): List<MinimalEvent> {
+    override suspend fun getEvents(hostId: String?, includePrivate: Boolean?): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
 
         val response =
-            apolloClient.query(FetchAllEventsQuery(Optional.presentIfNotNull(hostId))).execute()
+            apolloClient.query(
+                FetchAllEventsQuery(
+                    hostId = Optional.presentIfNotNull(hostId),
+                    includePrivateEvents = Optional.presentIfNotNull(includePrivate)
+                )
+            ).execute()
         Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
         return response.data?.events?.result?.map {
             MinimalEvent(
