@@ -360,58 +360,68 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(8.dp)
-                ) {
-                    LazyColumn(content = {
-                        items(viewModel.event.value.attendees!!.size) { index ->
-                            val attendee = viewModel.event.value.attendees!![index]
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                if (attendee?.photoUrl != null) {
-                                    AsyncImage(
-                                        model = attendee.photoUrl,
-                                        contentDescription = "Profile picture",
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(16.dp))
-                                if (attendee!!.displayName != null) {
-                                    Column(
-                                        modifier = Modifier.padding(
-                                            start = 4.dp,
-                                            top = 0.dp,
-                                            end = 0.dp,
-                                            bottom = 0.dp
+                if (viewModel.event.value.attendees!!.isEmpty()) {
+                    Text(
+                        text = "No attendees yet :(",
+                        Modifier
+                            .padding(12.dp)
+                            .align(Alignment.Start),
+                        fontSize = 12.sp,
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .padding(8.dp)
+                    ) {
+                        LazyColumn(content = {
+                            items(viewModel.event.value.attendees!!.size) { index ->
+                                val attendee = viewModel.event.value.attendees!![index]
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    if (attendee?.photoUrl != null) {
+                                        AsyncImage(
+                                            model = attendee.photoUrl,
+                                            contentDescription = "Profile picture",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape),
+                                            contentScale = ContentScale.Crop
                                         )
-                                    ) {
-                                        attendee.displayName?.let {
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    if (attendee!!.displayName != null) {
+                                        Column(
+                                            modifier = Modifier.padding(
+                                                start = 4.dp,
+                                                top = 0.dp,
+                                                end = 0.dp,
+                                                bottom = 0.dp
+                                            )
+                                        ) {
+                                            attendee.displayName?.let {
+                                                Text(
+                                                    text = it,
+                                                    textAlign = TextAlign.Center,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                            }
                                             Text(
-                                                text = it,
+                                                text = "Attendee",
                                                 textAlign = TextAlign.Center,
-                                                fontWeight = FontWeight.SemiBold
                                             )
                                         }
-                                        Text(
-                                            text = "Attendee",
-                                            textAlign = TextAlign.Center,
-                                        )
                                     }
                                 }
                             }
-                        }
-                    })
+                        })
+                    }
                 }
                 if (!event.url.isNullOrEmpty()) {
                     val intent =
