@@ -53,6 +53,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.compose.AppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
@@ -111,7 +112,7 @@ class MainActivity : ComponentActivity() {
 
         askPermissions()
         setContent {
-            BPRAppTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
