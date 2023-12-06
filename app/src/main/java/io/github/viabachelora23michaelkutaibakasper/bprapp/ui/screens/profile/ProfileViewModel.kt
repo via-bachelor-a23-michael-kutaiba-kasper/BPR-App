@@ -23,13 +23,16 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
     private val eventRepository: IEventRepository = repository
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
+    private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     val eventList = _eventList.asStateFlow()
+    val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
     val isLoading = mutableStateOf(false)
     var user = mutableStateOf(Firebase.auth.currentUser)
     val errorFetchingEvents = mutableStateOf(false)
 
     init {
         getEvents(hostId = user.value!!.uid, includePrivate = true)
+        getFinishedJoinedEvents(userId = user.value!!.uid)
     }
 
 
@@ -50,4 +53,32 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
             }
         }
     }
+
+    fun getFinishedJoinedEvents(userId: String) {
+        viewModelScope.launch {
+
+            try {
+
+                val events = eventRepository.getFinishedJoinedEvents(userId)
+                _finishedJoinedList.value = events
+                Log.d("profileviewmodel", "getevents: $events")
+
+            } catch (e: Exception) {
+                Log.d("profileViewViewModel", "error message: ${e.message}")
+            }
+        }
+    }
+
+    fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("profileviewmodel", "createReview: $eventId, $userId, $rating, $reviewDate")
+                val review = eventRepository.createReview(eventId, userId, rating, reviewDate)
+                Log.d("profileviewmodel", "getevents: $review")
+            } catch (e: Exception) {
+                Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
+            }
+        }
+    }
+
 }
