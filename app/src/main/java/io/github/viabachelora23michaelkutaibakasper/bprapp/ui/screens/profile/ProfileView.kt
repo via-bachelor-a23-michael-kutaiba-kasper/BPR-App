@@ -78,6 +78,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val openDialog = remember { mutableStateOf(false) }
     val events by viewModel.eventList.collectAsState()
     val participatedEvents by viewModel.finishedJoinedEvents.collectAsState()
+    val reviewIds by viewModel.reviewIds.collectAsState()
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
         viewModel.user.value = result.user
@@ -135,7 +136,10 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             } else if (events.isEmpty()) {
                 RefreshButton(message = "No events created :(")
             }
-            Button(onClick = { viewModel.getEvents(hostId = user!!.uid, includePrivate = true) }) {
+            Button(onClick = {
+               viewModel.allOfThem()
+
+            }) {
                 Text(text = "Refresh")
             }
             Text(
@@ -236,12 +240,15 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 Modifier.padding(4.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Button(onClick = {
-                                    currentEventId.value = event.eventId
-                                    openDialog.value = true
-                                }) {
-                                    Text(text = "Rate the event")
+                                if (event.eventId !in reviewIds) {
 
+                                    Button(onClick = {
+                                        currentEventId.value = event.eventId
+                                        openDialog.value = true
+                                    }) {
+                                        Text(text = "Rate the event")
+
+                                    }
                                 }
 
                                 Column(
