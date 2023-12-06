@@ -76,6 +76,13 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
             description
             url
             category
+            host {
+                displayName
+                photoUrl
+                lastSeenOnline
+                userId
+                creationDate
+            }
             images
             city
             location

@@ -76,7 +76,9 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.Pr
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @ExperimentalLayoutApi
 @ExperimentalFoundationApi
@@ -240,7 +242,9 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
-                                mapViewModel.getEvents()
+                                mapViewModel.getEvents(from = localDateTimeToUTCLocalDateTime(
+                                    LocalDateTime.now()
+                                ).toString())
                                 Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
