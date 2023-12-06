@@ -11,7 +11,8 @@ import java.time.LocalDateTime
 class FakeEventRepository : IEventRepository {
     override suspend fun getEvents(
         hostId: String?,
-        includePrivate: Boolean?
+        includePrivate: Boolean?,
+        from: String?
     ): List<MinimalEvent> {
         return listOf(
             MinimalEvent(
@@ -28,7 +29,14 @@ class FakeEventRepository : IEventRepository {
                 selectedEndDateTime = LocalDateTime.now().plusHours(5),
 
                 photos = null,
-                eventId = 1
+                eventId = 1,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
 
             ), MinimalEvent(
                 title = "Run Event3",
@@ -43,7 +51,14 @@ class FakeEventRepository : IEventRepository {
                 selectedStartDateTime = LocalDateTime.now(),
                 selectedEndDateTime = LocalDateTime.now().plusHours(5),
 
-                photos = null, eventId = 2
+                photos = null, eventId = 2,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
 
             ), MinimalEvent(
                 title = "Run Event4",
@@ -57,7 +72,14 @@ class FakeEventRepository : IEventRepository {
                 selectedStartDateTime = LocalDateTime.now(),
                 selectedEndDateTime = LocalDateTime.now().plusHours(5),
                 photos = null,
-                eventId = 3
+                eventId = 3,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
 
             )
         )
@@ -108,5 +130,65 @@ class FakeEventRepository : IEventRepository {
 
     override suspend fun getCategories(): List<String> {
         return listOf("Music", "Education", "Technology")
+    }
+
+    override suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent> {
+        return listOf(
+            MinimalEvent(
+                title = "Run Event",
+                description = "Run for 5km",
+                location = Location(
+                    city = "Horsens",
+                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
+                    geoLocation = GeoLocation(55.860916, 9.850000)
+                ),
+                selectedCategory = "Music",
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
+                photos = null,
+                eventId = 1,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
+            ),
+            MinimalEvent(
+                title = "Run Event",
+                description = "Run for 5km",
+                location = Location(
+                    city = "Horsens",
+                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
+                    geoLocation = GeoLocation(55.860916, 9.850000)
+                ),
+                selectedCategory = "Music",
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
+                photos = null,
+                eventId = 1,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
+            )
+        )
+    }
+
+    override suspend fun createReview(
+        eventId: Int,
+        userId: String,
+        rating: Float,
+        reviewDate: String
+    ): Int {
+        return 1
+    }
+
+    override suspend fun getReviewIds(userId: String): List<Int> {
+        return listOf(1, 2, 3, 4, 5)
     }
 }
