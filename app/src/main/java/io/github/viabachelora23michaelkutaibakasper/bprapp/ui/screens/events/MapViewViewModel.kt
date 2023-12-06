@@ -15,10 +15,13 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
     private val eventRepository: IEventRepository = repository
@@ -34,14 +37,19 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
     val errorFetchingEvent = mutableStateOf(false)
 
     init {
-        getEvents()
+        getEvents(
+            from = localDateTimeToUTCLocalDateTime(
+                LocalDateTime.now()
+            ).toString()
+        )
     }
 
-    fun getEvents() {
+
+    fun getEvents(from: String? = null) {
         viewModelScope.launch {
             try {
                 isLoading.value = true
-                val events = eventRepository.getEvents(includePrivate = false)
+                val events = eventRepository.getEvents(includePrivate = false, from = from)
                 _eventList.value = events
                 val clusterEvents = mutableListOf<EventClusterItem>()
                 _eventList.value.forEach { event ->
@@ -55,6 +63,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
                             selectedStartDateTime = event.selectedStartDateTime,
                             selectedCategory = event.selectedCategory,
                             photos = event.photos,
+                            host = event.host.displayName
                         )
                     )
                 }
@@ -78,6 +87,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
         selectedStartDateTime: LocalDateTime,
         description: String?,
         selectedCategory: String,
+        host: String?,
         photos: List<String?>?,
     ) : ClusterItem {
 
@@ -93,6 +103,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
             completeAddress = "",
             geoLocation = null
         )
+        var host: String? = null
 
         override fun getPosition(): LatLng {
             return position
@@ -119,6 +130,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
             this.eventId = eventId
             this.selectedCategory = selectedCategory
             this.photos = photos
+            this.host = host
 
 
         }
