@@ -106,7 +106,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     Card(
                         Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(150.dp)
                             .graphicsLayer {
                                 val pageOffset = (
                                         (pagerState.currentPage - page) + pagerState
@@ -125,10 +125,15 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                 .fillMaxWidth()
                                 .padding(4.dp),
                             model = if (event.photos?.isEmpty() != true
-                            ) event.photos?.get(page) else ImageRequest.Builder(LocalContext.current)
+                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == "Faengslet") ImageRequest.Builder(
+                                LocalContext.current
+                            )
+                                .data(R.mipmap.faengletlogo).build() else ImageRequest.Builder(
+                                LocalContext.current
+                            )
                                 .data(R.mipmap.no_photo).build(),
                             contentDescription = "Avatar Image",
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Fit
                         )
                     }
                 }
@@ -185,7 +190,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     )
                     {
                         Text(
-                            text = "Category: ${viewModel.event.value.selectedCategory}",
+                            text = if (viewModel.event.value.selectedCategory != "Un Assigned") "Category: ${viewModel.event.value.selectedCategory}" else "No category",
                             Modifier.padding(8.dp),
                             fontWeight = FontWeight.SemiBold
                         )
@@ -261,8 +266,16 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (viewModel.event.value.maxNumberOfAttendees == -1) "Unlimited spots"
-                            else "Spots left: ${viewModel.event.value.maxNumberOfAttendees}",
+                            text = if (viewModel.event.value.maxNumberOfAttendees == 0) "Unlimited spots"
+                            else {
+                                "Spots left: ${
+                                    viewModel.event.value.attendees?.let {
+                                        viewModel.event.value.maxNumberOfAttendees?.minus(
+                                            it.size
+                                        )
+                                    }
+                                }/${viewModel.event.value.maxNumberOfAttendees}"
+                            },
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -333,22 +346,32 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
                 ) {
-                    for (keyword in viewModel.event.value.selectedKeywords!!) {
-                        Card(
-                            modifier = Modifier.padding(4.dp),
-                            colors = CardColors(
-                                containerColor = Color.White,
-                                contentColor = Color.Black,
-                                Color.Unspecified,
-                                Color.Unspecified
-                            )
-                        ) {
-                            Text(
-                                text = keyword!!,
-                                modifier = Modifier.padding(8.dp),
-                                fontWeight = FontWeight.SemiBold
-                            )
+                    if (viewModel.event.value.selectedKeywords?.size == 1) {
+                        Text(
+                            text = "No keywords",
+                            Modifier
+                                .padding(12.dp),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    } else {
+                        for (keyword in viewModel.event.value.selectedKeywords!!) {
+                            Card(
+                                modifier = Modifier.padding(4.dp),
+                                colors = CardColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color.Black,
+                                    Color.Unspecified,
+                                    Color.Unspecified
+                                )
+                            ) {
+                                Text(
+                                    text = keyword!!,
+                                    modifier = Modifier.padding(8.dp),
+                                    fontWeight = FontWeight.SemiBold
+                                )
 
+                            }
                         }
                     }
                 }
@@ -467,17 +490,17 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 }
             }
 
-                Row {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(8.dp)
-                    ) {
-                        Text(text = "Share event")
-                    }
-                    if (user?.uid != viewModel.event.value.host?.userId) {
+            Row {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(8.dp)
+                ) {
+                    Text(text = "Share event")
+                }
+                if (user?.uid != viewModel.event.value.host?.userId) {
                     Button(
                         onClick = { openDialog.value = true },
                         modifier = Modifier
