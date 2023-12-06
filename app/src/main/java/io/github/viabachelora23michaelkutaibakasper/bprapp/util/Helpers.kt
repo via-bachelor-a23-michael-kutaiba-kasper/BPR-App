@@ -1,13 +1,11 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.util
 
-import com.google.type.DateTime
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -46,6 +44,6 @@ fun Float.roundToNearestHalf(): Float {
     return (this * 2).roundToInt() / 2.0f
 }
 
- fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime? {
+fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime? {
     return localDateTime.atOffset(ZoneOffset.UTC).toLocalDateTime()
 }

@@ -64,7 +64,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormatted
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.roundToNearestHalf
 import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 
 @ExperimentalMaterial3Api
@@ -137,7 +136,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                 RefreshButton(message = "No events created :(")
             }
             Button(onClick = {
-               viewModel.allOfThem()
+                viewModel.allOfThem()
 
             }) {
                 Text(text = "Refresh")

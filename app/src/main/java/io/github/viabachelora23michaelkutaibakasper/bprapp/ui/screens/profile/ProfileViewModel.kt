@@ -2,19 +2,14 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile
 
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -33,14 +28,15 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     val errorFetchingEvents = mutableStateOf(false)
 
     init {
-       allOfThem()
+        allOfThem()
     }
 
-    fun allOfThem(){
-      viewModelScope.launch {
-        getEvents(hostId = user.value!!.uid, includePrivate = true)
-        getReviewIds(hostId = user.value!!.uid)
-        getFinishedJoinedEvents(userId = user.value!!.uid) }
+    fun allOfThem() {
+        viewModelScope.launch {
+            getEvents(hostId = user.value!!.uid, includePrivate = true)
+            getReviewIds(hostId = user.value!!.uid)
+            getFinishedJoinedEvents(userId = user.value!!.uid)
+        }
     }
 
 
