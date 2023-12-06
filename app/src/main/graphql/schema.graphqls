@@ -122,6 +122,18 @@ The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
 
+type Review {
+  id: Int
+
+  rate: Float
+
+  reviewerId: String
+
+  eventId: Int
+
+  reviewDate: String
+}
+
 type EventResponse {
   result: Event
 
@@ -146,6 +158,18 @@ type CategoriesResponse {
   status: Status
 }
 
+type ReviewResponse {
+  result: Review
+
+  status: Status
+}
+
+type ReviewsByUserResponse {
+  result: [Review]
+
+  status: Status
+}
+
 type Query {
   """
   All arguments are optional filters to apply.
@@ -161,6 +185,10 @@ type Query {
   allPublicEvents: EventsResponse
 
   event(eventId: Int): EventResponse
+
+  reviewsByUser(userId: String): ReviewsByUserResponse
+
+  finishedJoinedEvents(userId: String): EventsResponse
 }
 
 type Mutation {
@@ -173,6 +201,8 @@ type Mutation {
   Create new event. Returns CreateEventResposne.
   """
   createEvent(title: String!, startDate: String!, endDate: String!, createdDate: String!, lastUpdateDate: String, isPrivate: Boolean!, adultsOnly: Boolean!, isPaid: Boolean!, host: userInput!, maxNumberOfAttendees: Int!, url: String, description: String, location: String!, city: String!, geoLocation: geoLocationInput!, category: String!, keywords: [String!]): EventResponse
+
+  createReview(rate: Float!, reviewerId: String!, eventId: Int!, reviewDate: String!): ReviewResponse
 }
 
 """
