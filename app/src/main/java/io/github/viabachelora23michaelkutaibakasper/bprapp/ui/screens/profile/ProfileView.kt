@@ -61,7 +61,7 @@ import java.time.LocalDateTime
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val authenticationClient: IAuthenticationClient = AuthenticationClient()
     val user by viewModel.user
-    val isLoading by remember { viewModel.isLoading }
+    val isLoading by viewModel.isLoading
     val events by viewModel.eventList.collectAsState()
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
@@ -110,14 +110,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            Text(
-                text = "Your events",
-                Modifier
-                    .padding(12.dp)
-                    .align(Alignment.Start),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+
 
             if (isLoading) {
                 LoadingScreen()
@@ -131,6 +124,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             Button(onClick = { viewModel.getEvents(hostId = user!!.uid, includePrivate = true) }) {
                 Text(text = "Refresh")
             }
+            Text(
+                text = "Your events",
+                Modifier
+                    .padding(12.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,7 +140,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             ) {
                 LazyColumn {
                     items(events) { event ->
-                        Column(modifier = Modifier.clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+                        Column(modifier = Modifier.fillMaxWidth().clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
                             Row(
                                 Modifier.padding(4.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -195,6 +196,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             authenticationClient.signOut()
             viewModel.user.value = null

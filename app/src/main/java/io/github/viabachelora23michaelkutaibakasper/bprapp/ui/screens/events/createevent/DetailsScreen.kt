@@ -66,9 +66,9 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
     val predefinedKeywords = viewModel.predefinedKeywords.value
     val predefinedCategories = viewModel.predefinedCategories.value
     var selectedKeywords = viewModel.selectedKeywords.value
-
     var categoryExpanded by remember { mutableStateOf(false) }
     val selectedCategory = viewModel.selectedCategory.value
+
     val maxNumberOfAttendees = viewModel.maxNumberOfAttendees.value
 
 
