@@ -24,15 +24,23 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     private val eventRepository: IEventRepository = repository
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
+    private val _reviewIds = MutableStateFlow<List<Int>>(emptyList())
     val eventList = _eventList.asStateFlow()
     val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
+    val reviewIds = _reviewIds.asStateFlow()
     val isLoading = mutableStateOf(false)
     var user = mutableStateOf(Firebase.auth.currentUser)
     val errorFetchingEvents = mutableStateOf(false)
 
     init {
+       allOfThem()
+    }
+
+    fun allOfThem(){
+      viewModelScope.launch {
         getEvents(hostId = user.value!!.uid, includePrivate = true)
-        getFinishedJoinedEvents(userId = user.value!!.uid)
+        getReviewIds(hostId = user.value!!.uid)
+        getFinishedJoinedEvents(userId = user.value!!.uid) }
     }
 
 
@@ -56,9 +64,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
 
     fun getFinishedJoinedEvents(userId: String) {
         viewModelScope.launch {
-
             try {
-
                 val events = eventRepository.getFinishedJoinedEvents(userId)
                 _finishedJoinedList.value = events
                 Log.d("profileviewmodel", "getevents: $events")
@@ -75,6 +81,18 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
                 Log.d("profileviewmodel", "createReview: $eventId, $userId, $rating, $reviewDate")
                 val review = eventRepository.createReview(eventId, userId, rating, reviewDate)
                 Log.d("profileviewmodel", "getevents: $review")
+            } catch (e: Exception) {
+                Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
+            }
+        }
+    }
+
+    fun getReviewIds(hostId: String) {
+        viewModelScope.launch {
+            try {
+                val reviewIds = eventRepository.getReviewIds("Oq8tmUrDV6SeEpWf1olCJNJ1JW93")
+                _reviewIds.value = reviewIds
+                Log.d("profileviewmodel", "the idsss!!: $reviewIds")
             } catch (e: Exception) {
                 Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
             }
