@@ -9,7 +9,10 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEven
 import java.time.LocalDateTime
 
 class FakeEventRepository : IEventRepository {
-    override suspend fun getEvents(): List<MinimalEvent> {
+    override suspend fun getEvents(
+        hostId: String?,
+        includePrivate: Boolean?
+    ): List<MinimalEvent> {
         return listOf(
             MinimalEvent(
                 title = "Run Event",
@@ -21,7 +24,8 @@ class FakeEventRepository : IEventRepository {
                 ),
                 selectedCategory = "Music",
 
-                selectedStartDateTime = LocalDateTime.now().plusHours(3),
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
 
                 photos = null,
                 eventId = 1
@@ -36,7 +40,8 @@ class FakeEventRepository : IEventRepository {
                 ),
                 selectedCategory = "Music",
 
-                selectedStartDateTime = LocalDateTime.now().plusHours(3),
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
 
                 photos = null, eventId = 2
 
@@ -49,7 +54,8 @@ class FakeEventRepository : IEventRepository {
                     geoLocation = GeoLocation(55.860916, 9.850000)
                 ),
                 selectedCategory = "Music",
-                selectedStartDateTime = LocalDateTime.now().plusHours(3),
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
                 photos = null,
                 eventId = 3
 

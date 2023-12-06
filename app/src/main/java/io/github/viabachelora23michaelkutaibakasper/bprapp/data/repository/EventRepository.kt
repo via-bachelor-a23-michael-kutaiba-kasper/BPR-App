@@ -25,16 +25,21 @@ import java.time.ZoneOffset
 class EventRepository : IEventRepository {
 
 
-    override suspend fun getEvents(hostId: String?, includePrivate: Boolean?): List<MinimalEvent> {
+    override suspend fun getEvents(
+        hostId: String?,
+        includePrivate: Boolean?,
+        from: String?
+    ): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
-
+        Log.d("ApolloEventClient", "getEvents: $from")
         val response =
             apolloClient.query(
                 FetchAllEventsQuery(
                     hostId = Optional.presentIfNotNull(hostId),
-                    includePrivateEvents = Optional.presentIfNotNull(includePrivate)
+                    includePrivateEvents = Optional.presentIfNotNull(includePrivate),
+                    from = Optional.presentIfNotNull(from)
                 )
             ).execute()
         Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
@@ -53,7 +58,18 @@ class EventRepository : IEventRepository {
                         lat = it.geoLocation?.lat!!.toDouble(),
                         lng = it.geoLocation.lng!!.toDouble()
                     )
-                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!)
+                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!),
+                host = User(
+                    displayName = it.host?.displayName!!,
+                    userId = it.host.userId!!,
+                    photoUrl = it.host.photoUrl?.let { Uri.parse(it) },
+                    creationDate = parseUtcStringToLocalDateTime(it.host.creationDate!!),
+                    lastSeenOnline = it.host.lastSeenOnline?.let { it1 ->
+                        parseUtcStringToLocalDateTime(
+                            it1
+                        )
+                    }
+                )
             )
         } ?: emptyList()
     }
@@ -90,7 +106,11 @@ class EventRepository : IEventRepository {
                 userId = response.data?.event?.result?.host?.userId!!,
                 photoUrl = response.data?.event?.result?.host?.photoUrl?.let { Uri.parse(it) },
                 creationDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.creationDate!!),
-                lastSeenOnline = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.lastSeenOnline!!)
+                lastSeenOnline = response.data?.event?.result?.host?.lastSeenOnline?.let {
+                    parseUtcStringToLocalDateTime(
+                        it
+                    )
+                }
             ),
             lastUpdatedDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.lastUpdateDate!!),
             photos = response.data?.event?.result?.images ?: emptyList(),

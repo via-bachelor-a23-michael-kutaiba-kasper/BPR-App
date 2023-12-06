@@ -6,7 +6,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEv
 interface IEventRepository {
     suspend fun getEvents(
         hostId: String? = null,
-        includePrivate: Boolean? = null
+        includePrivate: Boolean? = null,
+        from: String? = null,
     ): List<MinimalEvent>
 
     suspend fun getEvent(eventId: Int): Event
