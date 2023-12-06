@@ -11,6 +11,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
@@ -256,6 +257,19 @@ class EventRepository : IEventRepository {
             ).execute()
 
         return response.data?.createReview?.result?.id!!
+    }
+
+    override suspend fun getReviewIds(userId: String): List<Int> {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response =
+            apolloClient.query(ReviewsByUserQuery(userId = Optional.presentIfNotNull(userId))).execute()
+        Log.d(
+            "ApolloEventClient",
+            "getReviewIds: ${response.data?.reviewsByUser?.result}"
+        )
+        return response.data?.reviewsByUser?.result?.map { it?.eventId!! } ?: emptyList()
     }
 
 

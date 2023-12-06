@@ -18,6 +18,6 @@ interface IEventRepository {
     suspend fun getCategories(): List<String>
 
     suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent>
-    suspend fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String):Int
-
+    suspend fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String): Int
+    suspend fun getReviewIds(userId: String): List<Int>
 }
