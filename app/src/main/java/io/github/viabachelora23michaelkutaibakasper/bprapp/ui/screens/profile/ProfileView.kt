@@ -61,6 +61,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.roundToNearestHalf
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -72,10 +73,11 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val authenticationClient: IAuthenticationClient = AuthenticationClient()
     val user by viewModel.user
     var sliderValue by remember { mutableFloatStateOf(0f) }
-
+    val currentEventId = remember { mutableIntStateOf(0) }
     val isLoading by viewModel.isLoading
     val openDialog = remember { mutableStateOf(false) }
     val events by viewModel.eventList.collectAsState()
+    val participatedEvents by viewModel.finishedJoinedEvents.collectAsState()
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
         viewModel.user.value = result.user
@@ -206,15 +208,85 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                             }
                         }
                         HorizontalDivider()
+
+                    }
+                }
+            }
+
+            Text(
+                text = "Your participated events",
+                Modifier
+                    .padding(12.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .padding(8.dp)
+            ) {
+                LazyColumn {
+                    items(participatedEvents) { event ->
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+                            Row(
+                                Modifier.padding(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(onClick = {
+                                    currentEventId.value = event.eventId
+                                    openDialog.value = true
+                                }) {
+                                    Text(text = "Rate the event")
+
+                                }
+
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Row {
+                                        Text(text = "Title: ", fontWeight = FontWeight.Bold)
+                                        Text(text = event.title ?: "No title")
+                                    }
+                                    Row {
+                                        Text(text = "Description: ", fontWeight = FontWeight.Bold)
+                                        Text(text = event.description ?: "No description")
+                                    }
+                                    Row {
+                                        Text(text = "Category: ", fontWeight = FontWeight.Bold)
+                                        Text(text = event.selectedCategory ?: "No category")
+                                    }
+                                    Row {
+                                        Text(text = "Date: ", fontWeight = FontWeight.Bold)
+                                        Text(
+                                            text = DisplayFormattedTime(event.selectedStartDateTime)
+                                        )
+                                    }
+
+                                    Row {
+                                        Text(text = "Status: ", fontWeight = FontWeight.Bold)
+                                        Text(
+                                            text = if (event.selectedEndDateTime?.isBefore(
+                                                    LocalDateTime.now()
+                                                ) == true
+                                            ) "Ended" else "Ongoing"
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        HorizontalDivider()
+
                     }
                 }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { openDialog.value = true }) {
-            Text(text = "Rate the event")
 
-        }
         Button(onClick = {
             authenticationClient.signOut()
             viewModel.user.value = null
@@ -257,7 +329,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                             thumb = {
                                 Icon(
                                     imageVector = Icons.Filled.Star,
-                                    tint = Color.Yellow,
+                                    tint = Color.Red,
                                     contentDescription = null
                                 )
                             }
@@ -278,6 +350,12 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                             }
                             TextButton(
                                 onClick = {
+                                    viewModel.createReview(
+                                        eventId = currentEventId.value,
+                                        userId = user!!.uid,
+                                        rating = sliderValue,
+                                        reviewDate = localDateTimeToUTCLocalDateTime(LocalDateTime.now()).toString()
+                                    )
                                     openDialog.value = false
                                 },
                                 modifier = Modifier.padding(8.dp),
