@@ -80,6 +80,7 @@ dependencies {
     implementation(`firebase-auth-ktx`())
     implementation(`play-services-auth`())
     implementation(`android-material`())
+    implementation("com.google.firebase:firebase-messaging:23.3.1")
     testImplementation(junit())
     androidTestImplementation(`junit-ext`())
     androidTestImplementation(`espresso-core`())
