@@ -30,7 +30,7 @@ class FireStoreClient {
         return success
     }
 
-    fun UpdateFirebaseMessagingToken(token: String, hostId: String): Boolean {
+    fun updateFirebaseMessagingToken(token: String, hostId: String): Boolean {
         var success = false
         val db = Firebase.firestore
         val tokenData = hashMapOf(
