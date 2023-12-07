@@ -53,6 +53,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.Authenti
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Map
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
@@ -137,6 +139,7 @@ class MainActivity : ComponentActivity() {
                     val profileViewModel: ProfileViewModel = viewModel()
                     val mapViewModel: MapViewViewModel = viewModel()
                     val recommendationsViewModel: RecommendationsViewModel = viewModel()
+                    val achievementsViewModel: AchievementsViewModel = viewModel()
                     val navController: NavHostController = rememberNavController()
                     val scope = rememberCoroutineScope()
                     val snackbarHostState = remember { SnackbarHostState() }
@@ -269,7 +272,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(BottomNavigationScreens.Achievements.name) {
-                                Text(text = "Achievements")
+                                AchievementsScreen(viewModel = achievementsViewModel)
                             }
                             composable(BottomNavigationScreens.Profile.name) {
                                 ProfileScreen(navController, profileViewModel)
