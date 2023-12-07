@@ -125,7 +125,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                 .fillMaxWidth()
                                 .padding(4.dp),
                             model = if (event.photos?.isEmpty() != true
-                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == "Faengslet") ImageRequest.Builder(
+                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
                                 LocalContext.current
                             )
                                 .data(R.mipmap.faengletlogo).build() else ImageRequest.Builder(

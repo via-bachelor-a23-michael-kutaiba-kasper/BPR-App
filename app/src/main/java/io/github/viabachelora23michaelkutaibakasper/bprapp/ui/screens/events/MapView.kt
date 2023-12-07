@@ -296,7 +296,7 @@ private fun ClusterModalItem(
         Row(Modifier.padding(4.dp)) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host == "Faengslet") ImageRequest.Builder(
+                ) event.photos?.get(0) else if (event.host == R.string.fængslet.toString()) ImageRequest.Builder(
                     LocalContext.current
                 )
                     .data(R.mipmap.faengletlogo)
@@ -318,14 +318,9 @@ private fun ClusterModalItem(
                     Text(text = event.title1 ?: "No title")
                 }
                 Row {
-                    Text(text = "Description: ", fontWeight = Bold)
-                    Text(text = event.description ?: "No description")
-                }
-                Row {
                     Text(text = "Start date: ", fontWeight = Bold)
                     Text(
                         text = DisplayFormattedTime(event.selectedStartDateTime)
-                            ?: "No start date"
                     )
                 }
             }
@@ -351,7 +346,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host.displayName == "Faengslet") ImageRequest.Builder(
+                ) event.photos?.get(0) else if (event.host.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
                     LocalContext.current
                 )
                     .data(R.mipmap.faengletlogo)
@@ -369,10 +364,6 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                 Row {
                     Text(text = "Title: ", fontWeight = Bold)
                     Text(text = event.title ?: "No title")
-                }
-                Row {
-                    Text(text = "Description: ", fontWeight = Bold)
-                    Text(text = event.description ?: "No description")
                 }
                 Row {
                     Text(text = "Location: ", fontWeight = Bold)
