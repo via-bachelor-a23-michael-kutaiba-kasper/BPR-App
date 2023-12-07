@@ -28,3 +28,7 @@ fun isInvalidStartAndEndDate(
 ): Boolean {
     return endDate.isBefore(startDate) || endDate.isEqual(startDate)
 }
+
+fun isInvalidJoinEvent(attendeesSize:Int, maxAttendees:Int):Boolean{
+    return attendeesSize >= maxAttendees
+}

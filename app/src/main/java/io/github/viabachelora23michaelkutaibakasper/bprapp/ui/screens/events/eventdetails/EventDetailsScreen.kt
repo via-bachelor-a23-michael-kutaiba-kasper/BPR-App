@@ -527,7 +527,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     Button(
 
                         onClick = {
-                            if (viewModel.event.value.attendees?.size!! < viewModel.event.value.maxNumberOfAttendees!!) {
+                            if (!viewModel.invalidJoin.value) {
                                 openDialog.value = false
                                 viewModel.joinEvent(
                                     eventId = viewModel.event.value.eventId,
