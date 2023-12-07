@@ -295,19 +295,6 @@ private fun InterestSurvey(
         ) {
             Text(text = "Submit Survey")
         }
-        Text(text = "Recommendations")
-        if (viewModel.isSurveyFilled.value) {
-            Text(text = "Survey filled")
-        } else {
-            Text(text = "Survey not filled")
-            Button(onClick = {
-                viewModel.setSurveyFilled(
-                    hostId = user.value?.uid ?: ""
-                )
-            }) {
-                Text(text = "Click me")
-            }
-        }
     }
 }
 
