@@ -102,5 +102,7 @@ dependencies {
     implementation (`google-places`())
     testImplementation (`kotlinx-coroutines-test`())
     implementation(`firebase-firestore`())
+    implementation ("com.github.tehras:charts:0.2.4-alpha")
+    implementation ("com.github.a914-gowtham:compose-ratingbar:1.3.4")
 
 }

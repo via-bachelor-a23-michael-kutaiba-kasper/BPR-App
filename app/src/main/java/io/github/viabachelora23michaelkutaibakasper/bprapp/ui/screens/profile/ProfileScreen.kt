@@ -1,5 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,18 +18,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -39,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,14 +57,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.gowtham.ratingbar.RatingBar
+import com.gowtham.ratingbar.RatingBarStyle
+import com.gowtham.ratingbar.StepSize
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
-import io.github.viabachelora23michaelkutaibakasper.bprapp.util.roundToNearestHalf
 import java.time.LocalDateTime
 
 
@@ -70,6 +75,11 @@ import java.time.LocalDateTime
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val authenticationClient: IAuthenticationClient = AuthenticationClient()
+
+    val createdEvents = 0
+    val finishedJoinedEvents = 1
+    val tabs = listOf("createdEvents", "finishedJoinedEvents")
+    val selectedIndex = remember { mutableIntStateOf(0) }
     val user by viewModel.user
     var sliderValue by remember { mutableFloatStateOf(0f) }
     val currentEventId = remember { mutableIntStateOf(0) }
@@ -141,155 +151,52 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             }) {
                 Text(text = "Refresh")
             }
-            Text(
-                text = "Your events",
-                Modifier
-                    .padding(12.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .padding(8.dp)
-            ) {
-                LazyColumn {
-                    items(events) { event ->
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
-                            Row(
-                                Modifier.padding(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AsyncImage(
-                                    model = if (event.photos?.isEmpty() != true) event.photos?.get(0) else ImageRequest.Builder(
-                                        LocalContext.current
-                                    ).data(R.mipmap.no_photo).build(),
-                                    contentDescription = "Profile picture",
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
 
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.padding(4.dp)
-                                ) {
-                                    Row {
-                                        Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.title ?: "No title")
-                                    }
-                                    Row {
-                                        Text(text = "Description: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.description ?: "No description")
-                                    }
-                                    Row {
-                                        Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.selectedCategory ?: "No category")
-                                    }
-                                    Row {
-                                        Text(text = "Date: ", fontWeight = FontWeight.Bold)
-                                        Text(
-                                            text = DisplayFormattedTime(event.selectedStartDateTime)
-                                        )
-                                    }
+            Spacer(modifier = Modifier.height(16.dp))
 
-                                    Row {
-                                        Text(text = "Status: ", fontWeight = FontWeight.Bold)
-                                        Text(
-                                            text = if (event.selectedEndDateTime?.isBefore(
-                                                    LocalDateTime.now()
-                                                ) == true
-                                            ) "Ended" else "Ongoing"
-                                        )
-                                    }
+            Column(modifier = Modifier)
+            {
+                PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(text = { Text(text = title) },
+                            selected = selectedIndex.intValue == index,
+                            onClick = { selectedIndex.intValue = index },
+                            icon = {
+                                when (index) {
+                                    createdEvents -> Icon(
+                                        Icons.Default.Face,
+                                        contentDescription = "My Events"
+                                    )
+
+                                    finishedJoinedEvents -> Icon(
+                                        Icons.Default.Menu,
+                                        contentDescription = "Your Participations "
+                                    )
                                 }
                             }
-                        }
-                        HorizontalDivider()
+                        )
+                    }
+                }
 
+                when (selectedIndex.intValue) {
+                    createdEvents -> {
+                        CreatedEvents(events, navController)
+
+                    }
+
+                    finishedJoinedEvents -> {
+                        FinishedJoinedEvents(
+                            participatedEvents,
+                            navController,
+                            reviewIds,
+                            currentEventId,
+                            openDialog
+                        )
                     }
                 }
             }
 
-            Text(
-                text = "Your participated events",
-                Modifier
-                    .padding(12.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .padding(8.dp)
-            ) {
-                LazyColumn {
-                    items(participatedEvents) { event ->
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
-                            Row(
-                                Modifier.padding(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (event.eventId !in reviewIds) {
 
-                                    Button(onClick = {
-                                        currentEventId.value = event.eventId
-                                        openDialog.value = true
-                                    }) {
-                                        Text(text = "Rate the event")
-
-                                    }
-                                }
-
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.padding(4.dp)
-                                ) {
-                                    Row {
-                                        Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.title ?: "No title")
-                                    }
-                                    Row {
-                                        Text(text = "Description: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.description ?: "No description")
-                                    }
-                                    Row {
-                                        Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                                        Text(text = event.selectedCategory ?: "No category")
-                                    }
-                                    Row {
-                                        Text(text = "Date: ", fontWeight = FontWeight.Bold)
-                                        Text(
-                                            text = DisplayFormattedTime(event.selectedStartDateTime)
-                                        )
-                                    }
-
-                                    Row {
-                                        Text(text = "Status: ", fontWeight = FontWeight.Bold)
-                                        Text(
-                                            text = if (event.selectedEndDateTime?.isBefore(
-                                                    LocalDateTime.now()
-                                                ) == true
-                                            ) "Ended" else "Ongoing"
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        HorizontalDivider()
-
-                    }
-                }
-            }
         }
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -321,23 +228,16 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                             modifier = Modifier.padding(16.dp),
                         )
 
-                        Slider(
-                            modifier = Modifier.padding(4.dp),
+                        RatingBar(
                             value = sliderValue,
-                            onValueChange = { sliderValue = it.roundToNearestHalf() },
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.primary,
-                                activeTrackColor = MaterialTheme.colorScheme.primary,
-                                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                            ),
-                            steps = 10,
-                            valueRange = 0f..5f,
-                            thumb = {
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    tint = Color.Red,
-                                    contentDescription = null
-                                )
+                            style = RatingBarStyle.Fill(),
+                            numOfStars = 5,
+                            stepSize = StepSize.HALF,
+                            onValueChange = {
+                                sliderValue = it
+                            },
+                            onRatingChanged = {
+                                Log.d("TAG", "onRatingChanged: $it")
                             }
                         )
 
@@ -375,6 +275,154 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
 
         }
 
+    }
+}
+
+@Composable
+private fun FinishedJoinedEvents(
+    participatedEvents: List<MinimalEvent>,
+    navController: NavController,
+    reviewIds: List<Int>,
+    currentEventId: MutableIntState,
+    openDialog: MutableState<Boolean>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .padding(8.dp)
+    ) {
+        LazyColumn {
+            items(participatedEvents) { event ->
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+                    Row(
+                        Modifier.padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (event.eventId !in reviewIds) {
+
+                            Button(onClick = {
+                                currentEventId.value = event.eventId
+                                openDialog.value = true
+                            }) {
+                                Text(text = "Rate the event")
+
+                            }
+                        }
+
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Row {
+                                Text(text = "Title: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.title ?: "No title")
+                            }
+                            Row {
+                                Text(text = "Description: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.description ?: "No description")
+                            }
+                            Row {
+                                Text(text = "Category: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.selectedCategory ?: "No category")
+                            }
+                            Row {
+                                Text(text = "Date: ", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = DisplayFormattedTime(event.selectedStartDateTime)
+                                )
+                            }
+
+                            Row {
+                                Text(text = "Status: ", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = if (event.selectedEndDateTime?.isBefore(
+                                            LocalDateTime.now()
+                                        ) == true
+                                    ) "Ended" else "Ongoing"
+                                )
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+@Composable
+private fun CreatedEvents(
+    events: List<MinimalEvent>,
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .padding(8.dp)
+    ) {
+        LazyColumn {
+            items(events) { event ->
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+                    Row(
+                        Modifier.padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = if (event.photos?.isEmpty() != true) event.photos?.get(0) else ImageRequest.Builder(
+                                LocalContext.current
+                            ).data(R.mipmap.no_photo).build(),
+                            contentDescription = "Profile picture",
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Row {
+                                Text(text = "Title: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.title ?: "No title")
+                            }
+                            Row {
+                                Text(text = "Description: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.description ?: "No description")
+                            }
+                            Row {
+                                Text(text = "Category: ", fontWeight = FontWeight.Bold)
+                                Text(text = event.selectedCategory ?: "No category")
+                            }
+                            Row {
+                                Text(text = "Date: ", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = DisplayFormattedTime(event.selectedStartDateTime)
+                                )
+                            }
+
+                            Row {
+                                Text(text = "Status: ", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = if (event.selectedEndDateTime?.isBefore(
+                                            LocalDateTime.now()
+                                        ) == true
+                                    ) "Ended" else "Ongoing"
+                                )
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider()
+
+            }
+        }
     }
 }
 
