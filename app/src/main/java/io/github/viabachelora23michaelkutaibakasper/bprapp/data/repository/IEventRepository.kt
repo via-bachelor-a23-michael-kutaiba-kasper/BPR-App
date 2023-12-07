@@ -6,7 +6,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEv
 interface IEventRepository {
     suspend fun getEvents(
         hostId: String? = null,
-        includePrivate: Boolean? = null
+        includePrivate: Boolean? = null,
+        from: String? = null,
     ): List<MinimalEvent>
 
     suspend fun getEvent(eventId: Int): Event
@@ -15,4 +16,8 @@ interface IEventRepository {
 
     suspend fun getKeywords(): List<String>
     suspend fun getCategories(): List<String>
+
+    suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent>
+    suspend fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String): Int
+    suspend fun getReviewIds(userId: String): List<Int>
 }

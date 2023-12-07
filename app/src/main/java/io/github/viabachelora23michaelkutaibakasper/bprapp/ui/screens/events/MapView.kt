@@ -4,8 +4,6 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,31 +33,22 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
@@ -70,20 +59,18 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MapsComposeExperimentalApi
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerInfoWindowContent
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
-import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import java.time.LocalDateTime
 
 
@@ -151,7 +138,13 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(text = "Error fetching events")
-            Button(onClick = { viewModel.getEvents() }) {
+            Button(onClick = {
+                viewModel.getEvents(
+                    from = localDateTimeToUTCLocalDateTime(
+                        LocalDateTime.now()
+                    ).toString()
+                )
+            }) {
                 Text(text = "Refresh")
             }
         }
@@ -162,12 +155,24 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(text = "no events :(")
-            Button(onClick = { viewModel.getEvents() }) {
+            Button(onClick = {
+                viewModel.getEvents(
+                    from = localDateTimeToUTCLocalDateTime(
+                        LocalDateTime.now().minusHours(1)
+                    ).toString()
+                )
+            }) {
                 Text(text = "Refresh")
             }
         }
     } else {
-        Button(onClick = { viewModel.getEvents() }) {
+        Button(onClick = {
+            viewModel.getEvents(
+                from = localDateTimeToUTCLocalDateTime(
+                    LocalDateTime.now().minusHours(1)
+                ).toString()
+            )
+        }) {
             Text(text = "Refresh")
         }
         LazyColumn {
@@ -291,7 +296,11 @@ private fun ClusterModalItem(
         Row(Modifier.padding(4.dp)) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else ImageRequest.Builder(LocalContext.current)
+                ) event.photos?.get(0) else if (event.host == "Faengslet") ImageRequest.Builder(
+                    LocalContext.current
+                )
+                    .data(R.mipmap.faengletlogo)
+                    .build() else ImageRequest.Builder(LocalContext.current)
                     .data(R.mipmap.no_photo).build(),
                 contentDescription = "Profile picture",
                 modifier = Modifier
@@ -311,14 +320,6 @@ private fun ClusterModalItem(
                 Row {
                     Text(text = "Description: ", fontWeight = Bold)
                     Text(text = event.description ?: "No description")
-                }
-                Row {
-                    Text(text = "Location: ", fontWeight = Bold)
-                    Text(text = event.location.completeAddress ?: "No location")
-                }
-                Row {
-                    Text(text = "Category: ", fontWeight = Bold)
-                    Text(text = event.selectedCategory ?: "No category")
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
@@ -350,7 +351,12 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else ImageRequest.Builder(LocalContext.current)
+                ) event.photos?.get(0) else if (event.host.displayName == "Faengslet") ImageRequest.Builder(
+                    LocalContext.current
+                )
+                    .data(R.mipmap.faengletlogo)
+                    .build()
+                else ImageRequest.Builder(LocalContext.current)
                     .data(R.mipmap.no_photo).build(),
                 contentDescription = "Profile picture",
                 modifier = Modifier
@@ -374,7 +380,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = Bold)
-                    Text(text = event.selectedCategory ?: "No category")
+                    Text(text = if (event.selectedCategory != "Un Assigned") "Category: ${event.selectedCategory}" else "No category")
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
@@ -407,7 +413,14 @@ fun GreetingPreview() {
                         lng = 0.0
                     )
                 ), description = "Description",
-                selectedEndDateTime = LocalDateTime.now()
+                selectedEndDateTime = LocalDateTime.now(),
+                host = User(
+                    displayName = "Michael Kuta Ibaka",
+                    userId = "123456789",
+                    photoUrl = null,
+                    creationDate = LocalDateTime.now(),
+                    lastSeenOnline = LocalDateTime.now()
+                )
             ), navController = NavController(LocalContext.current)
         )
     }

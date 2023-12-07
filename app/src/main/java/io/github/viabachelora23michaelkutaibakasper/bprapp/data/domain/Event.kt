@@ -31,8 +31,10 @@ data class MinimalEvent(
     val description: String?,
     val selectedCategory: String,
     val photos: List<String?>?,
-    val location: Location
+    val location: Location,
+    val host: User
 )
+
 
 data class User(
     var displayName: String,

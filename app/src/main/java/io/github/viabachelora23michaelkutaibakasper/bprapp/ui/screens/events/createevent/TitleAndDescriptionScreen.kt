@@ -21,8 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidDescription
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidTitle
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 
 

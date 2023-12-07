@@ -6,11 +6,14 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventMutation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateReviewMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -25,16 +28,21 @@ import java.time.ZoneOffset
 class EventRepository : IEventRepository {
 
 
-    override suspend fun getEvents(hostId: String?, includePrivate: Boolean?): List<MinimalEvent> {
+    override suspend fun getEvents(
+        hostId: String?,
+        includePrivate: Boolean?,
+        from: String?
+    ): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
-
+        Log.d("ApolloEventClient", "getEvents: $from")
         val response =
             apolloClient.query(
                 FetchAllEventsQuery(
                     hostId = Optional.presentIfNotNull(hostId),
-                    includePrivateEvents = Optional.presentIfNotNull(includePrivate)
+                    includePrivateEvents = Optional.presentIfNotNull(includePrivate),
+                    from = Optional.presentIfNotNull(from)
                 )
             ).execute()
         Log.d("ApolloEventClient", "getEvents UwWU: ${response.data?.events}")
@@ -53,7 +61,18 @@ class EventRepository : IEventRepository {
                         lat = it.geoLocation?.lat!!.toDouble(),
                         lng = it.geoLocation.lng!!.toDouble()
                     )
-                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!)
+                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!),
+                host = User(
+                    displayName = it.host?.displayName!!,
+                    userId = it.host.userId!!,
+                    photoUrl = it.host.photoUrl?.let { Uri.parse(it) },
+                    creationDate = parseUtcStringToLocalDateTime(it.host.creationDate!!),
+                    lastSeenOnline = it.host.lastSeenOnline?.let { it1 ->
+                        parseUtcStringToLocalDateTime(
+                            it1
+                        )
+                    }
+                )
             )
         } ?: emptyList()
     }
@@ -90,7 +109,11 @@ class EventRepository : IEventRepository {
                 userId = response.data?.event?.result?.host?.userId!!,
                 photoUrl = response.data?.event?.result?.host?.photoUrl?.let { Uri.parse(it) },
                 creationDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.creationDate!!),
-                lastSeenOnline = parseUtcStringToLocalDateTime(response.data?.event?.result?.host?.lastSeenOnline!!)
+                lastSeenOnline = response.data?.event?.result?.host?.lastSeenOnline?.let {
+                    parseUtcStringToLocalDateTime(
+                        it
+                    )
+                }
             ),
             lastUpdatedDate = parseUtcStringToLocalDateTime(response.data?.event?.result?.lastUpdateDate!!),
             photos = response.data?.event?.result?.images ?: emptyList(),
@@ -172,6 +195,82 @@ class EventRepository : IEventRepository {
         val response = apolloClient.query(GetCategoriesQuery()).execute()
         Log.d("ApolloEventClient", "getCategories: ${response.data?.categories}")
         return response.data?.categories?.result?.map { it!! } ?: emptyList()
+    }
+
+    override suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent> {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.query(FetchFinishedJoinedEventsQuery(userId = userId)).execute()
+        Log.d(
+            "ApolloEventClient",
+            "getFinishedJoinedEvents: ${response.data?.finishedJoinedEvents}"
+        )
+        return response.data?.finishedJoinedEvents?.result?.map {
+            MinimalEvent(
+                title = it?.title!!,
+                selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),
+                eventId = it.id!!,
+                selectedCategory = it.category!!,
+                photos = it.images,
+                description = it.description,
+                location = Location(
+                    city = it.city,
+                    completeAddress = it.location,
+                    geoLocation = GeoLocation(
+                        lat = it.geoLocation?.lat!!.toDouble(),
+                        lng = it.geoLocation.lng!!.toDouble()
+                    )
+                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.endDate!!),
+                host = User(
+                    displayName = it.host?.displayName!!,
+                    userId = it.host.userId!!,
+                    photoUrl = it.host.photoUrl?.let { Uri.parse(it) },
+                    creationDate = parseUtcStringToLocalDateTime(it.host.creationDate!!),
+                    lastSeenOnline = it.host.lastSeenOnline?.let { it1 ->
+                        parseUtcStringToLocalDateTime(
+                            it1
+                        )
+                    }
+                )
+            )
+        } ?: emptyList()
+    }
+
+    override suspend fun createReview(
+        eventId: Int,
+        userId: String,
+        rating: Float,
+        reviewDate: String
+    ): Int {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response =
+            apolloClient.mutation(
+                CreateReviewMutation(
+                    eventId = eventId,
+                    rate = rating.toDouble(),
+                    reviewerId = userId,
+                    reviewDate = reviewDate
+                )
+            ).execute()
+
+        return response.data?.createReview?.result?.id!!
+    }
+
+    override suspend fun getReviewIds(userId: String): List<Int> {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response =
+            apolloClient.query(ReviewsByUserQuery(userId = Optional.presentIfNotNull(userId)))
+                .execute()
+        Log.d(
+            "ApolloEventClient",
+            "getReviewIds: ${response.data?.reviewsByUser?.result}"
+        )
+        return response.data?.reviewsByUser?.result?.map { it?.eventId!! } ?: emptyList()
     }
 
 

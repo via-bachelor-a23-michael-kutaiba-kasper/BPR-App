@@ -49,7 +49,6 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
     val context = LocalContext.current
 
 
-
     val fields =
         listOf(Place.Field.ADDRESS_COMPONENTS, Place.Field.ADDRESS, Place.Field.LAT_LNG)
 
@@ -113,7 +112,8 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .weight(1f).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .weight(1f)
+                .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
             LinearProgressIndicator(
@@ -133,43 +133,43 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
                 fontWeight = FontWeight.SemiBold
             )
         }
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Button(
+                onClick = {
+                    location.completeAddress?.let { viewModel.setValidAddress(it) }
+                    if (viewModel.invalidAddress) {
+                        Toast.makeText(
+                            context,
+                            "Please provide a location",
+                            Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        navController.navigate(CreateEventScreens.DateAndTime.name)
+                    }
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-            )
-            {
-                Button(
-                    onClick = {
-                        location.completeAddress?.let { viewModel.setValidAddress(it) }
-                        if (viewModel.invalidAddress) {
-                            Toast.makeText(
-                                context,
-                                "Please provide a location",
-                                Toast.LENGTH_SHORT
-                            ).show();
-                        } else {
-                            navController.navigate(CreateEventScreens.DateAndTime.name)
-                        }
-
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                ) {
-                    Text("Next")
-                }
-                Button(
-                    onClick = {
-                        // pop back to the previous screen (the Map)
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                ) {
-                    Text("Back")
-                }
+                    .padding(top = 4.dp)
+            ) {
+                Text("Next")
             }
+            Button(
+                onClick = {
+                    // pop back to the previous screen (the Map)
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                Text("Back")
+            }
+        }
 
     }
 }

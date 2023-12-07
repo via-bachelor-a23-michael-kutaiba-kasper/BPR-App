@@ -33,7 +33,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
             emptyList<String>(),
             "Music",
             50,
-           host =  User(
+            host = User(
                 "Michael Kuta Ibaka",
                 "123456789",
                 null,
@@ -61,7 +61,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
                 Log.d("EventDetailsViewmodel", "getevent: $event")
                 isLoading.value = false
             } catch (e: Exception) {
-                Log.d("EventDetailsViewmodel", "failed to fetch event: ${e.message}")
+                Log.d("EventDetailsViewmodel", "failed to fetch event: ${e.printStackTrace()}")
                 isLoading.value = false
                 errorFetchingEvent.value = true
             }

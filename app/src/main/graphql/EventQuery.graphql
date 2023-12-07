@@ -76,6 +76,13 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
             description
             url
             category
+            host {
+                displayName
+                photoUrl
+                lastSeenOnline
+                userId
+                creationDate
+            }
             images
             city
             location
@@ -89,6 +96,64 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
             message
         }
 
+    }
+}
+
+query FetchFinishedJoinedEvents($userId: String!) {
+    finishedJoinedEvents(userId: $userId) {
+        result {
+            id
+            title
+            startDate
+            endDate
+            isPaid
+            description
+            url
+            category
+            host {
+                displayName
+                photoUrl
+                lastSeenOnline
+                userId
+                creationDate
+            }
+            images
+            city
+            location
+            geoLocation {
+                lat
+                lng
+            }
+        }
+        status {
+            code
+            message
+        }
+
+    }
+}
+
+mutation CreateReview($rate: Float!, $reviewerId: String!, $eventId: Int!, $reviewDate: String!) {
+    createReview(rate: $rate, reviewerId: $reviewerId, eventId: $eventId, reviewDate: $reviewDate) {
+        result {
+            id
+            rate
+            reviewerId
+            eventId
+            reviewDate
+        }
+        status {
+            code
+            message
+        }
+    }
+}
+
+query ReviewsByUser($userId: String) {
+    reviewsByUser(userId: $userId) {
+        result {
+            eventId
+        }
     }
 }
 

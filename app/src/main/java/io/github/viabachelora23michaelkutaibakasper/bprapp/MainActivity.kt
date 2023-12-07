@@ -18,12 +18,10 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -34,14 +32,10 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,8 +48,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.compose.AppTheme
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
@@ -76,7 +68,9 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.Pr
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @ExperimentalLayoutApi
 @ExperimentalFoundationApi
@@ -204,12 +198,12 @@ class MainActivity : ComponentActivity() {
                         fun showSnackBar() {
                             scope.launch {
                                 val result = snackbarHostState.showSnackbar(
-                                        message = "Event created successfully",
-                                        actionLabel = "See event",
-                                        // Defaults to SnackbarDuration.Short
-                                        duration = SnackbarDuration.Short,
-                                        withDismissAction = true
-                                    )
+                                    message = "Event created successfully",
+                                    actionLabel = "See event",
+                                    // Defaults to SnackbarDuration.Short
+                                    duration = SnackbarDuration.Short,
+                                    withDismissAction = true
+                                )
                                 when (result) {
                                     SnackbarResult.ActionPerformed -> {
                                         Log.d(
@@ -240,7 +234,11 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
-                                mapViewModel.getEvents()
+                                mapViewModel.getEvents(
+                                    from = localDateTimeToUTCLocalDateTime(
+                                        LocalDateTime.now()
+                                    ).toString()
+                                )
                                 Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
@@ -275,10 +273,12 @@ class MainActivity : ComponentActivity() {
                             composable(CreateEventScreens.Images.name) {
                                 CreateEventImagesScreen(navController = navController)
                             }
-                            composable("${BottomNavigationScreens.EventDetails.name}/{eventId}",
+                            composable(
+                                "${BottomNavigationScreens.EventDetails.name}/{eventId}",
                                 arguments = listOf(navArgument("eventId") {
                                     type = NavType.IntType
-                                })) {
+                                })
+                            ) {
                                 val param = it.arguments?.getInt("eventId")
                                 param?.let { it1 ->
                                     eventDetailsViewModel.getEvent(it1)

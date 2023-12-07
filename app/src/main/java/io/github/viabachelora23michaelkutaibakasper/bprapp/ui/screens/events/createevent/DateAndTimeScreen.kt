@@ -44,7 +44,6 @@ import java.time.LocalTime
 import java.time.ZoneId
 
 
-
 fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 @ExperimentalMaterial3Api
@@ -59,7 +58,6 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
         rememberDatePickerState(initialSelectedDateMillis = selectedEndDateTime.toMillis())
     val startTimeDialogState = rememberMaterialDialogState()
     val endTimeDialogState = rememberMaterialDialogState()
-
 
 
     var pickedStartTime by remember {

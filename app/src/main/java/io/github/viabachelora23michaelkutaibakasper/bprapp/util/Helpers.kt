@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
 import java.util.Locale
+import kotlin.math.roundToInt
 
 fun parseUtcStringToLocalDateTime(utcString: String): LocalDateTime {
 
@@ -38,4 +38,12 @@ fun convertUtcMillisecondsToFormattedDate(
             ZoneOffset.UTC
         )
         .toLocalDate()
+}
+
+fun Float.roundToNearestHalf(): Float {
+    return (this * 2).roundToInt() / 2.0f
+}
+
+fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime? {
+    return localDateTime.atOffset(ZoneOffset.UTC).toLocalDateTime()
 }
