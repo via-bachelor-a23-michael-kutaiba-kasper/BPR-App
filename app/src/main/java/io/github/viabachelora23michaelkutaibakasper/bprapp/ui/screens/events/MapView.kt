@@ -293,7 +293,7 @@ private fun ClusterModalItem(
         navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}")
         viewModel.clusterClicked.value = false
     }) {
-        Row(Modifier.padding(4.dp)) {
+        Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
                 ) event.photos?.get(0) else if (event.host == R.string.fængslet.toString()) ImageRequest.Builder(
@@ -371,7 +371,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = Bold)
-                    Text(text = if (event.selectedCategory != "Un Assigned") "Category: ${event.selectedCategory}" else "No category")
+                    Text(text = if (event.selectedCategory != "Un Assigned") " ${event.selectedCategory}" else "No category")
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
