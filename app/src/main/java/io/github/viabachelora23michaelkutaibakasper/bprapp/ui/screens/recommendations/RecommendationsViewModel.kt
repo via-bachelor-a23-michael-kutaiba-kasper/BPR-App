@@ -59,7 +59,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         return isSurveyFilled.value
     }
 
-    private fun getKeywords(): List<String> {
+    fun getKeywords(): List<String> {
         viewModelScope.launch {
             try {
                 val keywords = eventRepository.getKeywords()
@@ -72,7 +72,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         return emptyList()
     }
 
-    private fun getCategories(): List<String> {
+    fun getCategories(): List<String> {
         viewModelScope.launch {
             try {
                 val categories = eventRepository.getCategories()
