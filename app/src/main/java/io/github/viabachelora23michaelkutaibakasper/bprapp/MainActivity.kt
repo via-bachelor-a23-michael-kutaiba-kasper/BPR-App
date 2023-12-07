@@ -273,7 +273,8 @@ class MainActivity : ComponentActivity() {
                             composable(CreateEventScreens.Images.name) {
                                 CreateEventImagesScreen(navController = navController)
                             }
-                            composable("${BottomNavigationScreens.EventDetails.name}/{eventId}",
+                            composable(
+                                "${BottomNavigationScreens.EventDetails.name}/{eventId}",
                                 arguments = listOf(navArgument("eventId") {
                                     type = NavType.IntType
                                 })

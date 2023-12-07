@@ -24,19 +24,17 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
     val reviewIds = _reviewIds.asStateFlow()
     val isLoading = mutableStateOf(false)
+    val reviewCreated = mutableStateOf(false)
     var user = mutableStateOf(Firebase.auth.currentUser)
     val errorFetchingEvents = mutableStateOf(false)
 
-    init {
-        allOfThem()
-    }
 
     fun allOfThem() {
-        viewModelScope.launch {
-            getEvents(hostId = user.value!!.uid, includePrivate = true)
-            getReviewIds(hostId = user.value!!.uid)
-            getFinishedJoinedEvents(userId = user.value!!.uid)
-        }
+
+        getEvents(hostId = user.value!!.uid, includePrivate = true)
+        getReviewIds(hostId = user.value!!.uid)
+        getFinishedJoinedEvents(userId = user.value!!.uid)
+
     }
 
 
@@ -72,13 +70,16 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     }
 
     fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String) {
+        reviewCreated.value = false
         viewModelScope.launch {
             try {
                 Log.d("profileviewmodel", "createReview: $eventId, $userId, $rating, $reviewDate")
                 val review = eventRepository.createReview(eventId, userId, rating, reviewDate)
                 Log.d("profileviewmodel", "getevents: $review")
+                reviewCreated.value = true
             } catch (e: Exception) {
                 Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
+                reviewCreated.value = false
             }
         }
     }
@@ -86,7 +87,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     fun getReviewIds(hostId: String) {
         viewModelScope.launch {
             try {
-                val reviewIds = eventRepository.getReviewIds("Oq8tmUrDV6SeEpWf1olCJNJ1JW93")
+                val reviewIds = eventRepository.getReviewIds(hostId)
                 _reviewIds.value = reviewIds
                 Log.d("profileviewmodel", "the idsss!!: $reviewIds")
             } catch (e: Exception) {
