@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.ev
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 
@@ -526,11 +527,15 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     Button(
 
                         onClick = {
-                            openDialog.value = false
-                            viewModel.joinEvent(
-                                eventId = viewModel.event.value.eventId,
-                                userId = user!!.uid
-                            )
+                            if (viewModel.event.value.attendees?.size!! < viewModel.event.value.maxNumberOfAttendees!!) {
+                                openDialog.value = false
+                                viewModel.joinEvent(
+                                    eventId = viewModel.event.value.eventId,
+                                    userId = user!!.uid
+                                )
+                            } else {
+                                Toast.makeText(context, "Event is full", Toast.LENGTH_SHORT).show()
+                            }
                         }) {
                         Text("Yes, join!")
                     }
