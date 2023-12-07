@@ -30,6 +30,29 @@ class FireStoreClient {
         return success
     }
 
+    fun UpdateFirebaseMessagingToken(token: String, hostId: String): Boolean {
+        var success = false
+        val db = Firebase.firestore
+        val tokenData = hashMapOf(
+            "token" to token
+        )
+
+        db.collection("notifications").document(hostId)
+            .set(tokenData)
+            .addOnSuccessListener {
+                success = true
+                Log.d(
+                    "FirebaseStorageClient",
+                    "DocumentSnapshot successfully updated! with token and hostId: $token and $hostId"
+                )
+            }
+            .addOnFailureListener { e ->
+                success = false
+                Log.w("FirebaseStorageClient", "Error updating document", e)
+            }
+        return success
+    }
+
     suspend fun isSurveyFilledForUser(userId: String): Boolean {
         val db = Firebase.firestore
 
