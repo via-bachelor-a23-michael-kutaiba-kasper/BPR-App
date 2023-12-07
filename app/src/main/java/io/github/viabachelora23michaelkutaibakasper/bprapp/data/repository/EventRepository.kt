@@ -12,6 +12,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEv
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.GetRecommendationsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
@@ -88,10 +89,10 @@ class EventRepository : IEventRepository {
             title = response.data?.event?.result?.title,
             description = response.data?.event?.result?.description,
             url = response.data?.event?.result?.url,
-            location = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location(
+            location = Location(
                 city = response.data?.event?.result?.city,
                 completeAddress = response.data?.event?.result?.location,
-                geoLocation = io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation(
+                geoLocation = GeoLocation(
                     lat = response.data?.event?.result?.geoLocation?.lat!!.toDouble(),
                     lng = response.data?.event?.result?.geoLocation?.lng!!.toDouble()
                 )
@@ -271,6 +272,57 @@ class EventRepository : IEventRepository {
             "getReviewIds: ${response.data?.reviewsByUser?.result}"
         )
         return response.data?.reviewsByUser?.result?.map { it?.eventId!! } ?: emptyList()
+    }
+
+    override suspend fun getReccommendations(
+        userId: String,
+        numberOfEvents: Int
+    ): List<MinimalEvent> {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.query(
+            GetRecommendationsQuery(
+                userId = userId,
+                limit = Optional.presentIfNotNull(numberOfEvents)
+            )
+        ).execute()
+        Log.d(
+            "ApolloEventClient",
+            "getReccommendations: ${response.data?.recommendations}"
+        )
+        return response.data?.recommendations?.result?.result?.map {
+            MinimalEvent(
+                title = it?.event?.title!!,
+                selectedStartDateTime = parseUtcStringToLocalDateTime(it.event.startDate!!),
+                eventId = it.event.id!!,
+                selectedCategory = it.event.category!!,
+                photos = it.event.images,
+                description = it.event.description,
+                location = Location(
+                    city = it.event.city,
+                    completeAddress = it.event.location,
+                    geoLocation = GeoLocation(
+                        lat = it.event.geoLocation?.lat!!.toDouble(),
+                        lng = it.event.geoLocation.lng!!.toDouble()
+                    )
+                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.event.endDate!!),
+                host = User(
+                    displayName = it.event.host?.displayName!!,
+                    userId = it.event.host.userId!!,
+                    photoUrl = it.event.host.photoUrl?.let { Uri.parse(it) },
+                    creationDate = parseUtcStringToLocalDateTime(
+                        it.event
+                            .host.creationDate!!
+                    ),
+                    lastSeenOnline = it.event.host.lastSeenOnline?.let { it1 ->
+                        parseUtcStringToLocalDateTime(
+                            it1
+                        )
+                    }
+                )
+            )
+        } ?: emptyList()
     }
 
 

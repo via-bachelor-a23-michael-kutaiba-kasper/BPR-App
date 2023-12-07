@@ -10,6 +10,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidJoinEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
 
     private val eventRepository: IEventRepository = repository
     val errorFetchingEvent = mutableStateOf(false)
+    val invalidJoin = mutableStateOf(false)
     private val _event = MutableStateFlow<Event>(
         Event(
             "title",
@@ -69,8 +71,13 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
     }
 
     fun joinEvent(eventId: Int, userId: String) {
+        if (isInvalidJoinEvent(event.value.attendees!!.size, event.value.maxNumberOfAttendees!!)) {
+            invalidJoin.value = true
+            return
+        }
         viewModelScope.launch {
             try {
+                invalidJoin.value = false
                 eventRepository.joinEvent(eventId, userId)
                 Log.d("EventDetailsViewmodel", "joined event: $eventId")
             } catch (e: Exception) {

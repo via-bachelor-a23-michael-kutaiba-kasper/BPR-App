@@ -293,10 +293,10 @@ private fun ClusterModalItem(
         navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}")
         viewModel.clusterClicked.value = false
     }) {
-        Row(Modifier.padding(4.dp)) {
+        Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host == "Faengslet") ImageRequest.Builder(
+                ) event.photos?.get(0) else if (event.host == R.string.fængslet.toString()) ImageRequest.Builder(
                     LocalContext.current
                 )
                     .data(R.mipmap.faengletlogo)
@@ -318,14 +318,9 @@ private fun ClusterModalItem(
                     Text(text = event.title1 ?: "No title")
                 }
                 Row {
-                    Text(text = "Description: ", fontWeight = Bold)
-                    Text(text = event.description ?: "No description")
-                }
-                Row {
                     Text(text = "Start date: ", fontWeight = Bold)
                     Text(
                         text = DisplayFormattedTime(event.selectedStartDateTime)
-                            ?: "No start date"
                     )
                 }
             }
@@ -351,7 +346,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host.displayName == "Faengslet") ImageRequest.Builder(
+                ) event.photos?.get(0) else if (event.host.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
                     LocalContext.current
                 )
                     .data(R.mipmap.faengletlogo)
@@ -371,16 +366,12 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                     Text(text = event.title ?: "No title")
                 }
                 Row {
-                    Text(text = "Description: ", fontWeight = Bold)
-                    Text(text = event.description ?: "No description")
-                }
-                Row {
                     Text(text = "Location: ", fontWeight = Bold)
                     Text(text = event.location.completeAddress ?: "No location")
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = Bold)
-                    Text(text = if (event.selectedCategory != "Un Assigned") "Category: ${event.selectedCategory}" else "No category")
+                    Text(text = if (event.selectedCategory != "Un Assigned") " ${event.selectedCategory}" else "No category")
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)

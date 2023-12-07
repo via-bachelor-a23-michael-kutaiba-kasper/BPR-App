@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.ev
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 
@@ -125,7 +126,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                 .fillMaxWidth()
                                 .padding(4.dp),
                             model = if (event.photos?.isEmpty() != true
-                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == "Faengslet") ImageRequest.Builder(
+                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
                                 LocalContext.current
                             )
                                 .data(R.mipmap.faengletlogo).build() else ImageRequest.Builder(
@@ -526,11 +527,15 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                     Button(
 
                         onClick = {
-                            openDialog.value = false
-                            viewModel.joinEvent(
-                                eventId = viewModel.event.value.eventId,
-                                userId = user!!.uid
-                            )
+                            if (!viewModel.invalidJoin.value) {
+                                openDialog.value = false
+                                viewModel.joinEvent(
+                                    eventId = viewModel.event.value.eventId,
+                                    userId = user!!.uid
+                                )
+                            } else {
+                                Toast.makeText(context, "Event is full", Toast.LENGTH_SHORT).show()
+                            }
                         }) {
                         Text("Yes, join!")
                     }

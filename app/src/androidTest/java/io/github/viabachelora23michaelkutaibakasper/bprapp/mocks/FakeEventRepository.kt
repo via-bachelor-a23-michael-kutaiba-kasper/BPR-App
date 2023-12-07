@@ -121,7 +121,7 @@ class FakeEventRepository : IEventRepository {
     }
 
     override suspend fun joinEvent(eventId: Int, userId: String) {
-
+        return
     }
 
     override suspend fun getKeywords(): List<String> {
@@ -190,5 +190,55 @@ class FakeEventRepository : IEventRepository {
 
     override suspend fun getReviewIds(userId: String): List<Int> {
         return listOf(1, 2, 3, 4, 5)
+    }
+
+    override suspend fun getReccommendations(
+        userId: String,
+        numberOfEvents: Int
+    ): List<MinimalEvent> {
+        return listOf(
+            MinimalEvent(
+                title = "Run Event",
+                description = "Run for 5km",
+                location = Location(
+                    city = "Horsens",
+                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
+                    geoLocation = GeoLocation(55.860916, 9.850000)
+                ),
+                selectedCategory = "Music",
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
+                photos = null,
+                eventId = 1,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
+            ),
+            MinimalEvent(
+                title = "Run Event",
+                description = "Run for 5km",
+                location = Location(
+                    city = "Horsens",
+                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
+                    geoLocation = GeoLocation(55.860916, 9.850000)
+                ),
+                selectedCategory = "Music",
+                selectedStartDateTime = LocalDateTime.now(),
+                selectedEndDateTime = LocalDateTime.now().plusHours(5),
+                photos = null,
+                eventId = 1,
+                host = User(
+                    "Michael Kuta Ibaka",
+                    "123456789",
+                    null,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+                )
+            )
+        )
     }
 }

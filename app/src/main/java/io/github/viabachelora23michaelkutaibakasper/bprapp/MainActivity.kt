@@ -97,6 +97,7 @@ class MainActivity : ComponentActivity() {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
+
     private fun askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -262,7 +263,10 @@ class MainActivity : ComponentActivity() {
                                 Map(navController = navController, viewModel = mapViewModel)
                             }
                             composable(BottomNavigationScreens.Recommendations.name) {
-                                RecommendationsScreen(recommendationsViewModel)
+                                RecommendationsScreen(
+                                    recommendationsViewModel,
+                                    navController = navController
+                                )
                             }
                             composable(BottomNavigationScreens.Achievements.name) {
                                 Text(text = "Achievements")

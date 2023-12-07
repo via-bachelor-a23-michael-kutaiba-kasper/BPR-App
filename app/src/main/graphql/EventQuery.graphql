@@ -58,10 +58,10 @@ query getEvent($id:Int!){
             maxNumberOfAttendees
             lastUpdateDate
         }
-      status {
-        code
-        message
-      }
+        status {
+            code
+            message
+        }
     }
 }
 
@@ -160,9 +160,9 @@ query ReviewsByUser($userId: String) {
 mutation CreateEventMutation($title: String!,$description:String!, $startDate: String!,$keywords:[String!]!,
     $endDate: String!, $createdDate: String!, $isPrivate: Boolean!, $adultsOnly: Boolean!, $isPaid: Boolean!, $host: userInput!, $maxNumberOfAttendees: Int!, $location: String!, $city: String!, $geoLocation: geoLocationInput!, $category: String!) {
     createEvent(title: $title,description: $description, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
-       result {
-               id
-       }
+        result {
+            id
+        }
         status {
             code
             message
@@ -173,12 +173,45 @@ mutation CreateEventMutation($title: String!,$description:String!, $startDate: S
 
 mutation JoinEvent($eventId: Int!, $userId: String!) {
     joinEvent(eventId: $eventId, userId: $userId) {
-      result {
-          id
-      }
+        result {
+            id
+        }
         status {
             code
             message
+        }
+    }
+}
+
+query GetRecommendations($userId: String!, $limit: Int) {
+    recommendations(userId: $userId, limit: $limit) {
+        result {
+            result {
+                event {
+                    id
+                    title
+                    startDate
+                    endDate
+                    isPaid
+                    description
+                    url
+                    category
+                    host {
+                        displayName
+                        photoUrl
+                        lastSeenOnline
+                        userId
+                        creationDate
+                    }
+                    images
+                    city
+                    location
+                    geoLocation {
+                        lat
+                        lng
+                    }
+                }
+            }
         }
     }
 }

@@ -15,7 +15,8 @@ class NotificationClient() : FirebaseMessagingService() {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
-        FireStoreClient().updateFirebaseMessagingToken(token, user.value!!.uid)
+        if (user.value == null) {
+            FireStoreClient().updateFirebaseMessagingToken(token, user.value!!.uid)
+        }
     }
-
 }
