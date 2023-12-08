@@ -67,4 +67,31 @@ class RecommendationsViewModelTest {
         // Verify the updated state
         TestCase.assertEquals(true, viewModel.predefinedCategories.value.size == 3)
     }
+
+    @Test
+    fun getInterestSurvey_returns200() {
+        val viewModel =
+            RecommendationsViewModel(repository = repository)
+
+        // Verify the updated state
+        TestCase.assertEquals(0, viewModel.isInterestSurveyFilled(userId = "abc"))
+    }
+
+    @Test
+    fun storeInterestSurvey_correctNumberOfKeywordsAndCategories_returns200() {
+        val viewModel =
+            RecommendationsViewModel(repository = repository)
+
+        var statusCode =0
+        // Verify the initial state
+        TestCase.assertEquals(statusCode, viewModel.storeInterestSurvey(userId = "abc", keywords = emptyList(), categories = emptyList()))
+
+        composeTestRule.runOnIdle {
+          statusCode =  viewModel.storeInterestSurvey(userId = "abc", keywords = listOf("abc","def","ghi"), categories = listOf("abc","def","ghi"))
+        }
+        composeTestRule.waitForIdle()
+
+        // Verify the updated state
+        TestCase.assertEquals(200, viewModel.isInterestSurveyFilled(userId = "abc"))
+    }
 }

@@ -150,6 +150,14 @@ type Recommendations {
   result: [Recommendation]
 }
 
+type InterestSurvey {
+  user: User
+
+  keywords: [String]
+
+  categories: [String]
+}
+
 type EventResponse {
   result: Event
 
@@ -192,6 +200,12 @@ type RecommendationsResponse {
   status: Status
 }
 
+type InterestSurveyResponse {
+  result: InterestSurvey
+
+  status: Status
+}
+
 type Query {
   """
   All arguments are optional filters to apply.
@@ -213,6 +227,8 @@ type Query {
   finishedJoinedEvents(userId: String): EventsResponse
 
   recommendations(userId: String!, limit: Int): RecommendationsResponse
+
+  interestSurvey(userId: String!): InterestSurveyResponse
 }
 
 type Mutation {
@@ -227,6 +243,8 @@ type Mutation {
   createEvent(title: String!, startDate: String!, endDate: String!, createdDate: String!, lastUpdateDate: String, isPrivate: Boolean!, adultsOnly: Boolean!, isPaid: Boolean!, host: userInput!, maxNumberOfAttendees: Int!, url: String, description: String, location: String!, city: String!, geoLocation: geoLocationInput!, category: String!, keywords: [String!]): EventResponse
 
   createReview(rate: Float!, reviewerId: String!, eventId: Int!, reviewDate: String!): ReviewResponse
+
+  storeInterestSurvey(userId: String!, keywords: [String]!, categories: [String]!): InterestSurveyResponse
 }
 
 """

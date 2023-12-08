@@ -11,14 +11,17 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.GetInterestSurveyQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetRecommendationsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.StoreInterestSurveyMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.GeoLocationInput
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.UserInput
@@ -325,5 +328,42 @@ class EventRepository : IEventRepository {
         } ?: emptyList()
     }
 
+    override suspend fun getInterestSurvey(userId: String): Status {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.query(GetInterestSurveyQuery(userId = userId)).execute()
+        Log.d(
+            "ApolloEventClient",
+            "GetInterestSurvey: ${response.data?.interestSurvey}"
+        )
+        return Status(
+            message = response.data?.interestSurvey?.status?.message!!,
+            code = response.data?.interestSurvey?.status?.code!!
+        )
+    }
+
+    override suspend fun storeInterestSurvey(
+        userId: String,
+        keywords: List<String>,
+        categories: List<String>
+    ): Status {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.mutation(StoreInterestSurveyMutation(
+            userId = userId,
+            keywords = keywords,
+            categories = categories
+        )).execute()
+        Log.d(
+            "ApolloEventClient",
+            "StoreInterestSurvey: ${response.data?.storeInterestSurvey}"
+        )
+        return Status(
+            message = response.data?.storeInterestSurvey?.status?.message!!,
+            code = response.data?.storeInterestSurvey?.status?.code!!
+        )
+    }
 
 }
