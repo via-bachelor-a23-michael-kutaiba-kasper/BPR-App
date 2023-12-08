@@ -46,10 +46,10 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Loa
 @ExperimentalLayoutApi
 @Composable
 fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: NavController) {
-    val predefinedKeywords = viewModel.predefinedKeywords.value
-    val predefinedCategories = viewModel.predefinedCategories.value
+    val predefinedKeywords by viewModel.predefinedKeywords.collectAsState(emptyList())
+    val predefinedCategories by viewModel.predefinedCategories.collectAsState(emptyList())
     var selectedKeywords = viewModel.selectedKeywords.value
-    var selectedCategories = viewModel.selectedCategory.value
+    var selectedCategories = viewModel.selectedCategories.value
     val isLoading by viewModel.isLoading
     val user = viewModel.user
     val context = LocalContext.current

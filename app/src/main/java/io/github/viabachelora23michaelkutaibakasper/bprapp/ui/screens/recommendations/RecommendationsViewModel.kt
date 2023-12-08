@@ -20,31 +20,25 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     private val _isSurveyFilled = MutableStateFlow(false)
     val isSurveyFilled = _isSurveyFilled.asStateFlow()
     var user = mutableStateOf(Firebase.auth.currentUser)
-    var predefinedKeywords = mutableStateOf(emptyList<String>())
-    var predefinedCategories = mutableStateOf(emptyList<String>())
-    private var _keywords = mutableStateOf(emptyList<String>())
-    private var _categories = mutableStateOf(emptyList<String>())
-    private val firestoreClient = FireStoreClient()
+    private var _predefinedKeywords = MutableStateFlow(emptyList<String>())
+    val predefinedKeywords = _predefinedKeywords.asStateFlow()
+    private var _predefinedCategories = MutableStateFlow(emptyList<String>())
+    val predefinedCategories = _predefinedCategories.asStateFlow()
     val isLoading = mutableStateOf(false)
     val errorFetchingEvents = mutableStateOf(false)
     private val _recommendationsList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     val recommendationsList = _recommendationsList.asStateFlow()
+    val selectedKeywords = mutableStateOf(emptyList<String>())
+    val selectedCategories = mutableStateOf(emptyList<String>())
 
-    /* fun setSurveyFilled(hostId: String) {
-         isSurveyFilled.value = firestoreClient.SetSurveyFilled(hostId)
-     }*/
 
-    val selectedKeywords: State<List<String>> get() = _keywords
-    val selectedCategory: State<List<String>> get() = _categories
-
-    fun setKeywords(newKeywords: List<String>): List<String> {
-        _keywords.value = newKeywords
-        return _keywords.value
+    fun setCategories(categories: List<String>):List<String> {
+        selectedCategories.value = categories
+        return selectedCategories.value
     }
-
-    fun setCategories(newCategories: List<String>): List<String> {
-        _categories.value = newCategories
-        return _categories.value
+    fun setKeywords(keywords: List<String>):List<String> {
+        selectedKeywords.value = keywords
+        return selectedKeywords.value
     }
 
     init {
@@ -53,18 +47,11 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         getCategories()
     }
 
-    /* private fun isSurveyFilledForUser(userId: String): Boolean {
-         viewModelScope.launch {
-             isSurveyFilled.value = firestoreClient.isSurveyFilledForUser(userId)
-         }
-         return isSurveyFilled.value
-     }*/
-
     fun getKeywords(): List<String> {
         viewModelScope.launch {
             try {
                 val keywords = eventRepository.getKeywords()
-                predefinedKeywords.value = keywords
+                _predefinedKeywords.value = keywords
                 Log.d("RecommendationsViewModel", "getKeywords: $keywords")
             } catch (e: Exception) {
                 Log.d("RecommendationsViewModel", "failed to getKeywords: ${e.message}")
@@ -77,7 +64,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         viewModelScope.launch {
             try {
                 val categories = eventRepository.getCategories()
-                predefinedCategories.value = categories
+                _predefinedCategories.value = categories
                 Log.d("RecommendationsViewModel", "failed to getCategories: $categories")
             } catch (e: Exception) {
                 Log.d("RecommendationsViewModel", "failed to getCategories: ${e.message}")
