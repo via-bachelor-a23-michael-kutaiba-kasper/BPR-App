@@ -41,13 +41,6 @@ data class Status(
 )
 
 
-data class User(
-    var displayName: String,
-    var userId: String,
-    var photoUrl: Uri?,
-    var creationDate: LocalDateTime?,
-    var lastSeenOnline: LocalDateTime?
-)
 
 data class Location(
     var city: String?,
