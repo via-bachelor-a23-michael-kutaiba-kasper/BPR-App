@@ -35,6 +35,11 @@ data class MinimalEvent(
     val host: User
 )
 
+data class Status(
+    val message: String,
+    val code: Int
+)
+
 
 data class User(
     var displayName: String,
