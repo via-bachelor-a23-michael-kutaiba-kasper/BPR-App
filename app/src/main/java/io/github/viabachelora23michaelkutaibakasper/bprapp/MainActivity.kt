@@ -8,23 +8,23 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -37,9 +37,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -49,6 +51,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.compose.AppTheme
+import com.exyte.animatednavbar.AnimatedNavigationBar
+import com.exyte.animatednavbar.animation.balltrajectory.Straight
+import com.exyte.animatednavbar.animation.indendshape.Height
+import com.exyte.animatednavbar.utils.noRippleClickable
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
@@ -143,7 +149,7 @@ class MainActivity : ComponentActivity() {
                     val navController: NavHostController = rememberNavController()
                     val scope = rememberCoroutineScope()
                     val snackbarHostState = remember { SnackbarHostState() }
-
+                    var selectedIndex = remember { mutableIntStateOf(2) }
 
                     Scaffold(snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
@@ -158,65 +164,107 @@ class MainActivity : ComponentActivity() {
                             Text("VibeVerse")
                         })
                     }, bottomBar = {
-                        val selectedIndex = remember { mutableIntStateOf(0) }
-                        NavigationBar(contentColor = MaterialTheme.colorScheme.secondary,
-                            content = {
-                                val isDarkTheme = isSystemInDarkTheme()
-                                NavigationBarItem(label = { Text("Home") },
-                                    selected = (selectedIndex.intValue == 0),
-                                    onClick = {
-                                        selectedIndex.intValue = 0;
-                                        navController.navigate(BottomNavigationScreens.Map.name)
+                        AnimatedNavigationBar(
+                            selectedIndex = selectedIndex.value,
+                            modifier = Modifier
+                                .height(68.dp),
+
+                            ballAnimation = Straight(
+                                tween(400)
+                            ),
+                            indentAnimation = Height(tween(500)),
+                            ballColor = MaterialTheme.colorScheme.primary,
+                            barColor = MaterialTheme.colorScheme.primary
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .noRippleClickable {
+                                        selectedIndex.value = 0
+
                                     },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.LocationOn,
-                                            contentDescription = "Map",
-                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Bottom App icon",
+                                    tint = if (selectedIndex.value == 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.inversePrimary
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .noRippleClickable {
+                                        selectedIndex.value = 1
+                                        navController.navigate(
+                                            BottomNavigationScreens.Recommendations.name
                                         )
-                                    })
-                                NavigationBarItem(label = { Text("Recomm.") },
-                                    selected = (selectedIndex.intValue == 1),
-                                    onClick = {
-                                        selectedIndex.intValue = 1; navController.navigate(
-                                        BottomNavigationScreens.Recommendations.name
-                                    )
                                     },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.ThumbUp,
-                                            contentDescription = "Achievements",
-                                            tint = if (isDarkTheme) Color.White else Color.Black
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.ThumbUp,
+                                    contentDescription = "Bottom App icon",
+                                    tint = if (selectedIndex.value == 1) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.inversePrimary
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .noRippleClickable {
+                                        selectedIndex.value = 2
+                                        navController.navigate(
+                                            BottomNavigationScreens.Map.name
                                         )
-                                    })
-                                NavigationBarItem(label = { Text("Medals") },
-                                    selected = (selectedIndex.intValue == 2),
-                                    onClick = {
-                                        selectedIndex.intValue = 2; navController.navigate(
-                                        BottomNavigationScreens.Achievements.name
-                                    )
                                     },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.Star,
-                                            contentDescription = "Achievements",
-                                            tint = if (isDarkTheme) Color.White else Color.Black
-                                        )
-                                    })
-                                NavigationBarItem(label = { Text("Profile") },
-                                    selected = (selectedIndex.intValue == 3),
-                                    onClick = {
-                                        selectedIndex.intValue = 3;
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    modifier = Modifier.size(36.dp),
+                                    painter = painterResource(id = R.mipmap.globe),
+                                    contentDescription = "Bottom App icon",
+                                    tint = if (selectedIndex.value == 2) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.inversePrimary
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .noRippleClickable {
+                                        selectedIndex.value = 3
+                                        navController.navigate(BottomNavigationScreens.Achievements.name)
+                                    },
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    modifier = Modifier.size(28.dp),
+                                    painter = painterResource(id = R.mipmap.trophy),
+                                    contentDescription = "Bottom App icon",
+                                    tint = if (selectedIndex.value == 3) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.inversePrimary
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .noRippleClickable {
+                                        selectedIndex.value = 4
                                         navController.navigate(BottomNavigationScreens.Profile.name)
                                     },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Filled.Person,
-                                            contentDescription = "Profile",
-                                            tint = if (isDarkTheme) Color.White else Color.Black
-                                        )
-                                    })
-                            })
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.Person,
+                                    contentDescription = "Bottom App icon",
+                                    tint = if (selectedIndex.value == 4) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.inversePrimary
+                                )
+                            }
+
+                        }
+
                     }) { innerPadding ->
 
                         fun showSnackBar() {
