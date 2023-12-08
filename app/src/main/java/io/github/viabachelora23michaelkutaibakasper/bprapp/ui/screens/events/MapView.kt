@@ -1,9 +1,14 @@
-@file:OptIn(MapsComposeExperimentalApi::class)
+@file:OptIn(
+    MapsComposeExperimentalApi::class, ExperimentalFoundationApi::class,
+    ExperimentalMaterial3Api::class
+)
 
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -45,11 +52,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -119,15 +130,17 @@ fun Map(navController: NavController, modifier: Modifier = Modifier, viewModel: 
 }
 
 
+@ExperimentalFoundationApi
 @Composable
 fun EventList(viewModel: MapViewViewModel, navController: NavController) {
     var response by remember { mutableStateOf<List<MinimalEvent>>(emptyList()) }
-
     val events by viewModel.eventList.collectAsState(emptyList())
     val isLoading by viewModel.isLoading
     val errorFetchingEvents by viewModel.errorFetchingEvent
     response = events
     Log.d("eventlist", "events: $response")
+    val groupedEvents = response.groupBy { it.selectedCategory }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     if (isLoading) {
         LoadingScreen()
@@ -166,20 +179,45 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             }
         }
     } else {
-        Button(onClick = {
-            viewModel.getEvents(
-                from = localDateTimeToUTCLocalDateTime(
-                    LocalDateTime.now().minusHours(1)
-                ).toString()
-            )
-        }) {
-            Text(text = "Refresh")
-        }
-        LazyColumn {
-            items(response) { event ->
-                EventListItem(event, navController)
+
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                (viewModel::getEvents)(
+                    localDateTimeToUTCLocalDateTime(
+                        LocalDateTime.now()
+                    ).toString()
+                )
+            },
+            indicator = { state, refreshTrigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = refreshTrigger,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            },
+        ) {
+            LazyColumn {
+                groupedEvents.forEach { (category, events) ->
+                    stickyHeader {
+                        Text(
+                            text = if (category != "Un Assigned") category else "No category",
+                            fontWeight = Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.primary)
+                                .padding(4.dp), textAlign = TextAlign.Center
+                        )
+                    }
+                    items(events) { event ->
+                        EventListItem(event, navController)
+                    }
+                }
             }
         }
+
     }
 }
 
