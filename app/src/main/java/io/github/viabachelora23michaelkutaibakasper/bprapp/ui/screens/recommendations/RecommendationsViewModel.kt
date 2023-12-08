@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class RecommendationsViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
     private val eventRepository = repository
-    val isSurveyFilled = mutableStateOf(false)
+    private val _isSurveyFilled = MutableStateFlow(false)
+    val isSurveyFilled = _isSurveyFilled.asStateFlow()
     var user = mutableStateOf(Firebase.auth.currentUser)
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
@@ -29,9 +30,9 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     private val _recommendationsList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     val recommendationsList = _recommendationsList.asStateFlow()
 
-    fun setSurveyFilled(hostId: String) {
-        isSurveyFilled.value = firestoreClient.SetSurveyFilled(hostId)
-    }
+    /* fun setSurveyFilled(hostId: String) {
+         isSurveyFilled.value = firestoreClient.SetSurveyFilled(hostId)
+     }*/
 
     val selectedKeywords: State<List<String>> get() = _keywords
     val selectedCategory: State<List<String>> get() = _categories
@@ -47,17 +48,17 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     }
 
     init {
-        isSurveyFilledForUser(user.value?.uid ?: "")
+        isInterestSurveyFilled(user.value!!.uid)
         getKeywords()
         getCategories()
     }
 
-    private fun isSurveyFilledForUser(userId: String): Boolean {
-        viewModelScope.launch {
-            isSurveyFilled.value = firestoreClient.isSurveyFilledForUser(userId)
-        }
-        return isSurveyFilled.value
-    }
+    /* private fun isSurveyFilledForUser(userId: String): Boolean {
+         viewModelScope.launch {
+             isSurveyFilled.value = firestoreClient.isSurveyFilledForUser(userId)
+         }
+         return isSurveyFilled.value
+     }*/
 
     fun getKeywords(): List<String> {
         viewModelScope.launch {
@@ -104,6 +105,56 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
                 errorFetchingEvents.value = true
             }
         }
+    }
+
+    fun isInterestSurveyFilled(userId: String): Int {
+        var isFilled: Boolean
+        var statusCode = 0
+        viewModelScope.launch {
+            try {
+                val status = eventRepository.getInterestSurvey(userId = userId)
+                isFilled = status.code == 200
+                _isSurveyFilled.value = isFilled
+                statusCode = status.code
+                Log.d("RecommendationsViewModel", "surveyFilled: $isFilled")
+            } catch (e: Exception) {
+                Log.d("RecommendationsViewModel", "failed to get status of survey: ${e.message}")
+            }
+        }
+        return statusCode
+    }
+
+    fun storeInterestSurvey(
+        userId: String,
+        keywords: List<String>,
+        categories: List<String>
+    ): Int {
+        var statusCode = 0
+        var success: Boolean
+        if (keywords.size == 3 || categories.size == 3) {
+
+            viewModelScope.launch {
+                try {
+                    val status = eventRepository.storeInterestSurvey(
+                        userId = userId,
+                        keywords = keywords,
+                        categories = categories
+                    )
+                    success = status.code == 200
+                    statusCode = status.code
+                    _isSurveyFilled.value = success
+                    Log.d("RecommendationsViewModel", "surveyFilled: $success")
+                    isInterestSurveyFilled(userId)
+                } catch (e: Exception) {
+                    Log.d(
+                        "RecommendationsViewModel",
+                        "failed to get status of survey: ${e.message}"
+                    )
+                }
+            }
+            return statusCode
+        }
+        return statusCode
     }
 
 }
