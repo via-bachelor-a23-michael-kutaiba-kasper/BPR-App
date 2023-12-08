@@ -4,6 +4,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import java.time.LocalDateTime
@@ -240,5 +241,17 @@ class FakeEventRepository : IEventRepository {
                 )
             )
         )
+    }
+
+    override suspend fun getInterestSurvey(userId: String): Status {
+        return Status("Success", 200)
+    }
+
+    override suspend fun storeInterestSurvey(
+        userId: String,
+        keywords: List<String>,
+        categories: List<String>
+    ): Status {
+        return Status("Success", 200)
     }
 }
