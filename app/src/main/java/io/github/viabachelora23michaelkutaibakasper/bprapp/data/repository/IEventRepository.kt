@@ -2,6 +2,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 
 interface IEventRepository {
     suspend fun getEvents(
@@ -22,4 +23,11 @@ interface IEventRepository {
     suspend fun getReviewIds(userId: String): List<Int>
 
     suspend fun getReccommendations(userId: String, numberOfEvents: Int): List<MinimalEvent>
+
+    suspend fun getInterestSurvey(userId: String): Status
+    suspend fun storeInterestSurvey(
+        userId: String,
+        keywords: List<String>,
+        categories: List<String>
+    ): Status
 }
