@@ -46,17 +46,18 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Loa
 @ExperimentalLayoutApi
 @Composable
 fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: NavController) {
-    val predefinedKeywords = viewModel.predefinedKeywords.value
-    val predefinedCategories = viewModel.predefinedCategories.value
+    val predefinedKeywords by viewModel.predefinedKeywords.collectAsState(emptyList())
+    val predefinedCategories by viewModel.predefinedCategories.collectAsState(emptyList())
     var selectedKeywords = viewModel.selectedKeywords.value
-    var selectedCategories = viewModel.selectedCategory.value
+    var selectedCategories = viewModel.selectedCategories.value
     val isLoading by viewModel.isLoading
     val user = viewModel.user
     val context = LocalContext.current
     val response by viewModel.recommendationsList.collectAsState(emptyList())
     val errorFetchingEvents by viewModel.errorFetchingEvents
+    val isSurveyFilled by viewModel.isSurveyFilled.collectAsState(false)
 
-    if (viewModel.isSurveyFilled.value) {
+    if (isSurveyFilled) {
         if (isLoading) {
             LoadingScreen()
         } else if (errorFetchingEvents) {
@@ -74,7 +75,7 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "no events :(")
+                Text(text = "Refresh recommendations :)")
                 RefreshRecommendationsButton(viewModel, user)
             }
         } else {
@@ -287,7 +288,11 @@ private fun InterestSurvey(
                         Toast.LENGTH_SHORT
                     ).show();
                 } else {
-                    /*TODO*/
+                    viewModel.storeInterestSurvey(
+                        userId = user.value!!.uid,
+                        keywords = selectedKeywords1,
+                        categories = selectedCategories1
+                    )
                 }
             }, modifier = Modifier
                 .fillMaxWidth()

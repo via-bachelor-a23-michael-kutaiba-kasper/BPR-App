@@ -215,3 +215,20 @@ query GetRecommendations($userId: String!, $limit: Int) {
         }
     }
 }
+
+query GetInterestSurvey($userId: String!) {
+    interestSurvey(userId: $userId) {
+        status {
+            code
+            message
+        }
+    }
+}
+mutation StoreInterestSurvey($userId: String!, $keywords: [String]!, $categories: [String]!) {
+    storeInterestSurvey(userId: $userId, keywords: $keywords, categories: $categories) {
+        status {
+            code
+            message
+        }
+    }
+}
