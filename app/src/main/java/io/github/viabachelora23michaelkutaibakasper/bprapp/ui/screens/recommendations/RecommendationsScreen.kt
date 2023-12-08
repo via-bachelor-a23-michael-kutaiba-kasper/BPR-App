@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -38,6 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseUser
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.EventListItem
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
@@ -56,7 +60,7 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
     val response by viewModel.recommendationsList.collectAsState(emptyList())
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val isSurveyFilled by viewModel.isSurveyFilled.collectAsState(false)
-
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     if (isSurveyFilled) {
         if (isLoading) {
             LoadingScreen()
@@ -97,10 +101,27 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center
                 )
-                RefreshRecommendationsButton(viewModel, user)
-                LazyColumn {
-                    items(response) { event ->
-                        EventListItem(event, navController)
+                SwipeRefresh(
+                    state = swipeRefreshState,
+                    onRefresh = {
+                        (viewModel::getRecommendations)(
+                            user.value?.uid ?: "",
+                            5
+                        )
+                    },
+                    indicator = { state, refreshTrigger ->
+                        SwipeRefreshIndicator(
+                            state = state,
+                            refreshTriggerDistance = refreshTrigger,
+                            backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                ) {
+                    LazyColumn {
+                        items(response) { event ->
+                            EventListItem(event, navController)
+                        }
                     }
                 }
             }
