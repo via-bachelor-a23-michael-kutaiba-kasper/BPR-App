@@ -80,6 +80,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
                 invalidJoin.value = false
                 eventRepository.joinEvent(eventId, userId)
                 Log.d("EventDetailsViewmodel", "joined event: $eventId")
+                getEvent(eventId)
             } catch (e: Exception) {
                 Log.d("EventDetailsViewmodel", "failed to join event: ${e.message}")
             }
