@@ -18,6 +18,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.StoreInterestSurveyMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -76,7 +77,7 @@ class EventRepository : IEventRepository {
                             it1
                         )
                     }
-                )
+                ), numberOfAttendees = it.attendees?.size
             )
         } ?: emptyList()
     }
@@ -236,7 +237,8 @@ class EventRepository : IEventRepository {
                             it1
                         )
                     }
-                )
+                ),
+                numberOfAttendees = null
             )
         } ?: emptyList()
     }
@@ -263,7 +265,7 @@ class EventRepository : IEventRepository {
         return response.data?.createReview?.result?.id!!
     }
 
-    override suspend fun getReviewIds(userId: String): List<Int> {
+    override suspend fun getReviewIds(userId: String): List<EventRating> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
@@ -274,7 +276,12 @@ class EventRepository : IEventRepository {
             "ApolloEventClient",
             "getReviewIds: ${response.data?.reviewsByUser?.result}"
         )
-        return response.data?.reviewsByUser?.result?.map { it?.eventId!! } ?: emptyList()
+        return response.data?.reviewsByUser?.result?.map {
+            EventRating(
+                eventId = it?.eventId!!,
+                rating = it.rate!!.toFloat()
+            )
+        } ?: emptyList()
     }
 
     override suspend fun getReccommendations(
@@ -323,7 +330,7 @@ class EventRepository : IEventRepository {
                             it1
                         )
                     }
-                )
+                ), numberOfAttendees = null
             )
         } ?: emptyList()
     }
@@ -351,11 +358,13 @@ class EventRepository : IEventRepository {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
-        val response = apolloClient.mutation(StoreInterestSurveyMutation(
-            userId = userId,
-            keywords = keywords,
-            categories = categories
-        )).execute()
+        val response = apolloClient.mutation(
+            StoreInterestSurveyMutation(
+                userId = userId,
+                keywords = keywords,
+                categories = categories
+            )
+        ).execute()
         Log.d(
             "ApolloEventClient",
             "StoreInterestSurvey: ${response.data?.storeInterestSurvey}"

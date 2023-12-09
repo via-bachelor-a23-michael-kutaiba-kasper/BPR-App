@@ -72,6 +72,9 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
             title
             startDate
             endDate
+            attendees {
+                userId
+            }
             isPaid
             description
             url
@@ -153,6 +156,7 @@ query ReviewsByUser($userId: String) {
     reviewsByUser(userId: $userId) {
         result {
             eventId
+            rate
         }
     }
 }

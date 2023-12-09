@@ -449,7 +449,7 @@ fun GreetingPreview() {
                     photoUrl = null,
                     creationDate = LocalDateTime.now(),
                     lastSeenOnline = LocalDateTime.now()
-                )
+                ), numberOfAttendees = null
             ), navController = NavController(LocalContext.current)
         )
     }
