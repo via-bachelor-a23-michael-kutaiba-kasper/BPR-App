@@ -166,7 +166,6 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
         }
         Card(
             modifier = AchievementModifier,
-            border = BorderStroke(1.dp, Color.Black),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
@@ -214,7 +213,7 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                     }
 
                 } else {
-                    Text(text = "Unlocked: 20/12/2023")
+                    Text(text = "Unlock: 20/12/2023")
                 }
                 Text(text = "Points: ${achievement.points}")
                 Text(text = "Description: ${achievement.description}")
@@ -316,7 +315,7 @@ fun AchievementCard(
                         )
                     }
                 } else {
-                    Text(text = "Unlocked: 20/12/2023",modifier = Modifier.padding(12.dp))
+                    Text(text = "Unlock: 20/12/2023",modifier = Modifier.padding(12.dp))
                 }
 
             }

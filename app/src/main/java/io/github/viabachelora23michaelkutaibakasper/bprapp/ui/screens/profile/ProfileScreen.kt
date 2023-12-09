@@ -421,20 +421,24 @@ private fun FinishedJoinedEvents(
     Column(modifier = Modifier
         .fillMaxWidth()
         .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+        if (event.eventId !in reviewIds.map { it.eventId }) {
+
+            Button(onClick = {
+                currentEventId.value = event.eventId
+                openDialog.value = true
+            }) {
+                Text(text = "Rate the event")
+
+            }
+        }
+        else {
+            Text(text = "You have already rated this event with ${reviewIds.find { it.eventId == event.eventId }?.rating} stars")
+        }
         Row(
             Modifier.padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (event.eventId !in reviewIds.map { it.eventId }) {
 
-                Button(onClick = {
-                    currentEventId.value = event.eventId
-                    openDialog.value = true
-                }) {
-                    Text(text = "Rate the event")
-
-                }
-            }
 
             Column(
                 verticalArrangement = Arrangement.Center,
