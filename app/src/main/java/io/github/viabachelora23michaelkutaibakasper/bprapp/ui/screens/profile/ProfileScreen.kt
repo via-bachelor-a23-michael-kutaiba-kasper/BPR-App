@@ -78,6 +78,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRati
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
@@ -107,7 +108,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
         viewModel.user.value = result.user
-
+        NotificationClient().onNewToken(NotificationClient().getToken())
     }, onAuthError = {
         viewModel.user.value = null
     })
@@ -430,8 +431,7 @@ private fun FinishedJoinedEvents(
                 Text(text = "Rate the event")
 
             }
-        }
-        else {
+        } else {
             Text(text = "You have already rated this event with ${reviewIds.find { it.eventId == event.eventId }?.rating} stars")
         }
         Row(
