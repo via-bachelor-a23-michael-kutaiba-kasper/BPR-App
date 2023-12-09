@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain
 
 import android.net.Uri
+import android.provider.CalendarContract.Attendees
 import java.time.LocalDateTime
 
 data class Event(
@@ -28,6 +29,7 @@ data class MinimalEvent(
     val selectedStartDateTime: LocalDateTime,
     val selectedEndDateTime: LocalDateTime?,
     val eventId: Int,
+    val numberOfAttendees: Int?,
     val description: String?,
     val selectedCategory: String,
     val photos: List<String?>?,
@@ -38,6 +40,11 @@ data class MinimalEvent(
 data class Status(
     val message: String,
     val code: Int
+)
+
+data class EventRating(
+    val eventId: Int,
+    val rating: Float
 )
 
 

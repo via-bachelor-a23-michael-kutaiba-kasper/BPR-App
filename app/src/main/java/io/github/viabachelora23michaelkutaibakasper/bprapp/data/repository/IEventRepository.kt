@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 
@@ -20,7 +21,7 @@ interface IEventRepository {
 
     suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent>
     suspend fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String): Int
-    suspend fun getReviewIds(userId: String): List<Int>
+    suspend fun getReviewIds(userId: String): List<EventRating>
 
     suspend fun getReccommendations(userId: String, numberOfEvents: Int): List<MinimalEvent>
 

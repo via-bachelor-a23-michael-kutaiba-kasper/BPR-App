@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
@@ -19,17 +20,21 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     private val eventRepository: IEventRepository = repository
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
-    private val _reviewIds = MutableStateFlow<List<Int>>(emptyList())
+    private val _reviewIds = MutableStateFlow<List<EventRating>>(emptyList())
     val eventList = _eventList.asStateFlow()
     val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
     val reviewIds = _reviewIds.asStateFlow()
     val isLoading = mutableStateOf(false)
+    private val _highestRatedCategory = MutableStateFlow("")
+    val highestRatedCategory = _highestRatedCategory.asStateFlow()
     val reviewCreated = mutableStateOf(false)
     var user = mutableStateOf(Firebase.auth.currentUser)
     val errorFetchingEvents = mutableStateOf(false)
 
 
     fun allOfThem() {
+        if (user.value == null)
+            return
 
         getEvents(hostId = user.value!!.uid, includePrivate = true)
         getReviewIds(hostId = user.value!!.uid)
@@ -37,8 +42,41 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
 
     }
 
+    data class EventWithCategory(
+        val eventId: Int,
+        val rating: Float,
+        val category: String
+    )
 
-    fun getEvents(hostId: String, includePrivate: Boolean? = null) {
+    fun getFavoriteCategory() {
+        val newList = mutableListOf<EventWithCategory>()
+        for (event in _finishedJoinedList.value) {
+            for (review in _reviewIds.value) {
+                if (event.eventId == review.eventId) {
+                    newList.add(
+                        EventWithCategory(
+                            event.eventId,
+                            review.rating,
+                            event.selectedCategory
+                        )
+                    )
+                }
+            }
+        }
+        val categoryAverageRatings = newList
+            .groupBy { it.category }
+            .mapValues { (_, events) ->
+                events.map { it.rating }.average()
+            }
+
+        val categoryWithHighestAverageRating = categoryAverageRatings.maxByOrNull { it.value }
+
+        _highestRatedCategory.value = categoryWithHighestAverageRating?.key ?: ""
+        Log.d("profileviewmodel", "getFavoriteCategory: ${_highestRatedCategory.value}")
+    }
+
+
+    private fun getEvents(hostId: String, includePrivate: Boolean? = null) {
         viewModelScope.launch {
             errorFetchingEvents.value = false
             try {
@@ -61,6 +99,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
             try {
                 val events = eventRepository.getFinishedJoinedEvents(userId)
                 _finishedJoinedList.value = events
+                getFavoriteCategory()
                 Log.d("profileviewmodel", "getevents: $events")
 
             } catch (e: Exception) {

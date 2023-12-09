@@ -31,6 +31,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,7 +62,7 @@ import kotlin.math.absoluteValue
 @ExperimentalFoundationApi
 @Composable
 fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsViewModel, param: Int) {
-    val event = viewModel.event.value
+    val event by viewModel.event.collectAsState()
     val isLoading by viewModel.isLoading
     Log.d("eventDetailsScreen", "event: $event")
     val user by remember { mutableStateOf(Firebase.auth.currentUser) }
