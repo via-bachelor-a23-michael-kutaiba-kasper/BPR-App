@@ -1,14 +1,11 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements
 
-import android.graphics.BlurMaskFilter
-import android.graphics.Paint
-import android.graphics.Typeface.NORMAL
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,17 +26,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -50,14 +42,24 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achieveme
 
 @Composable
 fun AchievementCard(achievement: Achievement) {
-    Column(modifier = Modifier.fillMaxSize().padding(8.dp).clip(RoundedCornerShape(16.dp))) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Cyan).shadow(
-            elevation = 4.dp, shape = RoundedCornerShape(4.dp)
-            ),contentAlignment = Alignment.Center)
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 12.dp
+        ),
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Cyan),
+            contentAlignment = Alignment.Center
+        )
         {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth().fillMaxHeight(0.8f),
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
@@ -97,10 +99,62 @@ fun AchievementCard(achievement: Achievement) {
 @Composable
 fun AchievementsScreen(viewModel: AchievementsViewModel) {
 
+
+    val achievements = listOf(
+        Achievement(
+            title = "Music Maestro",
+            description = "Host 5 music events",
+            points = 10,
+            id = 1
+        ),
+        Achievement(
+            title = "Athlete",
+            description = "Host 5 sport related events",
+            points = 20,
+            id = 1
+        ), Achievement(
+            title = "Music Maestro",
+            description = "Host 5 music events",
+            points = 10,
+            id = 1
+        ),
+        Achievement(
+            title = "Athlete",
+            description = "Host 5 sport related events",
+            points = 20,
+            id = 1
+        )
+    )
+    LazyVerticalGrid(columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
+        content = {
+
+            item(span = { GridItemSpan(2) }) {
+                LevelAndExperiencePart()
+            }
+            item (span = { GridItemSpan(2) }) {
+                Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Achievements",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Start
+                    )
+                }
+            }
+            items(achievements.size) {
+                AchievementCard(achievement = achievements[it])
+            }
+        })
+}
+
+@Composable
+private fun LevelAndExperiencePart() {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
@@ -170,49 +224,6 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
                 }
 
             }
-        }
-        Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Achievements",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Start
-            )
-            val achievements = listOf(
-                Achievement(
-                    title = "Music Maestro",
-                    description = "Host 5 music events",
-                    points = 10,
-                    id = 1
-                ),
-                Achievement(
-                    title = "Athlete",
-                    description = "Host 5 sport related events",
-                    points = 20,
-                    id = 1
-                ), Achievement(
-                    title = "Music Maestro",
-                    description = "Host 5 music events",
-                    points = 10,
-                    id = 1
-                ),
-                Achievement(
-                    title = "Athlete",
-                    description = "Host 5 sport related events",
-                    points = 20,
-                    id = 1
-                )
-            )
-            Column(modifier = Modifier.height(880.dp)) {
-                LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)
-                    , content = {
-
-                    items(achievements.size) {
-                        AchievementCard(achievement = achievements[it])
-                    }
-                })
-            }
-
         }
     }
 }

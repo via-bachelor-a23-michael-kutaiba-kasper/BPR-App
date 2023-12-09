@@ -190,13 +190,10 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                             )
                         }
                     }
-
                     when (selectedIndex.intValue) {
                         createdEvents -> {
                             CreatedEvents(events, navController)
-
                         }
-
                         finishedJoinedEvents -> {
                             FinishedJoinedEvents(
                                 participatedEvents,
