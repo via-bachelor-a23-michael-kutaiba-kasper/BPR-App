@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile
 
 import android.util.Log
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -56,6 +58,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -71,6 +77,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.generateRandomColor
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import java.time.LocalDateTime
 
@@ -194,6 +201,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         createdEvents -> {
                             CreatedEvents(events, navController)
                         }
+
                         finishedJoinedEvents -> {
                             FinishedJoinedEvents(
                                 participatedEvents,
@@ -208,6 +216,11 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
 
 
             }
+
+
+
+
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
@@ -216,6 +229,8 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             }) {
                 Text(text = "Sign out")
             }
+
+
 
             if (openDialog.value) {
                 Dialog(onDismissRequest = { openDialog.value = false }) {
@@ -305,7 +320,7 @@ private fun FinishedJoinedEvents(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp)
+            .height(500.dp)
             .padding(8.dp)
     ) {
         LazyColumn {
@@ -365,6 +380,82 @@ private fun FinishedJoinedEvents(
                 }
                 HorizontalDivider()
             }
+            if (participatedEvents.isNotEmpty()) {
+                item {
+                    PiechartOfEvents(participatedEvents,"Category participations")
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>,message: String) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        val categories = participatedEvents
+            .groupingBy { it.selectedCategory }
+            .eachCount().map { (value, count) ->
+                Category(name = value, count = count)
+            }
+        Text(text = "Statistics", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = message,Modifier.padding(8.dp),fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            //here
+            PieChart(
+                pieChartData = PieChartData(
+                    //create a list of slices from the categories
+                    slices = categories.map { category ->
+                        PieChartData.Slice(
+                            value = category.count.toFloat(),
+                            color = category.color,
+                        )
+                    }
+                ),
+                modifier = Modifier
+                    .size(200.dp)
+                    .align(Alignment.CenterHorizontally),
+                animation = simpleChartAnimation(),
+                sliceDrawer = SimpleSliceDrawer(sliceThickness = 100f)
+            )
+        }
+
+
+        //display each category and its color and count in a row
+        categories.forEach { category ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
+            ) {
+                Canvas(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(8.dp),
+                    onDraw = {
+                        drawCircle(category.color, radius = 20f)
+                    }
+                )
+                Text(
+                    text = category.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                )
+                Text(
+                    text = category.count.toString(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                )
+
+            }
         }
     }
 }
@@ -377,7 +468,7 @@ private fun CreatedEvents(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp)
+            .height(500.dp)
             .padding(8.dp)
     ) {
         LazyColumn {
@@ -438,10 +529,18 @@ private fun CreatedEvents(
                 HorizontalDivider()
 
             }
+            if (events.isNotEmpty()) {
+                item { PiechartOfEvents(events, "Created event categories") }
+            }
         }
     }
 }
 
+data class Category(
+    val name: String,
+    val color: Color = generateRandomColor(),
+    val count: Int = 0
+)
 
 @Composable
 private fun RefreshButton(
