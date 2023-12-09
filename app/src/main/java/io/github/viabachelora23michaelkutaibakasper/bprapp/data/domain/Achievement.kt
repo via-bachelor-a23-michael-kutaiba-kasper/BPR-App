@@ -6,5 +6,6 @@ data class Achievement(
     val title: String,
     val description: String,
     val points: Int,
-    val id: Int
+    val id: Int,
+    val isAchieved: Boolean
 )
