@@ -1,6 +1,7 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.mocks
 
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -37,8 +38,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
-
+                ), numberOfAttendees = null
             ), MinimalEvent(
                 title = "Run Event3",
                 description = "Run for 5km",
@@ -59,8 +59,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
-
+                ), numberOfAttendees = null
             ), MinimalEvent(
                 title = "Run Event4",
                 description = "Run for 5km",
@@ -80,8 +79,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
-
+                ), numberOfAttendees = null
             )
         )
     }
@@ -154,7 +152,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
+                ), numberOfAttendees = null
             ),
             MinimalEvent(
                 title = "Run Event",
@@ -175,7 +173,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
+                ), numberOfAttendees = null
             )
         )
     }
@@ -189,8 +187,13 @@ class FakeEventRepository : IEventRepository {
         return 1
     }
 
-    override suspend fun getReviewIds(userId: String): List<Int> {
-        return listOf(1, 2, 3, 4, 5)
+    override suspend fun getReviewIds(userId: String): List<EventRating> {
+        return listOf(
+            EventRating(1, 4.5f),
+            EventRating(2, 3.5f),
+            EventRating(3, 2.5f),
+            EventRating(4, 1.5f),
+            EventRating(5, 0.5f))
     }
 
     override suspend fun getReccommendations(
@@ -217,7 +220,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
+                ), numberOfAttendees = null
             ),
             MinimalEvent(
                 title = "Run Event",
@@ -238,7 +241,7 @@ class FakeEventRepository : IEventRepository {
                     null,
                     LocalDateTime.now(),
                     LocalDateTime.now()
-                )
+                ), numberOfAttendees = null
             )
         )
     }
