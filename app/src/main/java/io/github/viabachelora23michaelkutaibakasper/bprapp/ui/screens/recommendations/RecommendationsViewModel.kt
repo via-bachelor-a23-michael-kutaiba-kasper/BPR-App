@@ -1,7 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations
 
 import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.FireStoreClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -32,16 +30,24 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     val selectedCategories = mutableStateOf(emptyList<String>())
 
 
-    fun setCategories(categories: List<String>):List<String> {
+    fun setCategories(categories: List<String>): List<String> {
         selectedCategories.value = categories
         return selectedCategories.value
     }
-    fun setKeywords(keywords: List<String>):List<String> {
+
+    fun setKeywords(keywords: List<String>): List<String> {
         selectedKeywords.value = keywords
         return selectedKeywords.value
     }
 
     init {
+
+        all()
+    }
+
+    private fun all() {
+        if (user.value == null)
+            return
         isInterestSurveyFilled(user.value!!.uid)
         getKeywords()
         getCategories()
