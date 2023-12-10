@@ -80,7 +80,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.Authenti
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.generateRandomColor
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
@@ -133,7 +133,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
         ) {
             if (user == null) {
                 Text("Not logged in")
@@ -176,7 +176,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         message = "Error fetching events :("
                     )
                 } else if (events.isEmpty()) {
-                    RefreshButton(message = "No events created :(")
+                    RefreshButton(message = "Pull down to refresh")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

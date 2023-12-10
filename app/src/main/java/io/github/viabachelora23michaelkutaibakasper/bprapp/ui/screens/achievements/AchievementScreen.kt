@@ -1,6 +1,5 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,8 +53,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.greyScale
-import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
-import java.time.LocalDateTime
 
 
 @Composable
@@ -62,6 +61,7 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
 
     val openDialog = remember { mutableStateOf(false) }
     val isLoading by viewModel.isLoading
+    val user by viewModel.user.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     val selectedAchievement = remember {
         mutableStateOf(
@@ -118,29 +118,47 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
             )
         },
     ) {
-        LazyVerticalGrid(columns = GridCells.Fixed(2),
+        if (user == null) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Please sign in to see recommendations",
+                    textAlign = TextAlign.Center
+                )
+                Button(onClick = { viewModel.getAchievements() }) {
+                    Text(text = "Refresh")
 
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(8.dp),
-            content = {
+                }
+            }
+        } else {
+            LazyVerticalGrid(columns = GridCells.Fixed(2),
 
-                item(span = { GridItemSpan(2) }) {
-                    LevelAndExperiencePart()
-                }
-                item(span = { GridItemSpan(2) }) {
-                    AchievementsHeader()
-                }
-                //sort by isAchieved and list isAchieved last
-                val sortedAchievements = achievements.sortedByDescending { !it.isAchieved }
-                items(sortedAchievements.size) {
-                    AchievementCard(
-                        achievement = sortedAchievements[it],
-                        onClick = { openDialogFun(openDialog, true) },
-                        selectedAchievement = selectedAchievement
-                    )
-                }
-            })
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(8.dp),
+                content = {
+
+                    item(span = { GridItemSpan(2) }) {
+                        LevelAndExperiencePart()
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        AchievementsHeader()
+                    }
+                    //sort by isAchieved and list isAchieved last
+                    val sortedAchievements = achievements.sortedByDescending { !it.isAchieved }
+                    items(sortedAchievements.size) {
+                        AchievementCard(
+                            achievement = sortedAchievements[it],
+                            onClick = { openDialogFun(openDialog, true) },
+                            selectedAchievement = selectedAchievement
+                        )
+                    }
+                })
+        }
     }
     if (openDialog.value) {
 
@@ -151,17 +169,16 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
 @Composable
 private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Achievement) {
     Dialog(onDismissRequest = { onDismissRequest(openDialog, false) }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
         val AchievementModifier = if (achievement.isAchieved) {
             Modifier
                 .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp)
+                .height(400.dp)
+                .padding(8.dp)
         } else {
             Modifier
                 .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp)
+                .height(400.dp)
+                .padding(8.dp)
                 .greyScale()
         }
         Card(
@@ -185,18 +202,18 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                     modifier = Modifier
                         .size(150.dp)
                         .clip(CircleShape)
-                        .padding(16.dp),
+                        .padding(8.dp),
                     contentScale = ContentScale.Crop
                 )
                 Text(
                     text = achievement.title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(8.dp),
                 )
                 if (!achievement.isAchieved) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         LinearProgressIndicator(
@@ -208,7 +225,7 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                         )
                         Text(
                             text = "3 / 5",
-                            fontSize = 14.sp, modifier = Modifier.padding(12.dp)
+                            fontSize = 14.sp, modifier = Modifier.padding(8.dp)
                         )
                     }
 
@@ -216,7 +233,7 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                     Text(text = "Unlock: 20/12/2023")
                 }
                 Text(text = "Points: ${achievement.points}")
-                Text(text = "Description: ${achievement.description}")
+                Text(text = "Description: ${achievement.description}", modifier = Modifier.padding(8.dp))
             }
         }
     }
@@ -315,7 +332,7 @@ fun AchievementCard(
                         )
                     }
                 } else {
-                    Text(text = "Unlock: 20/12/2023",modifier = Modifier.padding(12.dp))
+                    Text(text = "Unlock: 20/12/2023", modifier = Modifier.padding(12.dp))
                 }
 
             }
@@ -338,6 +355,8 @@ private fun AchievementsHeader() {
 
 @Composable
 private fun LevelAndExperiencePart() {
+
+    val progress = remember { mutableStateOf(0.7f) }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -368,17 +387,20 @@ private fun LevelAndExperiencePart() {
                     fontSize = 20.sp
                 )
                 LinearProgressIndicator(
-                    progress = { 0.7f },
+                    progress = { progress.value },
                     strokeCap = StrokeCap.Round,
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth(0.5f)
                 )
-                Text(
-                    text = "Almost there! \uD83D\uDCAA",
-                    modifier = Modifier.padding(12.dp),
-                    fontSize = 16.sp
-                )
+                if (progress.value >= 0.7f) {
+                    Text(
+                        text = "Almost there! \uD83D\uDCAA",
+                        modifier = Modifier.padding(12.dp),
+                        fontSize = 16.sp
+                    )
+                }
+
             }
 
             Column {

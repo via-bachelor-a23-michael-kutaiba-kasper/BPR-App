@@ -48,7 +48,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
             eventId = 1
         )
     )
-    val event = _event.asStateFlow() //expose the stateflow as a public property
+    val event = _event.asStateFlow()
 
     val isLoading = mutableStateOf(false)
 

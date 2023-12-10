@@ -60,7 +60,6 @@ fun UploadImagePlaceHolder() {
     var showImageDialog2 by remember { mutableStateOf(false) }
     var showImageDialog3 by remember { mutableStateOf(false) }
 
-    // Choose from gallery
     val chooseFromGalleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -68,7 +67,6 @@ fun UploadImagePlaceHolder() {
                 showImageDialog = false
             }
         }
-    // Choose from gallery
     val chooseFromGalleryLauncher2 =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -84,15 +82,9 @@ fun UploadImagePlaceHolder() {
             }
         }
 
-    // Take a picture
     val takePictureLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
-                // Process the taken picture
-                // This might involve saving the image to a file and getting its URI
-                // For simplicity, we just set the imageUri to the camera output
-                //save image from camera to file
-                //save image uri from launcher to imageUri
                 val file = File("path/to/image.jpg")
                 imageUri = Uri.fromFile(file)
 
@@ -124,7 +116,6 @@ fun UploadImagePlaceHolder() {
 
                     TextButton(
                         onClick = {
-                            // You can add additional configurations for the camera here
                             takePictureLauncher.launch(null)
                         }
                     ) {
@@ -137,10 +128,8 @@ fun UploadImagePlaceHolder() {
                 }
             },
             confirmButton = {
-                // No confirm button needed
             },
             dismissButton = {
-                // No dismiss button needed
             }
         )
     }
@@ -168,7 +157,6 @@ fun UploadImagePlaceHolder() {
 
                     TextButton(
                         onClick = {
-                            // You can add additional configurations for the camera here
                             takePictureLauncher.launch(null)
                         }
                     ) {
@@ -181,10 +169,8 @@ fun UploadImagePlaceHolder() {
                 }
             },
             confirmButton = {
-                // No confirm button needed
             },
             dismissButton = {
-                // No dismiss button needed
             }
         )
     }
@@ -212,7 +198,6 @@ fun UploadImagePlaceHolder() {
 
                     TextButton(
                         onClick = {
-                            // You can add additional configurations for the camera here
                             takePictureLauncher.launch(null)
                         }
                     ) {
@@ -225,15 +210,11 @@ fun UploadImagePlaceHolder() {
                 }
             },
             confirmButton = {
-                // No confirm button needed
             },
             dismissButton = {
-                // No dismiss button needed
             }
         )
     }
-
-    // Image upload placeholder
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -246,7 +227,6 @@ fun UploadImagePlaceHolder() {
         contentAlignment = Alignment.Center
     ) {
         if (imageUri != null) {
-            // Display chosen image
             AsyncImage(
                 modifier = Modifier
                     .padding(4.dp),
@@ -256,7 +236,6 @@ fun UploadImagePlaceHolder() {
                 contentScale = ContentScale.Crop,
             )
 
-            // Delete button
             IconButton(
                 onClick = {
                     imageUri = null
@@ -269,7 +248,6 @@ fun UploadImagePlaceHolder() {
                 Icon(Icons.Default.Clear, contentDescription = "Delete")
             }
         } else {
-            // Placeholder icon
             Icon(
 
                 Icons.Default.Build,
@@ -291,7 +269,6 @@ fun UploadImagePlaceHolder() {
         )
         {
             if (imageUri2 != null) {
-                // Display chosen image
                 AsyncImage(
                     modifier = Modifier
                         .padding(4.dp),
@@ -300,7 +277,6 @@ fun UploadImagePlaceHolder() {
                     contentDescription = "Avatar Image",
                     contentScale = ContentScale.Crop,
                 )
-                // Delete button
                 IconButton(
                     onClick = {
                         imageUri2 = null
@@ -313,7 +289,6 @@ fun UploadImagePlaceHolder() {
                     Icon(Icons.Default.Clear, contentDescription = "Delete")
                 }
             } else {
-                // Placeholder icon
                 Icon(
                     Icons.Default.Build,
                     contentDescription = "Add photo",
@@ -333,7 +308,6 @@ fun UploadImagePlaceHolder() {
         )
         {
             if (imageUri3 != null) {
-                // Display chosen image
                 AsyncImage(
                     modifier = Modifier
                         .padding(4.dp),
@@ -342,8 +316,6 @@ fun UploadImagePlaceHolder() {
                     contentDescription = "Avatar Image",
                     contentScale = ContentScale.Crop,
                 )
-
-                // Delete button
                 IconButton(
                     onClick = {
                         imageUri3 = null
@@ -356,7 +328,6 @@ fun UploadImagePlaceHolder() {
                     Icon(Icons.Default.Clear, contentDescription = "Delete")
                 }
             } else {
-                // Placeholder icon
                 Icon(
                     Icons.Default.Build,
                     contentDescription = "Add photo",
@@ -389,45 +360,6 @@ fun CreateEventImagesScreen(navController: NavController) {
         )
         UploadImagePlaceHolder()
 
-        /*
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 128.dp),
-            modifier = Modifier.height(500.dp)
-        ) {
-            items(selectedImageUris) { uri ->
-                AsyncImage(
-                    modifier = Modifier
-                        .size(250.dp)
-                        .padding(4.dp),
-                    model = ImageRequest.Builder(LocalContext.current).data(uri)
-                        .crossfade(enable = true).build(),
-                    contentDescription = "Avatar Image",
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Row {
-            Button(onClick = {
-                Toast.makeText(
-                    context,
-                    isPhotoPickerAvailable(context)
-                        .toString(),
-                    Toast.LENGTH_LONG
-                ).show()
-            }) {
-                Text(text = "Availability")
-            }
-
-            Spacer(modifier = Modifier.width(24.dp))
-            Button(onClick = {
-                multiplePhotoPicker.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }) {
-                Text(text = "Pick multiple photo")
-            }
-        }*/
         val context = LocalContext.current
         Button(
             onClick = {
@@ -446,7 +378,6 @@ fun CreateEventImagesScreen(navController: NavController) {
                     "Event creation cancelled",
                     Toast.LENGTH_SHORT
                 ).show();
-                // pop back to the previous screen (the Map)
                 navController.popBackStack()
             },
             modifier = Modifier

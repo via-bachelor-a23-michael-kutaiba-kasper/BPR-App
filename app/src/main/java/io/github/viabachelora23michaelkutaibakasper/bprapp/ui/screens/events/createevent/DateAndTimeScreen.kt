@@ -39,19 +39,18 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.convertUtcMillisecondsToFormattedDate
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.toMillis
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 
 
-fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 @ExperimentalMaterial3Api
 @Composable
 fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: CreateEventViewModel) {
     val selectedStartDateTime = viewModel.selectedStartDateTime.value
     val selectedEndDateTime = viewModel.selectedEndDateTime.value
-
     val startDatePickerState =
         rememberDatePickerState(initialSelectedDateMillis = selectedStartDateTime.toMillis())
     val endDatePickerState =

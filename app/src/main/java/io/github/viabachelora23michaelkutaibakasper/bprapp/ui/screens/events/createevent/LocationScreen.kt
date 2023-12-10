@@ -70,7 +70,6 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
     Places.initializeWithNewPlacesApiEnabled(
         context, getMetaDataValue(context, "com.google.android.geo.API_KEY")!!
     )
-    // Start the autocomplete intent.
     val countries = mutableListOf<String>()
     countries.add("DK")
     val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -102,7 +101,6 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
                     viewModel.setLocation(location)
                 }
             } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                // The user canceled the operation.
                 Log.i(ContentValues.TAG, "User canceled autocomplete")
             }
         }
@@ -160,7 +158,6 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
             }
             Button(
                 onClick = {
-                    // pop back to the previous screen (the Map)
                     navController.popBackStack()
                 },
                 modifier = Modifier

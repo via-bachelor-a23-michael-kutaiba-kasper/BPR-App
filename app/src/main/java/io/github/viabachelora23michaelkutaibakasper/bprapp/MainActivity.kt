@@ -61,8 +61,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomN
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.Map
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.Map
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventImagesScreen
@@ -78,6 +78,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommenda
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -86,11 +88,15 @@ import java.time.LocalDateTime
 class MainActivity : ComponentActivity() {
 
 
-    private val requestPermissionLauncher = registerForActivityResult(
+    private val _usemylocation = MutableStateFlow(false)
+    var usemylocation = _usemylocation.asStateFlow()
+     val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-
+            _usemylocation.value = true
+        } else {
+            _usemylocation.value = false
         }
     }
 
@@ -99,6 +105,7 @@ class MainActivity : ComponentActivity() {
             this, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED -> {
 
+            _usemylocation.value = true
         }
 
         else -> {

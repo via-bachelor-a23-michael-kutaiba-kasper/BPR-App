@@ -398,7 +398,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
 
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
-                model =  if (event.photos?.isEmpty() != true
+                model = if (event.photos?.isEmpty() != true
                 ) {
                     event.photos?.get(0)
                 } else if (event.host.displayName == stringResource(id = R.string.Faengslet)) {

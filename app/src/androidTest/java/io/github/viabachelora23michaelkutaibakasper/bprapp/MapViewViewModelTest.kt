@@ -4,8 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.MapViewViewModel
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.MapViewViewModel
 import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test

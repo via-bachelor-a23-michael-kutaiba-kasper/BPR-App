@@ -86,9 +86,6 @@ fun CreateEventTitleAndDescriptionScreen(
                 .fillMaxWidth()
         )
         {
-
-
-            // Save or submit button
             Button(
                 onClick = {
                     if (viewModel.invalidTitle || viewModel.invalidDescription) {
@@ -115,7 +112,6 @@ fun CreateEventTitleAndDescriptionScreen(
                         "Event creation cancelled",
                         Toast.LENGTH_SHORT
                     ).show();
-                    // pop back to the previous screen (the Map)
                     navController.popBackStack()
                 },
                 modifier = Modifier
