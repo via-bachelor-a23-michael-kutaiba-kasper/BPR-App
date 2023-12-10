@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ import coil.request.ImageRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import kotlin.math.absoluteValue
 
@@ -122,18 +123,24 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                                 )
                             }
                     ) {
+                        Log.d("eventDetailsScreen", "displayname: ${event.host?.displayName}")
                         AsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp),
                             model = if (event.photos?.isEmpty() != true
-                            ) event.photos?.get(page) else if (viewModel.event.value.host?.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
-                                LocalContext.current
-                            )
-                                .data(R.mipmap.faengletlogo).build() else ImageRequest.Builder(
-                                LocalContext.current
-                            )
-                                .data(R.mipmap.no_photo).build(),
+                            ) {
+                                event.photos?.get(0)
+                            } else if (event.host?.displayName == stringResource(id = R.string.Faengslet)) {
+                                ImageRequest.Builder(
+                                    LocalContext.current
+                                )
+                                    .data(R.mipmap.faengletlogo)
+                                    .build()
+                            } else {
+                                ImageRequest.Builder(LocalContext.current)
+                                    .data(R.mipmap.no_photo).build()
+                            },
                             contentDescription = "Avatar Image",
                             contentScale = ContentScale.Fit
                         )
