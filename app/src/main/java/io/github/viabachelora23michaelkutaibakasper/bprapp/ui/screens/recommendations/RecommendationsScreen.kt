@@ -62,7 +62,11 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     if (user == null) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = "Please sign in to see recommendations",
                 textAlign = TextAlign.Center
@@ -98,44 +102,46 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
                 }
             } else {
 
-                    SwipeRefresh(
-                        state = swipeRefreshState,
-                        onRefresh = {
-                            (viewModel::all)(
-                            )
-                        },
-                        indicator = { state, refreshTrigger ->
-                            SwipeRefreshIndicator(
-                                state = state,
-                                refreshTriggerDistance = refreshTrigger,
-                                backgroundColor = MaterialTheme.colorScheme.onPrimary,
-                                contentColor = MaterialTheme.colorScheme.primary
-                            )
-                        },
+                SwipeRefresh(
+                    state = swipeRefreshState,
+                    onRefresh = {
+                        (viewModel::all)(
+                        )
+                    },
+                    indicator = { state, refreshTrigger ->
+                        SwipeRefreshIndicator(
+                            state = state,
+                            refreshTriggerDistance = refreshTrigger,
+                            backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        LazyColumn( modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                            item {
-                                Text(
-                                    text = "Recommendations",
-                                    modifier = Modifier.padding(16.dp),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 24.sp,
-                                    textAlign = TextAlign.Center
-                                )
-                                Text(
-                                    text = "These are the events we think you will like the most. Have fun! :)",
-                                    modifier = Modifier.padding(16.dp),
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                            items(response) { event ->
-                                EventListItem(event, navController)
-                            }
+                        item {
+                            Text(
+                                text = "Recommendations",
+                                modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "These are the events we think you will like the most. Have fun! :)",
+                                modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        items(response) { event ->
+                            EventListItem(event, navController)
                         }
                     }
+                }
 
 
             }

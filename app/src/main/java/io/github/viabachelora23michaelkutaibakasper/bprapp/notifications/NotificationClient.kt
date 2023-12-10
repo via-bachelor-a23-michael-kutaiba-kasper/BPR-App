@@ -29,7 +29,7 @@ class NotificationClient() : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d("Firebase notifications", "Refreshed token: $token")
-        if(user.value == null)
+        if (user.value == null)
             return
         FireStoreClient().updateFirebaseMessagingToken(token, user.value!!.uid)
 

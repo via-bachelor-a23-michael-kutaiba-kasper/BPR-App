@@ -61,8 +61,6 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomN
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.Map
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDateAndTimeScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.CreateEventImagesScreen
@@ -72,6 +70,8 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.cre
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.createevent.EventSummaryScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eventdetails.EventDetailsViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.Map
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsScreen
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
     private val _usemylocation = MutableStateFlow(false)
     var usemylocation = _usemylocation.asStateFlow()
-     val requestPermissionLauncher = registerForActivityResult(
+    val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {

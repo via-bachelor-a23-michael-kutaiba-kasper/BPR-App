@@ -1,7 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain
 
 
-
 data class Achievement(
     val title: String,
     val description: String,

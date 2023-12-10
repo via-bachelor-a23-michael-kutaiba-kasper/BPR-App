@@ -233,7 +233,10 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                     Text(text = "Unlock: 20/12/2023")
                 }
                 Text(text = "Points: ${achievement.points}")
-                Text(text = "Description: ${achievement.description}", modifier = Modifier.padding(8.dp))
+                Text(
+                    text = "Description: ${achievement.description}",
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }

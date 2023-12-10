@@ -74,9 +74,6 @@ class EventDetailsViewModelTest {
         }
         composeTestRule.waitForIdle()
 
-        // Verify the updated state
-        //test it does not return anything because it is a suspend function
-        //
 
 
         TestCase.assertEquals(viewModel.joinEvent(2, "123456"  ),Unit)
