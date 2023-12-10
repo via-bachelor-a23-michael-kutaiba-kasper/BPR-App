@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -80,6 +81,7 @@ class GreyScaleModifier : DrawModifier {
     }
 }
 
+fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 fun Modifier.greyScale() = this.then(GreyScaleModifier())
 fun generateRandomColor(): androidx.compose.ui.graphics.Color {
