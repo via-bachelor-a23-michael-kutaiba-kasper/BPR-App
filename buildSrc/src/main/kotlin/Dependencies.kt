@@ -1,6 +1,5 @@
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
-
 fun DependencyHandler.`androidx-core-ktx`(version: String = Versions.ANDROIDX_CORE_KTX) =
     "androidx.core:core-ktx:${version}"
 
@@ -97,4 +96,23 @@ fun DependencyHandler.`android-material`(version: String = Versions.ANDROID_MATE
 
 fun DependencyHandler.`kotlinx-coroutines-test`(version: String = Versions.KOTLINX_COROUTINES_TEST) =
     "org.jetbrains.kotlinx:kotlinx-coroutines-test:${version}"
+
 fun DependencyHandler.`firebase-firestore`() = "com.google.firebase:firebase-firestore"
+fun DependencyHandler.`firebase-messaging`(version: String = Versions.FIREBASE_MESSAGING) =
+    "com.google.firebase:firebase-messaging:${version}"
+
+fun DependencyHandler.charts(version: String = "0.2.4-alpha") =
+    "com.github.tehras:charts:${version}"
+
+fun DependencyHandler.`compose-ratingbar`(version: String = "1.3.4") =
+    "com.github.a914-gowtham:compose-ratingbar:${version}"
+
+fun DependencyHandler.`animated-navigation-bar`(version: String = "1.0.0") =
+    "com.exyte:animated-navigation-bar:${version}"
+
+fun DependencyHandler.`swipe-refresh`(version: String = "0.27.0") =
+    "com.google.accompanist:accompanist-swiperefresh:${version}"
+
+fun DependencyHandler.`play-services`(): String {
+    return "com.google.gms:google-services:${Versions.PLAY_SERVICES}"
+}
