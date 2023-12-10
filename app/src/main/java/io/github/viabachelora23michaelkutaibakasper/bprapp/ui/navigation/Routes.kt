@@ -1,6 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation
 
-enum class BottomNavigationScreens() {
+enum class BottomNavigationScreens {
     Map,
     Recommendations,
     Achievements,
@@ -8,7 +8,7 @@ enum class BottomNavigationScreens() {
     EventDetails
 }
 
-enum class CreateEventScreens() {
+enum class CreateEventScreens {
     Title,
     Location,
     DateAndTime,

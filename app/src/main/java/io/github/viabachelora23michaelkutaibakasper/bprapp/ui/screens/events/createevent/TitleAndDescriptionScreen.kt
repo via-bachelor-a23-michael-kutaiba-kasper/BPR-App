@@ -93,7 +93,7 @@ fun CreateEventTitleAndDescriptionScreen(
                             context,
                             "Please fill in title field",
                             Toast.LENGTH_SHORT
-                        ).show();
+                        ).show()
                     } else {
                         navController.navigate(CreateEventScreens.Location.name)
                     }
@@ -111,7 +111,7 @@ fun CreateEventTitleAndDescriptionScreen(
                         context,
                         "Event creation cancelled",
                         Toast.LENGTH_SHORT
-                    ).show();
+                    ).show()
                     navController.popBackStack()
                 },
                 modifier = Modifier

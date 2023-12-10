@@ -90,7 +90,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
             }
         }
     } else {
-        Column() {
+        Column {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -303,7 +303,7 @@ private fun AttendeesSection(viewModel: EventDetailsViewModel) {
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        if (attendee!!.displayName != null) {
+                        if (attendee?.displayName != null) {
                             Column(
                                 modifier = Modifier.padding(
                                     start = 4.dp,
@@ -312,7 +312,7 @@ private fun AttendeesSection(viewModel: EventDetailsViewModel) {
                                     bottom = 0.dp
                                 )
                             ) {
-                                attendee.displayName?.let {
+                                attendee.displayName.let {
                                     Text(
                                         text = it,
                                         fontWeight = FontWeight.SemiBold

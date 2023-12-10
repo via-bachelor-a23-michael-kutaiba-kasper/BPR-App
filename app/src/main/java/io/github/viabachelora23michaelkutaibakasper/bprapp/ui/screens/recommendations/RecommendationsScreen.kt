@@ -236,7 +236,7 @@ private fun InterestSurvey(
                                                 context,
                                                 "You can only select 3 categories",
                                                 Toast.LENGTH_SHORT
-                                            ).show();
+                                            ).show()
                                             selectedCategories1
                                         } else {
                                             viewModel.setCategories(selectedCategories1 + category)
@@ -296,7 +296,7 @@ private fun InterestSurvey(
                                             context,
                                             "You can only select 3 keywords",
                                             Toast.LENGTH_SHORT
-                                        ).show();
+                                        ).show()
                                         selectedKeywords1
                                     } else {
                                         viewModel.setKeywords(selectedKeywords1 + keyword)
@@ -326,7 +326,7 @@ private fun InterestSurvey(
                         context,
                         "Please select 3 categories and 3 keywords",
                         Toast.LENGTH_SHORT
-                    ).show();
+                    ).show()
                 } else {
                     viewModel.storeInterestSurvey(
                         userId = user!!.uid,

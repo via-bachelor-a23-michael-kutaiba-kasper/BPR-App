@@ -144,7 +144,7 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
                             context,
                             "Please provide a location",
                             Toast.LENGTH_SHORT
-                        ).show();
+                        ).show()
                     } else {
                         navController.navigate(CreateEventScreens.DateAndTime.name)
                     }

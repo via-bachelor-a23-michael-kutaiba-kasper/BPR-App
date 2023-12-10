@@ -73,7 +73,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
         }
     }
 
-    public class EventClusterItem(
+    class EventClusterItem(
         lat: Double,
         lng: Double,
         title: String,
@@ -103,7 +103,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
             return position
         }
 
-        override fun getTitle(): String? {
+        override fun getTitle(): String {
             return title1
         }
 
@@ -112,7 +112,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
             return description.toString()
         }
 
-        override fun getZIndex(): Float? {
+        override fun getZIndex(): Float {
             return 0f
         }
 

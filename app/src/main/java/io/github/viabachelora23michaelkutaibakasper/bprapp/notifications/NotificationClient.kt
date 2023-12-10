@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.FireStoreClient
 
-class NotificationClient() : FirebaseMessagingService() {
+class NotificationClient : FirebaseMessagingService() {
     var user = mutableStateOf(Firebase.auth.currentUser)
 
 

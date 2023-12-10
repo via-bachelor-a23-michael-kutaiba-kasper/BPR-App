@@ -341,9 +341,6 @@ fun UploadImagePlaceHolder() {
 
 @Composable
 fun CreateEventImagesScreen(navController: NavController) {
-    var selectedImageUris by remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -377,7 +374,7 @@ fun CreateEventImagesScreen(navController: NavController) {
                     context,
                     "Event creation cancelled",
                     Toast.LENGTH_SHORT
-                ).show();
+                ).show()
                 navController.popBackStack()
             },
             modifier = Modifier

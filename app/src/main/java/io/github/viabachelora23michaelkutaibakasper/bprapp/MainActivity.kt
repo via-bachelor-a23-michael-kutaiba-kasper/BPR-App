@@ -93,11 +93,7 @@ class MainActivity : ComponentActivity() {
     val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        if (isGranted) {
-            _usemylocation.value = true
-        } else {
-            _usemylocation.value = false
-        }
+        _usemylocation.value = isGranted
     }
 
     private fun askPermissions() = when {
@@ -311,7 +307,6 @@ class MainActivity : ComponentActivity() {
                             startDestination = BottomNavigationScreens.Map.name,
                             modifier = Modifier.padding(innerPadding)
                         ) {
-                            val authentication: IAuthenticationClient = AuthenticationClient()
                             composable(BottomNavigationScreens.Map.name) {
                                 mapViewModel.getEvents(
                                     from = localDateTimeToUTCLocalDateTime(

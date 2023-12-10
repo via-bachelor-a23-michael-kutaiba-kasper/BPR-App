@@ -447,7 +447,7 @@ private fun FinishedJoinedEvents(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Description: ", fontWeight = FontWeight.Bold)
@@ -455,7 +455,7 @@ private fun FinishedJoinedEvents(
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.selectedCategory ?: "No category")
+                    Text(text = event.selectedCategory)
                 }
                 Row {
                     Text(text = "Date: ", fontWeight = FontWeight.Bold)
@@ -584,7 +584,7 @@ private fun CreatedEventsTab(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Description: ", fontWeight = FontWeight.Bold)
@@ -592,7 +592,7 @@ private fun CreatedEventsTab(
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.selectedCategory ?: "No category")
+                    Text(text = event.selectedCategory)
                 }
                 Row {
                     Text(text = "Date: ", fontWeight = FontWeight.Bold)

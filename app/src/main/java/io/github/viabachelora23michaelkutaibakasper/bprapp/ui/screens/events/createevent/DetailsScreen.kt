@@ -226,7 +226,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                                             context,
                                             "You can only select up to 5 keywords",
                                             Toast.LENGTH_SHORT
-                                        ).show();
+                                        ).show()
                                         selectedKeywords
                                     } else {
                                         viewModel.setKeywords(selectedKeywords + keyword)
@@ -279,7 +279,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                             context,
                             "Please select a category and 3-5 keywords",
                             Toast.LENGTH_SHORT
-                        ).show();
+                        ).show()
                     } else {
                         viewModel.setEvent()
                         navController.navigate(CreateEventScreens.EventSummary.name)

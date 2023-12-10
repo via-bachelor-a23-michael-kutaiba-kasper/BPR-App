@@ -368,7 +368,7 @@ private fun ClusterModalItem(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = Bold)
-                    Text(text = event.title1 ?: "No title")
+                    Text(text = event.title1)
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
@@ -421,7 +421,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)) {
                 Row {
                     Text(text = "Title: ", fontWeight = Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Location: ", fontWeight = Bold)
@@ -434,7 +434,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
                     Text(
-                        text = DisplayFormattedTime(event.selectedStartDateTime) ?: "No start date"
+                        text = DisplayFormattedTime(event.selectedStartDateTime)
                     )
                 }
             }

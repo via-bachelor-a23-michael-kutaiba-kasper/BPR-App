@@ -81,7 +81,7 @@ class GreyScaleModifier : DrawModifier {
 fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 fun Modifier.greyScale() = this.then(GreyScaleModifier())
-fun generateRandomColor(): androidx.compose.ui.graphics.Color {
+fun generateRandomColor(): Color {
     val random = Random.Default
     return Color(
         red = random.nextFloat(),

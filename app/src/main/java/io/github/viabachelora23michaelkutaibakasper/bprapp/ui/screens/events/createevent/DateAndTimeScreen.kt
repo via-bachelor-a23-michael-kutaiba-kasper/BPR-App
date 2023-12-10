@@ -56,7 +56,6 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
     val startTimeDialogState = rememberMaterialDialogState()
     val endTimeDialogState = rememberMaterialDialogState()
 
-
     var pickedStartTime by remember {
         mutableStateOf(selectedStartDateTime.toLocalTime())
     }
