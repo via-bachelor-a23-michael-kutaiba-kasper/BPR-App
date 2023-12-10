@@ -136,21 +136,6 @@ query FetchFinishedJoinedEvents($userId: String!) {
     }
 }
 
-mutation CreateReview($rate: Float!, $reviewerId: String!, $eventId: Int!, $reviewDate: String!) {
-    createReview(rate: $rate, reviewerId: $reviewerId, eventId: $eventId, reviewDate: $reviewDate) {
-        result {
-            id
-            rate
-            reviewerId
-            eventId
-            reviewDate
-        }
-        status {
-            code
-            message
-        }
-    }
-}
 
 query ReviewsByUser($userId: String) {
     reviewsByUser(userId: $userId) {
@@ -161,31 +146,7 @@ query ReviewsByUser($userId: String) {
     }
 }
 
-mutation CreateEventMutation($title: String!,$description:String!, $startDate: String!,$keywords:[String!]!,
-    $endDate: String!, $createdDate: String!, $isPrivate: Boolean!, $adultsOnly: Boolean!, $isPaid: Boolean!, $host: userInput!, $maxNumberOfAttendees: Int!, $location: String!, $city: String!, $geoLocation: geoLocationInput!, $category: String!) {
-    createEvent(title: $title,description: $description, startDate: $startDate,keywords:$keywords, endDate: $endDate, createdDate: $createdDate, isPrivate: $isPrivate, adultsOnly: $adultsOnly, isPaid: $isPaid, host: $host, maxNumberOfAttendees: $maxNumberOfAttendees, location: $location, city: $city, geoLocation: $geoLocation, category: $category) {
-        result {
-            id
-        }
-        status {
-            code
-            message
-        }
-    }
-}
 
-
-mutation JoinEvent($eventId: Int!, $userId: String!) {
-    joinEvent(eventId: $eventId, userId: $userId) {
-        result {
-            id
-        }
-        status {
-            code
-            message
-        }
-    }
-}
 
 query GetRecommendations($userId: String!, $limit: Int) {
     recommendations(userId: $userId, limit: $limit) {
@@ -228,11 +189,4 @@ query GetInterestSurvey($userId: String!) {
         }
     }
 }
-mutation StoreInterestSurvey($userId: String!, $keywords: [String]!, $categories: [String]!) {
-    storeInterestSurvey(userId: $userId, keywords: $keywords, categories: $categories) {
-        status {
-            code
-            message
-        }
-    }
-}
+
