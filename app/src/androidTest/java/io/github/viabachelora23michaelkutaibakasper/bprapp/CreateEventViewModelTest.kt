@@ -525,7 +525,6 @@ class CreateEventViewModelTest {
     fun createEvent_EndDateIsEqualToStartDate_DoesNotCreate() {
         val viewModel =
             CreateEventViewModel(repository = repository)
-        //create an event object
         val event = Event(
             title = "Hey",
             description = "Run for 5km",

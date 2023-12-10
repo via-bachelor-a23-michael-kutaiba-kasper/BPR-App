@@ -91,7 +91,7 @@ dependencies {
     implementation(`firebase-auth-ktx`())
     implementation(`play-services-auth`())
     implementation(`android-material`())
-    implementation("com.google.firebase:firebase-messaging:23.3.1")
+    implementation(`firebase-messaging`())
     testImplementation(junit())
     androidTestImplementation(`junit-ext`())
     androidTestImplementation(`espresso-core`())
@@ -113,9 +113,9 @@ dependencies {
     implementation(`google-places`())
     testImplementation(`kotlinx-coroutines-test`())
     implementation(`firebase-firestore`())
-    implementation("com.github.tehras:charts:0.2.4-alpha")
-    implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
-    implementation("com.exyte:animated-navigation-bar:1.0.0")
-    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
+    implementation(charts())
+    implementation(`compose-ratingbar`())
+    implementation(`animated-navigation-bar`())
+    implementation(`swipe-refresh`())
 
 }

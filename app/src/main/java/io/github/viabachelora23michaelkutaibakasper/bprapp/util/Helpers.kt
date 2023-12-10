@@ -9,10 +9,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -62,8 +62,10 @@ fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime
 
 class GreyScaleModifier : DrawModifier {
     override fun ContentDrawScope.draw() {
+
         val saturationMatrix =
             androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.1f) }
+
         val saturationFilter = ColorFilter.colorMatrix(saturationMatrix)
         val paint = Paint().apply {
             colorFilter = saturationFilter
@@ -76,8 +78,10 @@ class GreyScaleModifier : DrawModifier {
     }
 }
 
+fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
 fun Modifier.greyScale() = this.then(GreyScaleModifier())
-fun generateRandomColor(): androidx.compose.ui.graphics.Color {
+fun generateRandomColor(): Color {
     val random = Random.Default
     return Color(
         red = random.nextFloat(),
@@ -86,3 +90,4 @@ fun generateRandomColor(): androidx.compose.ui.graphics.Color {
     )
 
 }
+

@@ -233,7 +233,6 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
 
             viewModelScope.launch {
                 try {
-
                     eventId = eventRepository.createEvent(event = event)
                     eventCreated.value = true
                     createdEventId.value = eventId
@@ -252,7 +251,6 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
             )
         }
         return eventId
-
     }
 
     private fun getKeywords(): List<String> {

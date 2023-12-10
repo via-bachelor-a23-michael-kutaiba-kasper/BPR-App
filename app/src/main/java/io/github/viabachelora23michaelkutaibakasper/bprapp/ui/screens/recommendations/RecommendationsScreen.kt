@@ -25,9 +25,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,9 +38,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseUser
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.EventListItem
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.EventListItem
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 
 
 @ExperimentalLayoutApi
@@ -51,73 +54,110 @@ fun RecommendationsScreen(viewModel: RecommendationsViewModel, navController: Na
     var selectedKeywords = viewModel.selectedKeywords.value
     var selectedCategories = viewModel.selectedCategories.value
     val isLoading by viewModel.isLoading
-    val user = viewModel.user
+    val user by viewModel.user.collectAsState()
     val context = LocalContext.current
     val response by viewModel.recommendationsList.collectAsState(emptyList())
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val isSurveyFilled by viewModel.isSurveyFilled.collectAsState(false)
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    if (isSurveyFilled) {
-        if (isLoading) {
-            LoadingScreen()
-        } else if (errorFetchingEvents) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Error fetching events")
-                RefreshRecommendationsButton(viewModel, user)
-            }
-        } else if (response.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Refresh recommendations :)")
-                RefreshRecommendationsButton(viewModel, user)
-            }
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Recommendations",
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "These are the events we think you will like the most. Have fun! :)",
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center
-                )
-                RefreshRecommendationsButton(viewModel, user)
-                LazyColumn {
-                    items(response) { event ->
-                        EventListItem(event, navController)
-                    }
-                }
-            }
+    if (user == null) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Please sign in to see recommendations",
+                textAlign = TextAlign.Center
+            )
+            Button(onClick = { viewModel.all() }) {
+                Text(text = "Refresh")
 
+            }
         }
 
     } else {
-        InterestSurvey(
-            predefinedCategories,
-            selectedCategories,
-            viewModel,
-            context,
-            predefinedKeywords,
-            selectedKeywords,
-            user
-        )
 
+        if (isSurveyFilled) {
+            if (isLoading) {
+                LoadingScreen()
+            } else if (errorFetchingEvents) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Error fetching events")
+                    RefreshRecommendationsButton(viewModel, user)
+                }
+            } else if (response.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Refresh recommendations :)")
+                    RefreshRecommendationsButton(viewModel, user)
+                }
+            } else {
+
+                SwipeRefresh(
+                    state = swipeRefreshState,
+                    onRefresh = {
+                        (viewModel::all)(
+                        )
+                    },
+                    indicator = { state, refreshTrigger ->
+                        SwipeRefreshIndicator(
+                            state = state,
+                            refreshTriggerDistance = refreshTrigger,
+                            backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        item {
+                            Text(
+                                text = "Recommendations",
+                                modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "These are the events we think you will like the most. Have fun! :)",
+                                modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        items(response) { event ->
+                            EventListItem(event, navController)
+                        }
+                    }
+                }
+
+
+            }
+
+        } else {
+            InterestSurvey(
+                predefinedCategories,
+                selectedCategories,
+                viewModel,
+                context,
+                predefinedKeywords,
+                selectedKeywords,
+                user
+            )
+
+        }
     }
 }
 
@@ -130,7 +170,7 @@ private fun InterestSurvey(
     context: Context,
     predefinedKeywords: List<String>,
     selectedKeywords: List<String>,
-    user: MutableState<FirebaseUser?>
+    user: FirebaseUser?
 ) {
     var selectedCategories1 = selectedCategories
     var selectedKeywords1 = selectedKeywords
@@ -196,7 +236,7 @@ private fun InterestSurvey(
                                                 context,
                                                 "You can only select 3 categories",
                                                 Toast.LENGTH_SHORT
-                                            ).show();
+                                            ).show()
                                             selectedCategories1
                                         } else {
                                             viewModel.setCategories(selectedCategories1 + category)
@@ -256,7 +296,7 @@ private fun InterestSurvey(
                                             context,
                                             "You can only select 3 keywords",
                                             Toast.LENGTH_SHORT
-                                        ).show();
+                                        ).show()
                                         selectedKeywords1
                                     } else {
                                         viewModel.setKeywords(selectedKeywords1 + keyword)
@@ -286,10 +326,10 @@ private fun InterestSurvey(
                         context,
                         "Please select 3 categories and 3 keywords",
                         Toast.LENGTH_SHORT
-                    ).show();
+                    ).show()
                 } else {
                     viewModel.storeInterestSurvey(
-                        userId = user.value!!.uid,
+                        userId = user!!.uid,
                         keywords = selectedKeywords1,
                         categories = selectedCategories1
                     )
@@ -306,11 +346,11 @@ private fun InterestSurvey(
 @Composable
 private fun RefreshRecommendationsButton(
     viewModel: RecommendationsViewModel,
-    user: MutableState<FirebaseUser?>
+    user: FirebaseUser?
 ) {
     Button(onClick = {
         viewModel.getRecommendations(
-            userId = user.value?.uid ?: "",
+            userId = user?.uid ?: "",
             numberOfEvents = 5
         )
     }) {

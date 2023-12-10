@@ -10,7 +10,7 @@ buildscript {
         classpath(`secrets-gradle-plugin`())
         classpath(`build-gradle`())
         classpath(`kotlin-gradle-plugin`())
-        classpath("com.google.gms:google-services:4.4.0")
+        classpath(`play-services`())
     }
 }
 

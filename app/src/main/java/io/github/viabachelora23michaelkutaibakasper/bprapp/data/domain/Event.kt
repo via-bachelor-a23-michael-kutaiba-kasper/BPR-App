@@ -1,7 +1,5 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain
 
-import android.net.Uri
-import android.provider.CalendarContract.Attendees
 import java.time.LocalDateTime
 
 data class Event(
@@ -47,14 +45,6 @@ data class EventRating(
     val rating: Float
 )
 
-
-data class User(
-    var displayName: String,
-    var userId: String,
-    var photoUrl: Uri?,
-    var creationDate: LocalDateTime?,
-    var lastSeenOnline: LocalDateTime?
-)
 
 data class Location(
     var city: String?,

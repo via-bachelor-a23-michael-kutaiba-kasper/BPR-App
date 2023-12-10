@@ -17,7 +17,8 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     private val eventRepository = repository
     private val _isSurveyFilled = MutableStateFlow(false)
     val isSurveyFilled = _isSurveyFilled.asStateFlow()
-    var user = mutableStateOf(Firebase.auth.currentUser)
+    private var _user = MutableStateFlow(Firebase.auth.currentUser)
+    val user = _user.asStateFlow()
     private var _predefinedKeywords = MutableStateFlow(emptyList<String>())
     val predefinedKeywords = _predefinedKeywords.asStateFlow()
     private var _predefinedCategories = MutableStateFlow(emptyList<String>())
@@ -45,12 +46,14 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         all()
     }
 
-    private fun all() {
+    fun all() {
+        _user.value = Firebase.auth.currentUser
         if (user.value == null)
             return
         isInterestSurveyFilled(user.value!!.uid)
         getKeywords()
         getCategories()
+        getRecommendations(userId = user.value!!.uid, numberOfEvents = 5)
     }
 
     fun getKeywords(): List<String> {

@@ -1,16 +1,23 @@
-@file:OptIn(MapsComposeExperimentalApi::class)
+@file:OptIn(
+    MapsComposeExperimentalApi::class, ExperimentalFoundationApi::class,
+    ExperimentalMaterial3Api::class
+)
 
-package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events
+package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -44,12 +52,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -61,6 +74,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
+import io.github.viabachelora23michaelkutaibakasper.bprapp.MainActivity
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -119,15 +133,17 @@ fun Map(navController: NavController, modifier: Modifier = Modifier, viewModel: 
 }
 
 
+@ExperimentalFoundationApi
 @Composable
 fun EventList(viewModel: MapViewViewModel, navController: NavController) {
     var response by remember { mutableStateOf<List<MinimalEvent>>(emptyList()) }
-
     val events by viewModel.eventList.collectAsState(emptyList())
     val isLoading by viewModel.isLoading
     val errorFetchingEvents by viewModel.errorFetchingEvent
     response = events
     Log.d("eventlist", "events: $response")
+    val groupedEvents = response.groupBy { it.selectedCategory }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     if (isLoading) {
         LoadingScreen()
@@ -166,23 +182,49 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             }
         }
     } else {
-        Button(onClick = {
-            viewModel.getEvents(
-                from = localDateTimeToUTCLocalDateTime(
-                    LocalDateTime.now().minusHours(1)
-                ).toString()
-            )
-        }) {
-            Text(text = "Refresh")
-        }
-        LazyColumn {
-            items(response) { event ->
-                EventListItem(event, navController)
+
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                (viewModel::getEvents)(
+                    localDateTimeToUTCLocalDateTime(
+                        LocalDateTime.now()
+                    ).toString()
+                )
+            },
+            indicator = { state, refreshTrigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = refreshTrigger,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            },
+        ) {
+            LazyColumn {
+                groupedEvents.forEach { (category, events) ->
+                    stickyHeader {
+                        Text(
+                            text = if (category != "Un Assigned") category else "No category",
+                            fontWeight = Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.primary)
+                                .padding(4.dp), textAlign = TextAlign.Center
+                        )
+                    }
+                    items(events) { event ->
+                        EventListItem(event, navController)
+                    }
+                }
             }
         }
+
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun MapEvents(
@@ -214,13 +256,18 @@ fun MapEvents(
     }
 
     Box(modifier = Modifier) {
+        val useMyposition by MainActivity().usemylocation.collectAsState()
+
         GoogleMap(
             modifier = Modifier,
             cameraPositionState = cameraPositionState,
             googleMapOptionsFactory = { GoogleMapOptions().mapId(context.getString(R.string.map_id)) },
             uiSettings = uiSettings,
-            properties = MapProperties(
-                isMyLocationEnabled = true
+
+            properties =
+
+            MapProperties(
+                isMyLocationEnabled = useMyposition
             )
         ) {
             Clustering(
@@ -296,12 +343,18 @@ private fun ClusterModalItem(
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host == R.string.fængslet.toString()) ImageRequest.Builder(
-                    LocalContext.current
-                )
-                    .data(R.mipmap.faengletlogo)
-                    .build() else ImageRequest.Builder(LocalContext.current)
-                    .data(R.mipmap.no_photo).build(),
+                ) {
+                    event.photos?.get(0)
+                } else if (event.host == stringResource(id = R.string.Faengslet)) {
+                    ImageRequest.Builder(
+                        LocalContext.current
+                    )
+                        .data(R.mipmap.faengletlogo)
+                        .build()
+                } else {
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(R.mipmap.no_photo).build()
+                },
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(100.dp)
@@ -315,7 +368,7 @@ private fun ClusterModalItem(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = Bold)
-                    Text(text = event.title1 ?: "No title")
+                    Text(text = event.title1)
                 }
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
@@ -346,13 +399,18 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true
-                ) event.photos?.get(0) else if (event.host.displayName == R.string.fængslet.toString()) ImageRequest.Builder(
-                    LocalContext.current
-                )
-                    .data(R.mipmap.faengletlogo)
-                    .build()
-                else ImageRequest.Builder(LocalContext.current)
-                    .data(R.mipmap.no_photo).build(),
+                ) {
+                    event.photos?.get(0)
+                } else if (event.host.displayName == stringResource(id = R.string.Faengslet)) {
+                    ImageRequest.Builder(
+                        LocalContext.current
+                    )
+                        .data(R.mipmap.faengletlogo)
+                        .build()
+                } else {
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(R.mipmap.no_photo).build()
+                },
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(100.dp)
@@ -363,7 +421,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)) {
                 Row {
                     Text(text = "Title: ", fontWeight = Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Location: ", fontWeight = Bold)
@@ -376,7 +434,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
                 Row {
                     Text(text = "Start date: ", fontWeight = Bold)
                     Text(
-                        text = DisplayFormattedTime(event.selectedStartDateTime) ?: "No start date"
+                        text = DisplayFormattedTime(event.selectedStartDateTime)
                     )
                 }
             }

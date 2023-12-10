@@ -78,8 +78,9 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRati
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.LoadingScreen
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.generateRandomColor
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
@@ -107,7 +108,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val errorFetchingEvents by viewModel.errorFetchingEvents
     val launcher = authenticationClient.signIn(onAuthComplete = { result ->
         viewModel.user.value = result.user
-
+        NotificationClient().onNewToken(NotificationClient().getToken())
     }, onAuthError = {
         viewModel.user.value = null
     })
@@ -132,7 +133,8 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             if (user == null) {
                 Text("Not logged in")
@@ -175,7 +177,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         message = "Error fetching events :("
                     )
                 } else if (events.isEmpty()) {
-                    RefreshButton(message = "No events created :(")
+                    RefreshButton(message = "Pull down to refresh")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -421,20 +423,23 @@ private fun FinishedJoinedEvents(
     Column(modifier = Modifier
         .fillMaxWidth()
         .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+        if (event.eventId !in reviewIds.map { it.eventId }) {
+
+            Button(onClick = {
+                currentEventId.value = event.eventId
+                openDialog.value = true
+            }) {
+                Text(text = "Rate the event")
+
+            }
+        } else {
+            Text(text = "You have already rated this event with ${reviewIds.find { it.eventId == event.eventId }?.rating} stars")
+        }
         Row(
             Modifier.padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (event.eventId !in reviewIds.map { it.eventId }) {
 
-                Button(onClick = {
-                    currentEventId.value = event.eventId
-                    openDialog.value = true
-                }) {
-                    Text(text = "Rate the event")
-
-                }
-            }
 
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -442,7 +447,7 @@ private fun FinishedJoinedEvents(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Description: ", fontWeight = FontWeight.Bold)
@@ -450,7 +455,7 @@ private fun FinishedJoinedEvents(
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.selectedCategory ?: "No category")
+                    Text(text = event.selectedCategory)
                 }
                 Row {
                     Text(text = "Date: ", fontWeight = FontWeight.Bold)
@@ -579,7 +584,7 @@ private fun CreatedEventsTab(
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.title ?: "No title")
+                    Text(text = event.title)
                 }
                 Row {
                     Text(text = "Description: ", fontWeight = FontWeight.Bold)
@@ -587,7 +592,7 @@ private fun CreatedEventsTab(
                 }
                 Row {
                     Text(text = "Category: ", fontWeight = FontWeight.Bold)
-                    Text(text = event.selectedCategory ?: "No category")
+                    Text(text = event.selectedCategory)
                 }
                 Row {
                     Text(text = "Date: ", fontWeight = FontWeight.Bold)
