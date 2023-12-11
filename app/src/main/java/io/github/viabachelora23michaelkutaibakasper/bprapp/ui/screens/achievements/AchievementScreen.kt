@@ -57,52 +57,13 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.util.greyScale
 
 @Composable
 fun AchievementsScreen(viewModel: AchievementsViewModel) {
-
-
     val openDialog = remember { mutableStateOf(false) }
     val isLoading by viewModel.isLoading
     val user by viewModel.user.collectAsState()
+    val achievements by viewModel.achievements.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-    val selectedAchievement = remember {
-        mutableStateOf(
-            Achievement(
-                title = "Music Maestro",
-                description = "Host 5 music events",
-                points = 10,
-                id = 1,
-                isAchieved = false
-            )
-        )
-    }
-    val achievements = listOf(
-        Achievement(
-            title = "Music Maestro",
-            description = "Host 5 music events",
-            points = 10,
-            id = 1,
-            isAchieved = true
-        ),
-        Achievement(
-            title = "Athlete",
-            description = "Host 5 sport related events",
-            points = 20,
-            id = 1,
-            isAchieved = false
-        ), Achievement(
-            title = "Music Maestro",
-            description = "Host 5 music events",
-            points = 10,
-            id = 1,
-            isAchieved = false
-        ),
-        Achievement(
-            title = "Athlete",
-            description = "Host 5 sport related events",
-            points = 20,
-            id = 1,
-            isAchieved = true
-        )
-    )
+    val selectedAchievement by viewModel.selectedAchievement.collectAsState()
+
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = {
@@ -154,7 +115,7 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
                         AchievementCard(
                             achievement = sortedAchievements[it],
                             onClick = { openDialogFun(openDialog, true) },
-                            selectedAchievement = selectedAchievement
+                            viewModel = viewModel
                         )
                     }
                 })
@@ -162,7 +123,7 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
     }
     if (openDialog.value) {
 
-        FocusedCardDialog(openDialog, selectedAchievement.value)
+        FocusedCardDialog(openDialog, selectedAchievement)
     }
 }
 
@@ -250,32 +211,24 @@ fun openDialogFun(bool: MutableState<Boolean>, value: Boolean) {
     bool.value = value
 }
 
-fun SetSelectedAchievement(
-    achievement: Achievement,
-    selectedAchievement: MutableState<Achievement>
-) {
-    selectedAchievement.value = achievement
-}
-
 
 @Composable
 fun AchievementCard(
     achievement: Achievement,
-    selectedAchievement: MutableState<Achievement>,
-    onClick: () -> Unit
+    onClick: () -> Unit, viewModel: AchievementsViewModel
 ) {
     val AchievementModifier = if (achievement.isAchieved) {
         Modifier
             .fillMaxSize()
             .clickable {
-                SetSelectedAchievement(achievement, selectedAchievement)
+                viewModel.setSelectedAchievement(achievement)
                 onClick()
             }
     } else {
         Modifier
             .fillMaxSize()
             .clickable {
-                SetSelectedAchievement(achievement, selectedAchievement)
+                viewModel.setSelectedAchievement(achievement)
                 onClick()
             }
             .greyScale()

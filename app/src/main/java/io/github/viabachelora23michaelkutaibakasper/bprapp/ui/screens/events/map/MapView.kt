@@ -82,6 +82,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEv
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
@@ -281,7 +282,7 @@ fun MapEvents(
                 },
                 onClusterItemInfoWindowClick = {
                     // Handle cluster item info window click
-                    navController.navigate("${BottomNavigationScreens.EventDetails.name}/${it.eventId}")
+                    navigateTo("${BottomNavigationScreens.EventDetails.name}/${it.eventId}", navController)
                     true
                 },
 
@@ -308,7 +309,7 @@ fun MapEvents(
         FloatingActionButton(
             onClick = {
                 if (user != null) {
-                    navController.navigate(CreateEventScreens.Title.name)
+                  navigateTo(CreateEventScreens.Title.name, navController)
                 } else {
                     Toast.makeText(
                         context,
@@ -337,7 +338,7 @@ private fun ClusterModalItem(
     viewModel: MapViewViewModel
 ) {
     Column(modifier = Modifier.clickable {
-        navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}")
+        navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
         viewModel.clusterClicked.value = false
     }) {
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -394,7 +395,9 @@ fun LoadingScreen() {
 
 @Composable
 fun EventListItem(event: MinimalEvent, navController: NavController) {
-    Column(modifier = Modifier.clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+    Column(modifier = Modifier.clickable {
+    navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
+    }) {
 
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(

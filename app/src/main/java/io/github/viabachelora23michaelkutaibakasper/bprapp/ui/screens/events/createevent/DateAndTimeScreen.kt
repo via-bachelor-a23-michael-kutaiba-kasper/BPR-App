@@ -37,6 +37,7 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.convertUtcMillisecondsToFormattedDate
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.toMillis
@@ -250,7 +251,7 @@ fun CreateEventDateAndTimeScreen(navController: NavController, viewModel: Create
                         viewModel.setSelectedDateTime(combinedStartDateAndTime)
                         viewModel.setSelectedEndDateTime(combinedEndDateAndTime)
 
-                        navController.navigate(CreateEventScreens.Details.name)
+                        navigateTo(CreateEventScreens.Details.name, navController)
                     }
 
                 },

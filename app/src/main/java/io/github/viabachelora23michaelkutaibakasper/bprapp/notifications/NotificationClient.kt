@@ -8,7 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.FireStoreClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.FireStoreClient
 
 class NotificationClient : FirebaseMessagingService() {
     var user = mutableStateOf(Firebase.auth.currentUser)

@@ -41,6 +41,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 
 
 @Composable
@@ -146,7 +147,7 @@ fun CreateEventLocationScreen(navController: NavController, viewModel: CreateEve
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        navController.navigate(CreateEventScreens.DateAndTime.name)
+                        navigateTo(CreateEventScreens.DateAndTime.name, navController)
                     }
 
                 },

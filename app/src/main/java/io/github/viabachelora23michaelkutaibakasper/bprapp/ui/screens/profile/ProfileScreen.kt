@@ -76,10 +76,11 @@ import com.gowtham.ratingbar.StepSize
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.AuthenticationClient
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.AuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.IAuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.generateRandomColor
@@ -422,7 +423,7 @@ private fun FinishedJoinedEvents(
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
         if (event.eventId !in reviewIds.map { it.eventId }) {
 
             Button(onClick = {
@@ -562,7 +563,7 @@ private fun CreatedEventsTab(
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navController.navigate("${BottomNavigationScreens.EventDetails.name}/${event.eventId}") }) {
+        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
         Row(
             Modifier.padding(4.dp),
             verticalAlignment = Alignment.CenterVertically

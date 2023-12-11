@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import java.io.File
 
 
@@ -360,7 +361,8 @@ fun CreateEventImagesScreen(navController: NavController) {
         val context = LocalContext.current
         Button(
             onClick = {
-                navController.navigate(CreateEventScreens.InviteFriends.name)
+
+                navigateTo(CreateEventScreens.InviteFriends.name, navController)
             },
             modifier = Modifier
                 .fillMaxWidth()

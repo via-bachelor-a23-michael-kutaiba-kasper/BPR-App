@@ -49,6 +49,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -282,7 +283,8 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                         ).show()
                     } else {
                         viewModel.setEvent()
-                        navController.navigate(CreateEventScreens.EventSummary.name)
+
+                        navigateTo(CreateEventScreens.EventSummary.name, navController)
                     }
                 },
                 modifier = Modifier
