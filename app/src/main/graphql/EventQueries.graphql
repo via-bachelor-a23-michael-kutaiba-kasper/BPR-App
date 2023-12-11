@@ -230,3 +230,14 @@ query GetAllAchievements {
         }
     }
 }
+
+query GetExperienceHistory($userId: String!) {
+    expProgress(userId: $userId) {
+        result {
+            expProgressHistory {
+                timestamp
+                expGained
+            }
+        }
+    }
+}
