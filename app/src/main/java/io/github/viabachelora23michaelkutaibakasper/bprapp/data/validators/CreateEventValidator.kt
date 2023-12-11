@@ -30,5 +30,8 @@ fun isInvalidStartAndEndDate(
 }
 
 fun isInvalidJoinEvent(attendeesSize: Int, maxAttendees: Int): Boolean {
+    if (maxAttendees == 0)
+        return false
+
     return attendeesSize >= maxAttendees
 }
