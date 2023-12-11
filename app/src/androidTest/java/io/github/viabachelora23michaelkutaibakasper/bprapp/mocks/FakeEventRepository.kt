@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.mocks
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Experience
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -194,7 +195,8 @@ class FakeEventRepository : IEventRepository {
             EventRating(2, 3.5f),
             EventRating(3, 2.5f),
             EventRating(4, 1.5f),
-            EventRating(5, 0.5f))
+            EventRating(5, 0.5f)
+        )
     }
 
     override suspend fun getReccommendations(
@@ -259,35 +261,44 @@ class FakeEventRepository : IEventRepository {
         return Status("Success", 200)
     }
 
-    override suspend fun getAchievements(userId: String): List<Achievement> {
+    override suspend fun getUserAchievements(userId: String): List<Achievement> {
         return listOf(
             Achievement(
                 title = "Music Maestro",
                 description = "Host 5 music events",
-                points = 10,
+                expReward = 10,
                 id = 1,
                 isAchieved = true
             ),
             Achievement(
                 title = "Athlete",
                 description = "Host 5 sport related events",
-                points = 20,
+                expReward = 20,
                 id = 1,
                 isAchieved = false
             ), Achievement(
                 title = "Music Maestro",
                 description = "Host 5 music events",
-                points = 10,
+                expReward = 10,
                 id = 1,
                 isAchieved = false
             ),
             Achievement(
                 title = "Athlete",
                 description = "Host 5 sport related events",
-                points = 20,
+                expReward = 20,
                 id = 1,
                 isAchieved = true
             )
+        )
+    }
+
+    override suspend fun getExperience(userId: String): Experience {
+        return Experience(
+            totalExp = 100,
+            level = 1,
+            maxExp = 200,
+            minExp = 100
         )
     }
 }

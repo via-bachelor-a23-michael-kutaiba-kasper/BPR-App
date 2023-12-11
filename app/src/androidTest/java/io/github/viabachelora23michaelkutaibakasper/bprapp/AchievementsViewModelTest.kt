@@ -31,6 +31,21 @@ class AchievementsViewModelTest {
 
         // Verify the updated state
         TestCase.assertEquals(true, viewModel.achievements.value.size == 4)
+    }
 
+    @Test
+    fun getExperience_returnsExperience() {
+        val viewModel = AchievementsViewModel(repository)
+
+        // Verify the initial state
+        TestCase.assertEquals(0, viewModel.experience.value.totalExp)
+
+        composeTestRule.runOnIdle {
+            viewModel.getUserExperience()
+        }
+        composeTestRule.waitForIdle()
+
+        // Verify the updated state
+        TestCase.assertEquals(100, viewModel.experience.value)
     }
 }
