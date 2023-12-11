@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.compose.AppTheme
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.AppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomBar
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.NavigationHost
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel

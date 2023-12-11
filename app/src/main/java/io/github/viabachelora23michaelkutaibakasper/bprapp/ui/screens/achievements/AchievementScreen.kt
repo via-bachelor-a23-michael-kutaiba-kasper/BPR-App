@@ -276,8 +276,8 @@ fun AchievementCard(
                         if (achievement.progress != null) {
                             LinearProgressIndicator(
                                 progress = {
-                                    achievement.progress?.toFloat()
-                                        ?.div(achievement.requirement?.toFloat() ?: 1f) ?: 0f
+                                    achievement.progress!!.toFloat()
+                                        .div(achievement.requirement.toFloat())
                                 },
                                 strokeCap = StrokeCap.Round,
                                 modifier = Modifier
@@ -428,7 +428,7 @@ fun processString(input: String): Color {
 
         else -> {
             // Do something if none of the characters are found
-            return Color.Red
+            return Color.Magenta
         }
     }
 }

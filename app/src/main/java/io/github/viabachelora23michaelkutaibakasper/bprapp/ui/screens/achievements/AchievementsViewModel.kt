@@ -69,13 +69,19 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
         }
         for (achivement in _allAchievements.value) {
             if (hashmap.containsKey(achivement.name)) {
-                achivement.progress = hashmap[achivement.name]!!.progress
-                achivement.isAchieved =
-                    hashmap[achivement.name]!!.progress == achivement.requirement
-                achivement.unlockDate = hashmap[achivement.name]!!.unlockDate
+                //  hashmap[achivement.name]!!.progress = hashmap[achivement.name]!!.progress
+
+                hashmap[achivement.name]!!.isAchieved =
+                    (achivement.unlockDate != null && achivement.unlockDate!!.year > 1) ||
+                            hashmap[achivement.name]?.progress!! >= achivement.requirement
+                _allAchievements.value = _allAchievements.value.filter {
+                    it.name != achivement.name
+                }
             }
+
         }
-        _allAchievements.value = hashmap.values.toList().sortedByDescending { it.isAchieved }
+        _allAchievements.value =
+            (hashmap.values.toList() + _allAchievements.value).sortedByDescending { it.isAchieved }
     }
 
     init {
@@ -91,6 +97,7 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
                 isLoading.value = true
                 val achievements = repository.getAllAchievements()
                 _allAchievements.value = achievements.drop(1)
+                combineAllchievementsWithUserAchievements()
                 Log.d("AchievementsViewModel", " allacievements: $achievements")
                 isLoading.value = false
             } catch (e: Exception) {
@@ -111,6 +118,7 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
             try {
                 val achievements = repository.getUserAchievements(user.value!!.uid)
                 _userAchievements.value = achievements
+                combineAllchievementsWithUserAchievements()
                 Log.d("AchievementsViewModel", " user achievements: $achievements")
 
             } catch (e: Exception) {
