@@ -439,7 +439,9 @@ class EventRepository : IEventRepository {
             totalExp = response.data?.expProgress?.result?.totalExp!!,
             level = response.data?.expProgress?.result?.level?.value!!,
             minExp = response.data?.expProgress?.result?.level!!.minExp!!,
-            maxExp = response.data?.expProgress?.result?.level!!.maxExp!!
+            maxExp = response.data?.expProgress?.result?.level!!.maxExp!!,
+            stage = response.data?.expProgress?.result?.stage!!,
+            name = response.data?.expProgress?.result?.level!!.name!!
         )
     }
 

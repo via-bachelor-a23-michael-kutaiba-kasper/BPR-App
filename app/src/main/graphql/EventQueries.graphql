@@ -194,11 +194,12 @@ query GetExperience($userId: String!) {
     expProgress(userId: $userId) {
         result {
             totalExp
-
+            stage
             level {
                 value
                 maxExp
                 minExp
+                name
             }
         }
     }

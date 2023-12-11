@@ -338,6 +338,7 @@ private fun LevelAndExperiencePart(viewModel: AchievementsViewModel) {
                 .padding(16.dp),
             contentScale = ContentScale.Crop
         )
+        Text(text = experience.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically

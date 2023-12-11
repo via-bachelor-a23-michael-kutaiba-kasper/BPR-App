@@ -8,6 +8,8 @@ data class Experience(
     val level: Int,
     val minExp: Int,
     val maxExp: Int,
+    val stage: Int,
+    val name : String
 )
 
 data class ExperienceHistory(
