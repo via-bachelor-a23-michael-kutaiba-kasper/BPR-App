@@ -40,6 +40,7 @@ class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewM
 
 
     fun getEvents(from: String? = null) {
+        errorFetchingEvent.value = false
         viewModelScope.launch {
             try {
                 isLoading.value = true
