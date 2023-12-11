@@ -1,5 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.mocks
 
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
@@ -256,5 +257,37 @@ class FakeEventRepository : IEventRepository {
         categories: List<String>
     ): Status {
         return Status("Success", 200)
+    }
+
+    override suspend fun getAchievements(userId: String): List<Achievement> {
+        return listOf(
+            Achievement(
+                title = "Music Maestro",
+                description = "Host 5 music events",
+                points = 10,
+                id = 1,
+                isAchieved = true
+            ),
+            Achievement(
+                title = "Athlete",
+                description = "Host 5 sport related events",
+                points = 20,
+                id = 1,
+                isAchieved = false
+            ), Achievement(
+                title = "Music Maestro",
+                description = "Host 5 music events",
+                points = 10,
+                id = 1,
+                isAchieved = false
+            ),
+            Achievement(
+                title = "Athlete",
+                description = "Host 5 sport related events",
+                points = 20,
+                id = 1,
+                isAchieved = true
+            )
+        )
     }
 }
