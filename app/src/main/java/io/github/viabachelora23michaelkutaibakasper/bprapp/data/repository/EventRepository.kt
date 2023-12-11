@@ -12,6 +12,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEv
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetAllAchievementsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.GetExperienceHistoryQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetExperienceQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetInterestSurveyQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
@@ -24,6 +25,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achieveme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Experience
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -439,6 +441,23 @@ class EventRepository : IEventRepository {
             minExp = response.data?.expProgress?.result?.level!!.minExp!!,
             maxExp = response.data?.expProgress?.result?.level!!.maxExp!!
         )
+    }
+
+    override suspend fun getUserExperienceHistory(userId: String): List<ExperienceHistory> {
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL)
+            .build()
+        val response = apolloClient.query(GetExperienceHistoryQuery(userId = userId)).execute()
+        Log.d(
+            "ApolloEventClient",
+            "getUserExperienceHistory: ${response.data?.expProgress?.result}"
+        )
+        return response.data?.expProgress?.result?.expProgressHistory?.map {
+            ExperienceHistory(
+                exp = it?.expGained!!,
+                date = parseUtcStringToLocalDateTime(it.timestamp!!)
+            )
+        } ?: emptyList()
     }
 
 }
