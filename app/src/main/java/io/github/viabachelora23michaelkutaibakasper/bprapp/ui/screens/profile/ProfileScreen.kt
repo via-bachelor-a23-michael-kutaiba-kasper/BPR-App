@@ -224,7 +224,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 reviewIds,
                                 currentEventId,
                                 openDialog,
-                                highestRatedCategory
+                                highestRatedCategory, viewModel = viewModel
                             )
                         }
                     }
@@ -321,8 +321,9 @@ private fun FinishedJoinedEventsTab(
     navController: NavController,
     reviewIds: List<EventRating>,
     currentEventId: MutableIntState,
-    openDialog: MutableState<Boolean>, highestRatedCategory: String
+    openDialog: MutableState<Boolean>, highestRatedCategory: String, viewModel: ProfileViewModel
 ) {
+    val experienceHistory = viewModel.experienceHistory.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -364,16 +365,13 @@ private fun FinishedJoinedEventsTab(
                         LineChart(
                             linesChartData = listOf(
                                 LineChartData(
-                                    points = listOf(
+                                    points =
+                                    experienceHistory.value.map {
                                         LineChartData.Point(
-                                            100f,
-                                            "Label 1"
-                                        ),
-                                        LineChartData.Point(
-                                            2f,
-                                            "Label 2"
+                                            value = it.exp.toFloat(),
+                                            label = DisplayFormattedTime(it.date)
                                         )
-                                    ), lineDrawer = SolidLineDrawer(
+                                    }, lineDrawer = SolidLineDrawer(
                                         color = generateRandomColor()
                                     ), startAtZero = true
                                 )
@@ -392,7 +390,7 @@ private fun FinishedJoinedEventsTab(
 
                             ),
                             horizontalOffset = 5f,
-                            labels = listOf("label 1", "label 2")
+                            labels = experienceHistory.value.map { DisplayFormattedTime(it.date) },
                         )
                     }
 
