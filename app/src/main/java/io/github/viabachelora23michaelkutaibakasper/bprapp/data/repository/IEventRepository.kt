@@ -1,5 +1,6 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
 
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -31,4 +32,6 @@ interface IEventRepository {
         keywords: List<String>,
         categories: List<String>
     ): Status
+
+    suspend fun getAchievements(userId: String): List<Achievement>
 }

@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AchievementsViewModel : ViewModel() {
+class AchievementsViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
     private var _user = MutableStateFlow(Firebase.auth.currentUser)
@@ -58,13 +60,16 @@ class AchievementsViewModel : ViewModel() {
             )
         )
     val selectedAchievement = _selectedAchievement.asStateFlow()
-fun setSelectedAchievement(achievement: Achievement){
-    _selectedAchievement.value = achievement
+    fun setSelectedAchievement(achievement: Achievement) {
+        _selectedAchievement.value = achievement
 
-}
+    }
+
     fun getAchievements() {
         _user.value = Firebase.auth.currentUser
         isLoading.value = true
         isLoading.value = false
+        val sortedlist = _achievements.value.sortedByDescending { !it.isAchieved }
+        _achievements.value = sortedlist
     }
 }

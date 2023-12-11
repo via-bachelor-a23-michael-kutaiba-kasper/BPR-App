@@ -17,6 +17,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.GetRecommendationsQue
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.StoreInterestSurveyMutation
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
@@ -373,6 +374,10 @@ class EventRepository : IEventRepository {
             message = response.data?.storeInterestSurvey?.status?.message!!,
             code = response.data?.storeInterestSurvey?.status?.code!!
         )
+    }
+
+    override suspend fun getAchievements(userId: String): List<Achievement> {
+        TODO("Not yet implemented")
     }
 
 }

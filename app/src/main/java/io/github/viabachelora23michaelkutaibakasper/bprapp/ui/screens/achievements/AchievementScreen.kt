@@ -109,11 +109,9 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
                     item(span = { GridItemSpan(2) }) {
                         AchievementsHeader()
                     }
-                    //sort by isAchieved and list isAchieved last
-                    val sortedAchievements = achievements.sortedByDescending { !it.isAchieved }
-                    items(sortedAchievements.size) {
+                    items(achievements.size) {
                         AchievementCard(
-                            achievement = sortedAchievements[it],
+                            achievement = achievements[it],
                             onClick = { openDialogFun(openDialog, true) },
                             viewModel = viewModel
                         )
