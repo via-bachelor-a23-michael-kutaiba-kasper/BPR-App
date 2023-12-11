@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
@@ -21,11 +22,13 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _reviewIds = MutableStateFlow<List<EventRating>>(emptyList())
+    private val _experienceHistory = MutableStateFlow<List<ExperienceHistory>>(emptyList())
+    private val _highestRatedCategory = MutableStateFlow("")
     val eventList = _eventList.asStateFlow()
     val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
     val reviewIds = _reviewIds.asStateFlow()
+    val experienceHistory = _experienceHistory.asStateFlow()
     val isLoading = mutableStateOf(false)
-    private val _highestRatedCategory = MutableStateFlow("")
     val highestRatedCategory = _highestRatedCategory.asStateFlow()
     val reviewCreated = mutableStateOf(false)
     var user = mutableStateOf(Firebase.auth.currentUser)
@@ -39,7 +42,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
         getEvents(hostId = user.value!!.uid, includePrivate = true)
         getReviewIds(hostId = user.value!!.uid)
         getFinishedJoinedEvents(userId = user.value!!.uid)
-
+        getExperienceHistory(hostId = user.value!!.uid)
     }
 
     data class EventWithCategory(
@@ -129,6 +132,18 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
                 val reviewIds = eventRepository.getReviewIds(hostId)
                 _reviewIds.value = reviewIds
                 Log.d("profileviewmodel", "the idsss!!: $reviewIds")
+            } catch (e: Exception) {
+                Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
+            }
+        }
+    }
+
+    fun getExperienceHistory(hostId: String) {
+        viewModelScope.launch {
+            try {
+                val experienceHistory = eventRepository.getUserExperienceHistory(hostId)
+                _experienceHistory.value = experienceHistory
+                Log.d("profileViewViewModel", "the experienceHistory!!: $experienceHistory")
             } catch (e: Exception) {
                 Log.d("profileViewViewModel", "error message: ${e.printStackTrace()}")
             }
