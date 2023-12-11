@@ -1,4 +1,4 @@
-package io.github.viabachelora23michaelkutaibakasper.bprapp.data.sign_in
+package io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication
 
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher

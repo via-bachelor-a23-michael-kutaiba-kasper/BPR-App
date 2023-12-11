@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,9 +63,7 @@ fun BottomBar(
                 .fillMaxSize()
                 .noRippleClickable {
                     selectedIndex.value = 1
-                    navController.navigate(
-                        BottomNavigationScreens.Recommendations.name
-                    )
+                    navigateTo(BottomNavigationScreens.Recommendations.name, navController)
                 },
             contentAlignment = Alignment.Center
         )
@@ -82,9 +79,7 @@ fun BottomBar(
                 .fillMaxSize()
                 .noRippleClickable {
                     selectedIndex.value = 2
-                    navController.navigate(
-                        BottomNavigationScreens.Map.name
-                    )
+                    navigateTo(BottomNavigationScreens.Map.name, navController)
                 },
             contentAlignment = Alignment.Center
         )
@@ -101,7 +96,7 @@ fun BottomBar(
                 .fillMaxSize()
                 .noRippleClickable {
                     selectedIndex.value = 3
-                    navController.navigate(BottomNavigationScreens.Achievements.name)
+                    navigateTo(BottomNavigationScreens.Achievements.name, navController)
                 },
             contentAlignment = Alignment.Center
         )
@@ -118,7 +113,7 @@ fun BottomBar(
                 .fillMaxSize()
                 .noRippleClickable {
                     selectedIndex.value = 4
-                    navController.navigate(BottomNavigationScreens.Profile.name)
+                    navigateTo(BottomNavigationScreens.Profile.name, navController)
                 },
             contentAlignment = Alignment.Center
         )

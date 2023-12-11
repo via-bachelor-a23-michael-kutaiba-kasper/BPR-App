@@ -37,7 +37,7 @@ import java.time.LocalDateTime
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
- fun NavigationHost(
+fun NavigationHost(
     navController: NavHostController,
     innerPadding: PaddingValues,
     mapViewModel: MapViewViewModel,

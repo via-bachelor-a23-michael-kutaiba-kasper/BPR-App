@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 
@@ -332,7 +333,7 @@ fun EventSummaryScreen(navController: NavController, viewModel: CreateEventViewM
                             openDialog.value = false
                             viewModel.setEvent()
                             viewModel.createEvent(viewModel.event.value)
-                            navController.navigate(BottomNavigationScreens.Map.name)
+                            navigateTo(BottomNavigationScreens.Map.name, navController)
 
                         }) {
                         Text("Yes, Create!")

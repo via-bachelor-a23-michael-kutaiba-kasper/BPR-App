@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 
 
 @Composable
@@ -95,7 +96,7 @@ fun CreateEventTitleAndDescriptionScreen(
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        navController.navigate(CreateEventScreens.Location.name)
+                        navigateTo(CreateEventScreens.Location.name, navController)
                     }
 
                 },
