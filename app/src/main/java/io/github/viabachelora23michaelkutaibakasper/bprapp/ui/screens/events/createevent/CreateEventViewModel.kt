@@ -237,10 +237,9 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
                     eventCreated.value = true
                     createdEventId.value = eventId
                     Log.d("CreateEventViewModel", "eventcreated: ${eventCreated.value}")
-                    Log.d("CreateEventViewModel", "createEvent: $eventId")
+                    Log.d("CreateEventViewModel", "createEvent succes: $eventId")
                 } catch (e: Exception) {
-                    Log.d("CreateEventViewModel", "createEvent: ${e.printStackTrace()}")
-                    Log.d("CreateEventViewModel", "event creation failed: ${e.message}")
+                    Log.d("CreateEventViewModel", "createEvent failed: ${e.printStackTrace()}")
                 }
             }
         } else {
