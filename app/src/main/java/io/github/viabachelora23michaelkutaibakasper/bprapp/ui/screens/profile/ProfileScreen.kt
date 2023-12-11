@@ -61,6 +61,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.tehras.charts.line.LineChart
+import com.github.tehras.charts.line.LineChartData
+import com.github.tehras.charts.line.renderer.line.SolidLineDrawer
+import com.github.tehras.charts.line.renderer.point.FilledCircularPointDrawer
+import com.github.tehras.charts.line.renderer.xaxis.SimpleXAxisDrawer
+import com.github.tehras.charts.line.renderer.yaxis.SimpleYAxisDrawer
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -74,10 +80,10 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 import com.gowtham.ratingbar.StepSize
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
@@ -320,7 +326,7 @@ private fun FinishedJoinedEventsTab(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
+            .height(750.dp)
             .padding(8.dp)
     ) {
         LazyColumn {
@@ -343,9 +349,53 @@ private fun FinishedJoinedEventsTab(
                             append(". Does this match with the events you have attended?\uD83E\uDD14")
                         }
                     )
+                }
 
+                item {
+                    Column(Modifier.fillMaxSize()) {
+                        Text(
+                            text = "Experience gained over time",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        )
+                        LineChart(
+                            linesChartData = listOf(
+                                LineChartData(
+                                    points = listOf(
+                                        LineChartData.Point(
+                                            100f,
+                                            "Label 1"
+                                        ),
+                                        LineChartData.Point(
+                                            2f,
+                                            "Label 2"
+                                        )
+                                    ), lineDrawer = SolidLineDrawer(
+                                        color = generateRandomColor()
+                                    ), startAtZero = true
+                                )
+                            ),
+                            // Optional properties.
+                            modifier = Modifier
+                                .height(250.dp)
+                                .padding(4.dp),
+                            animation = simpleChartAnimation(),
+                            pointDrawer = FilledCircularPointDrawer(
+                                color = generateRandomColor()
 
-                    Log.d("uwuwuw", "FinishedJoinedEventsTab: $highestRatedCategory")
+                            ),
+                            xAxisDrawer = SimpleXAxisDrawer(),
+                            yAxisDrawer = SimpleYAxisDrawer(
+
+                            ),
+                            horizontalOffset = 5f,
+                            labels = listOf("label 1", "label 2")
+                        )
+                    }
+
                 }
             }
         }
@@ -423,10 +473,15 @@ private fun FinishedJoinedEvents(
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
+        .clickable {
+            navigateTo(
+                "${BottomNavigationScreens.EventDetails.name}/${event.eventId}",
+                navController
+            )
+        }) {
         if (event.eventId !in reviewIds.map { it.eventId }) {
 
-            Button(onClick = {
+            Button(modifier = Modifier.align(Alignment.End), onClick = {
                 currentEventId.value = event.eventId
                 openDialog.value = true
             }) {
@@ -563,7 +618,12 @@ private fun CreatedEventsTab(
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
+        .clickable {
+            navigateTo(
+                "${BottomNavigationScreens.EventDetails.name}/${event.eventId}",
+                navController
+            )
+        }) {
         Row(
             Modifier.padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
