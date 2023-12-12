@@ -48,29 +48,16 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
         getUserExperience()
         getAchievements()
         getUserAchievements()
-        combineAllchievementsWithUserAchievements()
+        synchronizeAchievements()
     }
 
-    fun setIsAchieved() {
-        //if an achivement from all achivements is in user achivements, set isachieved to true
-        for (achivement in _allAchievements.value) {
-            for (userachivement in _userAchievements.value) {
-                if (achivement.name == userachivement.name) {
-                    achivement.isAchieved = true
-                }
-            }
-        }
-    }
-
-    fun combineAllchievementsWithUserAchievements() {
+    fun synchronizeAchievements() {
         val hashmap = HashMap<String, Achievement>()
         for (userachivement in _userAchievements.value) {
             hashmap[userachivement.name] = userachivement
         }
         for (achivement in _allAchievements.value) {
             if (hashmap.containsKey(achivement.name)) {
-                //  hashmap[achivement.name]!!.progress = hashmap[achivement.name]!!.progress
-
                 hashmap[achivement.name]!!.isAchieved =
                     (achivement.unlockDate != null && achivement.unlockDate!!.year > 1) ||
                             hashmap[achivement.name]?.progress!! >= achivement.requirement
@@ -78,7 +65,6 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
                     it.name != achivement.name
                 }
             }
-
         }
         _allAchievements.value =
             (hashmap.values.toList() + _allAchievements.value).sortedByDescending { it.isAchieved }
@@ -90,14 +76,12 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
 
     fun getAchievements() {
         _user.value = Firebase.auth.currentUser
-        // val sortedlist = _achievements.value.sortedByDescending { !it.isAchieved }
-
         viewModelScope.launch {
             try {
                 isLoading.value = true
                 val achievements = repository.getAllAchievements()
                 _allAchievements.value = achievements.drop(1)
-                combineAllchievementsWithUserAchievements()
+                synchronizeAchievements()
                 Log.d("AchievementsViewModel", " allacievements: $achievements")
                 isLoading.value = false
             } catch (e: Exception) {
@@ -112,15 +96,12 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
 
     fun getUserAchievements() {
         _user.value = Firebase.auth.currentUser
-        // val sortedlist = _achievements.value.sortedByDescending { !it.isAchieved }
-
         viewModelScope.launch {
             try {
                 val achievements = repository.getUserAchievements(user.value!!.uid)
                 _userAchievements.value = achievements
-                combineAllchievementsWithUserAchievements()
+                synchronizeAchievements()
                 Log.d("AchievementsViewModel", " user achievements: $achievements")
-
             } catch (e: Exception) {
                 Log.d(
                     "AchievementsViewModel",
@@ -139,8 +120,6 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
             } catch (e: Exception) {
                 Log.d("AchievementsViewModel", "failed to getExperience: ${e.message}")
             }
-
-
         }
     }
 }

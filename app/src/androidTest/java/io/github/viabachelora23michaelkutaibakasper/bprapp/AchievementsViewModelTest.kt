@@ -18,19 +18,19 @@ class AchievementsViewModelTest {
 
 
     @Test
-    fun getAchievements_returnsListOfAchievements() {
+    fun getUserAchievements_returnsListOfAchievements() {
         val viewModel = AchievementsViewModel(repository)
 
         // Verify the initial state
-        TestCase.assertEquals(emptyList<Achievement>(), viewModel.achievements.value)
+        TestCase.assertEquals(emptyList<Achievement>(), viewModel.userAchievements.value)
 
         composeTestRule.runOnIdle {
-            viewModel.getAchievements()
+            viewModel.getUserAchievements()
         }
         composeTestRule.waitForIdle()
 
         // Verify the updated state
-        TestCase.assertEquals(true, viewModel.achievements.value.size == 4)
+        TestCase.assertEquals(true, viewModel.userAchievements.value.size == 4)
     }
 
     @Test
@@ -48,4 +48,23 @@ class AchievementsViewModelTest {
         // Verify the updated state
         TestCase.assertEquals(100, viewModel.experience.value)
     }
+
+    @Test
+    fun getAchievements_returnsListOfAchievements() {
+        val viewModel = AchievementsViewModel(repository)
+
+        // Verify the initial state
+        TestCase.assertEquals(emptyList<Achievement>(), viewModel.achievements.value)
+
+        composeTestRule.runOnIdle {
+            viewModel.getAchievements()
+        }
+        composeTestRule.waitForIdle()
+
+        // Verify the updated state
+        TestCase.assertEquals(true, viewModel.achievements.value.size == 4)
+    }
+
+
 }
+

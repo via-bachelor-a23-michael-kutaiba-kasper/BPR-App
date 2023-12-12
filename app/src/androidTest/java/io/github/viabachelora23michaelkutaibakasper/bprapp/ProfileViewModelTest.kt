@@ -2,6 +2,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import junit.framework.TestCase
@@ -71,6 +72,22 @@ class ProfileViewModelTest {
 
         // Verify the updated state
         TestCase.assertEquals(true, viewModel.reviewCreated.value)
+    }
+
+    @Test
+    fun getExperienceHistory_returnsListOfExperience() {
+        val viewModel = ProfileViewModel(repository)
+
+        // Verify the initial state
+        TestCase.assertEquals(emptyList<ExperienceHistory>(), viewModel.experienceHistory.value)
+
+        composeTestRule.runOnIdle {
+            viewModel.getExperienceHistory("abc")
+        }
+        composeTestRule.waitForIdle()
+
+        // Verify the updated state
+        TestCase.assertEquals(true, viewModel.experienceHistory.value.size == 3)
     }
 
 }
