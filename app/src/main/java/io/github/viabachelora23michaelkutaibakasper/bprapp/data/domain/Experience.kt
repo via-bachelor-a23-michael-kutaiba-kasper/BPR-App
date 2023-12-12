@@ -9,7 +9,7 @@ data class Experience(
     val minExp: Int,
     val maxExp: Int,
     val stage: Int,
-    val name : String
+    val name: String
 )
 
 data class ExperienceHistory(

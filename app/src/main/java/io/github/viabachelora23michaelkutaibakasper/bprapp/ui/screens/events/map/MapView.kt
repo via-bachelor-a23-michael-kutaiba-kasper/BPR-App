@@ -282,7 +282,10 @@ fun MapEvents(
                 },
                 onClusterItemInfoWindowClick = {
                     // Handle cluster item info window click
-                    navigateTo("${BottomNavigationScreens.EventDetails.name}/${it.eventId}", navController)
+                    navigateTo(
+                        "${BottomNavigationScreens.EventDetails.name}/${it.eventId}",
+                        navController
+                    )
                     true
                 },
 
@@ -309,7 +312,7 @@ fun MapEvents(
         FloatingActionButton(
             onClick = {
                 if (user != null) {
-                  navigateTo(CreateEventScreens.Title.name, navController)
+                    navigateTo(CreateEventScreens.Title.name, navController)
                 } else {
                     Toast.makeText(
                         context,
@@ -396,7 +399,7 @@ fun LoadingScreen() {
 @Composable
 fun EventListItem(event: MinimalEvent, navController: NavController) {
     Column(modifier = Modifier.clickable {
-    navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
+        navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
     }) {
 
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {

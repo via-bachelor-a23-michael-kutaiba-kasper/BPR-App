@@ -3,7 +3,6 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.tasks.await
 
 class FireStoreClient {
     fun updateFirebaseMessagingToken(token: String, hostId: String): Boolean {

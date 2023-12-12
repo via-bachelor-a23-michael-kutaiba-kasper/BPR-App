@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AchievementsViewModel(val repository: IEventRepository = EventRepository()) : ViewModel() {
-
     val isLoading = mutableStateOf(false)
     private var _user = MutableStateFlow(Firebase.auth.currentUser)
     val user = _user.asStateFlow()
@@ -25,7 +24,6 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
     val achievements = _allAchievements.asStateFlow()
     private var _userAchievements = MutableStateFlow<List<Achievement>>(emptyList())
     val userAchievements = _userAchievements.asStateFlow()
-
     private val _selectedAchievement =
         MutableStateFlow(
             Achievement(
@@ -48,7 +46,6 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
         getUserExperience()
         getAchievements()
         getUserAchievements()
-        synchronizeAchievements()
     }
 
     fun synchronizeAchievements() {
