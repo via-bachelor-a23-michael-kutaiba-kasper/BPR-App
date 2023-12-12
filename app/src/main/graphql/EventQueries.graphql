@@ -190,3 +190,55 @@ query GetInterestSurvey($userId: String!) {
     }
 }
 
+query GetExperience($userId: String!) {
+    expProgress(userId: $userId) {
+        result {
+            totalExp
+            stage
+            level {
+                value
+                maxExp
+                minExp
+                name
+            }
+        }
+    }
+}
+
+
+query GetUserAchievements($userId: String!) {
+    userAchievements(userId: $userId) {
+        result {
+            icon
+            name
+            unlockDate
+            description
+            expReward
+            progress
+            requirement
+        }
+    }
+}
+
+query GetAllAchievements {
+    allAchievements {
+        result {
+            icon
+            name
+            description
+            expReward
+            requirement
+        }
+    }
+}
+
+query GetExperienceHistory($userId: String!) {
+    expProgress(userId: $userId) {
+        result {
+            expProgressHistory {
+                timestamp
+                expGained
+            }
+        }
+    }
+}

@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.compose.AppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomBar
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.NavigationHost
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel
@@ -30,6 +29,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.eve
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.MapViewViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.AppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.showSnackBar
 
 @Composable

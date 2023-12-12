@@ -3,6 +3,7 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -34,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -61,6 +64,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.github.tehras.charts.line.LineChart
+import com.github.tehras.charts.line.LineChartData
+import com.github.tehras.charts.line.renderer.line.SolidLineDrawer
+import com.github.tehras.charts.line.renderer.point.FilledCircularPointDrawer
+import com.github.tehras.charts.line.renderer.xaxis.SimpleXAxisDrawer
+import com.github.tehras.charts.line.renderer.yaxis.SimpleYAxisDrawer
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.animation.simpleChartAnimation
@@ -74,10 +83,11 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 import com.gowtham.ratingbar.StepSize
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.AuthenticationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.IAuthenticationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
@@ -183,8 +193,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Column(modifier = Modifier)
-                {
+                Column(modifier = Modifier) {
                     PrimaryTabRow(selectedTabIndex = selectedIndex.intValue) {
                         tabs.forEachIndexed { index, title ->
                             Tab(text = { Text(text = title) },
@@ -193,8 +202,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 icon = {
                                     when (index) {
                                         createdEvents -> Icon(
-                                            Icons.Default.Face,
-                                            contentDescription = "My Events"
+                                            Icons.Default.Face, contentDescription = "My Events"
                                         )
 
                                         finishedJoinedEvents -> Icon(
@@ -202,8 +210,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                             contentDescription = "Your Participations "
                                         )
                                     }
-                                }
-                            )
+                                })
                         }
                     }
                     when (selectedIndex.intValue) {
@@ -218,7 +225,8 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 reviewIds,
                                 currentEventId,
                                 openDialog,
-                                highestRatedCategory
+                                highestRatedCategory,
+                                viewModel
                             )
                         }
                     }
@@ -246,8 +254,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -260,8 +267,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 modifier = Modifier.padding(16.dp),
                             )
 
-                            RatingBar(
-                                value = sliderValue,
+                            RatingBar(value = sliderValue,
                                 style = RatingBarStyle.Fill(),
                                 numOfStars = 5,
                                 stepSize = StepSize.HALF,
@@ -270,12 +276,10 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                                 },
                                 onRatingChanged = {
                                     Log.d("TAG", "onRatingChanged: $it")
-                                }
-                            )
+                                })
 
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
                             ) {
                                 TextButton(
@@ -315,12 +319,15 @@ private fun FinishedJoinedEventsTab(
     navController: NavController,
     reviewIds: List<EventRating>,
     currentEventId: MutableIntState,
-    openDialog: MutableState<Boolean>, highestRatedCategory: String
+    openDialog: MutableState<Boolean>,
+    highestRatedCategory: String,
+    viewModel: ProfileViewModel
 ) {
+    val experienceHistory = viewModel.experienceHistory.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
+            .height(750.dp)
             .padding(8.dp)
     ) {
         LazyColumn {
@@ -333,19 +340,19 @@ private fun FinishedJoinedEventsTab(
                     PiechartOfEvents(participatedEvents, "Category participations")
                 }
                 item {
-                    Text(
-                        buildAnnotatedString {
-                            append("Your favorite category, based on your ratings, is ")
+                    Text(buildAnnotatedString {
+                        append("Your favorite category, based on your ratings, is ")
 
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(highestRatedCategory)
-                            }
-                            append(". Does this match with the events you have attended?\uD83E\uDD14")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(highestRatedCategory)
                         }
-                    )
+                        append(". Does this match with the events you have attended?\uD83E\uDD14")
+                    })
+                }
 
+                item {
+                    LinechartOfExpHistory(experienceHistory)
 
-                    Log.d("uwuwuw", "FinishedJoinedEventsTab: $highestRatedCategory")
                 }
             }
         }
@@ -353,11 +360,58 @@ private fun FinishedJoinedEventsTab(
     }
 }
 
+@Composable
+private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistory>>) {
+    Text(
+        text = "Experience gained over time",
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    )
+    Row(
+        Modifier
+            .fillMaxSize()
+            .horizontalScroll(rememberScrollState())
+    ) {
+        Column(Modifier.fillMaxSize()) {
+            LineChart(
+                linesChartData = listOf(
+                    LineChartData(
+                        points = experienceHistory.value.map {
+                            LineChartData.Point(
+                                value = it.exp.toFloat(), label = DisplayFormattedTime(it.date)
+                            )
+                        }, lineDrawer = SolidLineDrawer(
+                            color = generateRandomColor()
+                        ), startAtZero = true
+                    )
+                ),
+                modifier = Modifier
+                    .height(250.dp)
+                    .padding(4.dp)
+                    .width(2000.dp),
+                animation = simpleChartAnimation(),
+                pointDrawer = FilledCircularPointDrawer(
+                    color = generateRandomColor()
+
+                ),
+                xAxisDrawer = SimpleXAxisDrawer(),
+                yAxisDrawer = SimpleYAxisDrawer(
+
+                ),
+                horizontalOffset = 10f,
+                labels = experienceHistory.value.map { DisplayFormattedTime(it.date) },
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun CreatedEventsTab(
-    events: List<MinimalEvent>,
-    navController: NavController
+    events: List<MinimalEvent>, navController: NavController
 ) {
     Column(
         modifier = Modifier
@@ -423,10 +477,14 @@ private fun FinishedJoinedEvents(
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
+        .clickable {
+            navigateTo(
+                "${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController
+            )
+        }) {
         if (event.eventId !in reviewIds.map { it.eventId }) {
 
-            Button(onClick = {
+            Button(modifier = Modifier.align(Alignment.End), onClick = {
                 currentEventId.value = event.eventId
                 openDialog.value = true
             }) {
@@ -437,14 +495,12 @@ private fun FinishedJoinedEvents(
             Text(text = "You have already rated this event with ${reviewIds.find { it.eventId == event.eventId }?.rating} stars")
         }
         Row(
-            Modifier.padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
 
             Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(4.dp)
+                verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
@@ -483,9 +539,8 @@ private fun FinishedJoinedEvents(
 @Composable
 private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>, message: String) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        val categories = participatedEvents
-            .groupingBy { it.selectedCategory }
-            .eachCount().map { (value, count) ->
+        val categories = participatedEvents.groupingBy { it.selectedCategory }.eachCount()
+            .map { (value, count) ->
                 Category(name = value, count = count)
             }
         Text(text = "Statistics", fontSize = 24.sp, fontWeight = FontWeight.Bold)
@@ -502,22 +557,19 @@ private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>, message: St
                 fontWeight = FontWeight.SemiBold
             )
 
-            PieChart(
-                pieChartData = PieChartData(
+            PieChart(pieChartData = PieChartData(
 
-                    slices = categories.map { category ->
-                        PieChartData.Slice(
-                            value = category.count.toFloat(),
-                            color = category.color,
-                        )
-                    }
-                ),
+                slices = categories.map { category ->
+                    PieChartData.Slice(
+                        value = category.count.toFloat(),
+                        color = category.color,
+                    )
+                }),
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.CenterHorizontally),
                 animation = simpleChartAnimation(),
-                sliceDrawer = SimpleSliceDrawer(sliceThickness = 100f)
-            )
+                sliceDrawer = SimpleSliceDrawer(sliceThickness = 100f))
         }
 
 
@@ -529,23 +581,18 @@ private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>, message: St
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Canvas(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(8.dp),
-                    onDraw = {
-                        drawCircle(category.color, radius = 20f)
-                    }
-                )
+                Canvas(modifier = Modifier
+                    .size(20.dp)
+                    .padding(8.dp), onDraw = {
+                    drawCircle(category.color, radius = 20f)
+                })
                 Text(
-                    text = category.name,
-                    modifier = Modifier
+                    text = category.name, modifier = Modifier
                         .weight(1f)
                         .padding(8.dp)
                 )
                 Text(
-                    text = category.count.toString(),
-                    modifier = Modifier
+                    text = category.count.toString(), modifier = Modifier
                         .weight(1f)
                         .padding(8.dp)
                 )
@@ -558,15 +605,17 @@ private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>, message: St
 
 @Composable
 private fun CreatedEventsTab(
-    navController: NavController,
-    event: MinimalEvent
+    navController: NavController, event: MinimalEvent
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .clickable { navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}",navController) }) {
+        .clickable {
+            navigateTo(
+                "${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController
+            )
+        }) {
         Row(
-            Modifier.padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
                 model = if (event.photos?.isEmpty() != true) event.photos?.get(0) else ImageRequest.Builder(
@@ -580,8 +629,7 @@ private fun CreatedEventsTab(
             )
 
             Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(4.dp)
+                verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)
             ) {
                 Row {
                     Text(text = "Title: ", fontWeight = FontWeight.Bold)
@@ -618,9 +666,7 @@ private fun CreatedEventsTab(
 }
 
 data class Category(
-    val name: String,
-    val color: Color = generateRandomColor(),
-    val count: Int = 0
+    val name: String, val color: Color = generateRandomColor(), val count: Int = 0
 )
 
 @Composable

@@ -1,7 +1,10 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.mocks
 
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Experience
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
@@ -193,7 +196,8 @@ class FakeEventRepository : IEventRepository {
             EventRating(2, 3.5f),
             EventRating(3, 2.5f),
             EventRating(4, 1.5f),
-            EventRating(5, 0.5f))
+            EventRating(5, 0.5f)
+        )
     }
 
     override suspend fun getReccommendations(
@@ -256,5 +260,113 @@ class FakeEventRepository : IEventRepository {
         categories: List<String>
     ): Status {
         return Status("Success", 200)
+    }
+
+    override suspend fun getUserAchievements(userId: String): List<Achievement> {
+        return listOf(
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ),
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ), Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ),
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            )
+        )
+    }
+
+    override suspend fun getAllAchievements(): List<Achievement> {
+        return listOf(
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ),
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ), Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            ),
+            Achievement(
+                name = "Music Maestro",
+                description = "Host 5 music events",
+                expReward = 10,
+                icon = "",
+                requirement = 1, progress = 2,
+                unlockDate = LocalDateTime.now(),
+                isAchieved = false
+            )
+        )
+    }
+
+    override suspend fun getExperience(userId: String): Experience {
+        return Experience(
+            totalExp = 100,
+            level = 1,
+            maxExp = 200,
+            minExp = 100,
+            stage = 1,
+            name = "Beginner"
+        )
+    }
+
+    override suspend fun getUserExperienceHistory(userId: String): List<ExperienceHistory> {
+        return listOf(
+            ExperienceHistory(
+                exp = 100,
+                date = LocalDateTime.now()
+            ),
+            ExperienceHistory(
+                exp = 100,
+                date = LocalDateTime.now()
+            ),
+            ExperienceHistory(
+                exp = 100,
+                date = LocalDateTime.now()
+            ),
+        )
     }
 }

@@ -158,6 +158,66 @@ type InterestSurvey {
   categories: [String]
 }
 
+type Level {
+  value: Int
+
+  maxExp: Int
+
+  minExp: Int
+
+  name: String
+}
+
+type ExpProgressHistoryEntry {
+  timestamp: String
+
+  expGained: Int
+}
+
+type ExpProgress {
+  stage: Int
+
+  totalExp: Int
+
+  level: Level
+
+  expProgressHistory: [ExpProgressHistoryEntry]
+}
+
+type ExpProgressResponse {
+  result: ExpProgress
+
+  status: Status
+}
+
+type UserAchievement {
+  icon: String
+
+  name: String
+
+  unlockDate: String
+
+  description: String
+
+  expReward: Int
+
+  progress: Int
+
+  requirement: Int
+}
+
+type AllAchievements {
+  icon: String
+
+  name: String
+
+  description: String
+
+  expReward: Int
+
+  requirement: Int
+}
+
 type EventResponse {
   result: Event
 
@@ -206,6 +266,18 @@ type InterestSurveyResponse {
   status: Status
 }
 
+type UserAchievementResponse {
+  result: [UserAchievement]
+
+  status: Status
+}
+
+type AllAchievementsResponse {
+  result: [AllAchievements]
+
+  status: Status
+}
+
 type Query {
   """
   All arguments are optional filters to apply.
@@ -229,6 +301,12 @@ type Query {
   recommendations(userId: String!, limit: Int): RecommendationsResponse
 
   interestSurvey(userId: String!): InterestSurveyResponse
+
+  expProgress(userId: String!): ExpProgressResponse
+
+  userAchievements(userId: String!): UserAchievementResponse
+
+  allAchievements: AllAchievementsResponse
 }
 
 type Mutation {

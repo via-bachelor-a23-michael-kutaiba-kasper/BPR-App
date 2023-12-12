@@ -52,6 +52,7 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
+import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.greyScale
 
 
@@ -64,10 +65,11 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     val selectedAchievement by viewModel.selectedAchievement.collectAsState()
 
+
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = {
-            (viewModel::getAchievements)(
+            (viewModel::all)(
             )
         },
         indicator = { state, refreshTrigger ->
@@ -104,16 +106,14 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
                 content = {
 
                     item(span = { GridItemSpan(2) }) {
-                        LevelAndExperiencePart()
+                        LevelAndExperiencePart(viewModel = viewModel)
                     }
                     item(span = { GridItemSpan(2) }) {
                         AchievementsHeader()
                     }
-                    //sort by isAchieved and list isAchieved last
-                    val sortedAchievements = achievements.sortedByDescending { !it.isAchieved }
-                    items(sortedAchievements.size) {
+                    items(achievements.size) {
                         AchievementCard(
-                            achievement = sortedAchievements[it],
+                            achievement = achievements[it],
                             onClick = { openDialogFun(openDialog, true) },
                             viewModel = viewModel
                         )
@@ -130,7 +130,7 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
 @Composable
 private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Achievement) {
     Dialog(onDismissRequest = { onDismissRequest(openDialog, false) }) {
-        val AchievementModifier = if (achievement.isAchieved) {
+        val AchievementModifier = if (achievement.isAchieved == true) {
             Modifier
                 .fillMaxWidth()
                 .height(400.dp)
@@ -149,17 +149,15 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Cyan),
+                    .background(
+                        processString(achievement.name)
+                    ),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(
-                        LocalContext.current
-                    )
-                        .data(R.mipmap.ic_launcher_round)
-                        .build(),
-                    contentDescription = "Profile picture",
+                    model = achievement.icon,
+                    contentDescription = "achievement picture",
                     modifier = Modifier
                         .size(150.dp)
                         .clip(CircleShape)
@@ -167,12 +165,12 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                     contentScale = ContentScale.Crop
                 )
                 Text(
-                    text = achievement.title,
+                    text = achievement.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(8.dp),
                 )
-                if (!achievement.isAchieved) {
+                if (achievement.isAchieved == false) {
                     Column(
                         modifier = Modifier.padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -185,15 +183,17 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                                 .fillMaxWidth(0.5f)
                         )
                         Text(
-                            text = "3 / 5",
+                            text = "${achievement.progress} / ${achievement.requirement}",
                             fontSize = 14.sp, modifier = Modifier.padding(8.dp)
                         )
                     }
 
                 } else {
-                    Text(text = "Unlock: 20/12/2023")
+                    if (achievement.unlockDate != null) {
+                        Text(text = "Unlock: ${DisplayFormattedTime(achievement.unlockDate!!)}")
+                    }
                 }
-                Text(text = "Points: ${achievement.points}")
+                Text(text = "Experience points: ${achievement.expReward}")
                 Text(
                     text = "Description: ${achievement.description}",
                     modifier = Modifier.padding(8.dp)
@@ -217,7 +217,7 @@ fun AchievementCard(
     achievement: Achievement,
     onClick: () -> Unit, viewModel: AchievementsViewModel
 ) {
-    val AchievementModifier = if (achievement.isAchieved) {
+    val AchievementModifier = if (achievement.isAchieved == true) {
         Modifier
             .fillMaxSize()
             .clickable {
@@ -242,7 +242,9 @@ fun AchievementCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Cyan),
+                .background(
+                    processString(achievement.name)
+                ),
             contentAlignment = Alignment.Center
         )
         {
@@ -253,11 +255,7 @@ fun AchievementCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(
-                        LocalContext.current
-                    )
-                        .data(R.mipmap.ic_launcher_round)
-                        .build(),
+                    model = achievement.icon,
                     contentDescription = "Profile picture",
                     modifier = Modifier
                         .size(150.dp)
@@ -266,29 +264,38 @@ fun AchievementCard(
                     contentScale = ContentScale.Crop
                 )
                 Text(
-                    text = achievement.title,
+                    text = achievement.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
-                if (!achievement.isAchieved) {
+                if (achievement.isAchieved != true) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        LinearProgressIndicator(
-                            progress = { 0.7f },
-                            strokeCap = StrokeCap.Round,
-                            modifier = Modifier
-                                .height(8.dp)
-                                .fillMaxWidth(0.5f)
-                        )
-                        Text(
-                            text = "3 / 5",
-                            fontSize = 14.sp, modifier = Modifier.padding(12.dp)
-                        )
+                        if (achievement.progress != null) {
+                            LinearProgressIndicator(
+                                progress = {
+                                    achievement.progress!!.toFloat()
+                                        .div(achievement.requirement.toFloat())
+                                },
+                                strokeCap = StrokeCap.Round,
+                                modifier = Modifier
+                                    .height(8.dp)
+                                    .fillMaxWidth(0.5f)
+                            )
+
+                            Text(
+                                text = "${achievement.progress} / ${achievement.requirement}",
+                                fontSize = 14.sp, modifier = Modifier.padding(12.dp)
+                            )
+                        }
                     }
                 } else {
-                    Text(text = "Unlock: 20/12/2023", modifier = Modifier.padding(12.dp))
+                    Text(
+                        text = "Unlock:${achievement.unlockDate?.let { DisplayFormattedTime(it) }}",
+                        modifier = Modifier.padding(12.dp)
+                    )
                 }
 
             }
@@ -310,9 +317,9 @@ private fun AchievementsHeader() {
 }
 
 @Composable
-private fun LevelAndExperiencePart() {
-
-    val progress = remember { mutableStateOf(0.7f) }
+private fun LevelAndExperiencePart(viewModel: AchievementsViewModel) {
+    val experience by viewModel.experience.collectAsState()
+    val currentProgress = experience.totalExp.toFloat() / experience.maxExp.toFloat()
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -331,6 +338,7 @@ private fun LevelAndExperiencePart() {
                 .padding(16.dp),
             contentScale = ContentScale.Crop
         )
+        Text(text = experience.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
@@ -343,13 +351,14 @@ private fun LevelAndExperiencePart() {
                     fontSize = 20.sp
                 )
                 LinearProgressIndicator(
-                    progress = { progress.value },
+                    progress = { currentProgress },
                     strokeCap = StrokeCap.Round,
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth(0.5f)
                 )
-                if (progress.value >= 0.7f) {
+                Text(text = "${experience.totalExp} / ${experience.maxExp}")
+                if (currentProgress >= 0.7f) {
                     Text(
                         text = "Almost there! \uD83D\uDCAA",
                         modifier = Modifier.padding(12.dp),
@@ -382,13 +391,44 @@ private fun LevelAndExperiencePart() {
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "Level", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                        Text(text = "1", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                        Text(
+                            text = experience.level.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
                     }
 
 
                 }
 
             }
+        }
+    }
+}
+
+fun processString(input: String): Color {
+    when {
+        '1' in input -> {
+            // Do something for case '1'
+            return Color.Yellow
+            // Perform action for case '1'
+        }
+
+        '2' in input -> {
+            // Do something for case '2'
+            return Color.Cyan
+            // Perform action for case '2'
+        }
+
+        '3' in input -> {
+            // Do something for case '3'
+            return Color.Green
+            // Perform action for case '3'
+        }
+
+        else -> {
+            // Do something if none of the characters are found
+            return Color.Magenta
         }
     }
 }

@@ -1,10 +1,15 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain
 
+import java.time.LocalDateTime
+
 
 data class Achievement(
-    val title: String,
+    val icon: String,
+    val name: String,
     val description: String,
-    val points: Int,
-    val id: Int,
-    val isAchieved: Boolean
+    val expReward: Int,
+    val requirement: Int,
+    var progress: Int?,
+    var unlockDate: LocalDateTime?,
+    var isAchieved: Boolean?
 )

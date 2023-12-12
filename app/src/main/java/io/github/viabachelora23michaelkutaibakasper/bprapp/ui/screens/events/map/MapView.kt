@@ -83,7 +83,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.CreateEventScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.BPRAppTheme
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.theme.AppTheme
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import java.time.LocalDateTime
@@ -282,7 +282,10 @@ fun MapEvents(
                 },
                 onClusterItemInfoWindowClick = {
                     // Handle cluster item info window click
-                    navigateTo("${BottomNavigationScreens.EventDetails.name}/${it.eventId}", navController)
+                    navigateTo(
+                        "${BottomNavigationScreens.EventDetails.name}/${it.eventId}",
+                        navController
+                    )
                     true
                 },
 
@@ -309,7 +312,7 @@ fun MapEvents(
         FloatingActionButton(
             onClick = {
                 if (user != null) {
-                  navigateTo(CreateEventScreens.Title.name, navController)
+                    navigateTo(CreateEventScreens.Title.name, navController)
                 } else {
                     Toast.makeText(
                         context,
@@ -396,7 +399,7 @@ fun LoadingScreen() {
 @Composable
 fun EventListItem(event: MinimalEvent, navController: NavController) {
     Column(modifier = Modifier.clickable {
-    navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
+        navigateTo("${BottomNavigationScreens.EventDetails.name}/${event.eventId}", navController)
     }) {
 
         Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -449,7 +452,7 @@ fun EventListItem(event: MinimalEvent, navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    BPRAppTheme {
+    AppTheme {
         EventListItem(
             event = MinimalEvent(
                 title = "Title",
