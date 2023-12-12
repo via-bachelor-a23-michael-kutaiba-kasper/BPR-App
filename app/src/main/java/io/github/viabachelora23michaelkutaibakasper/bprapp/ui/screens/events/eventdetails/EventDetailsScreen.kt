@@ -262,7 +262,7 @@ private fun EditandDeleteButtons(
 @Composable
 private fun AttendeesSection(viewModel: EventDetailsViewModel) {
     Text(
-        text = "Attendees",
+        text = "Attendees (${viewModel.event.value.attendees?.size})",
         Modifier
             .padding(12.dp),
         fontSize = 16.sp,
@@ -386,7 +386,7 @@ private fun BooleanFields(viewModel: EventDetailsViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = if (viewModel.event.value.maxNumberOfAttendees == 0) "Unlimited spots"
+                text = if (viewModel.event.value.maxNumberOfAttendees!! < 0) "Unlimited spots"
                 else {
                     "Spots left: ${
                         viewModel.event.value.attendees?.let {
