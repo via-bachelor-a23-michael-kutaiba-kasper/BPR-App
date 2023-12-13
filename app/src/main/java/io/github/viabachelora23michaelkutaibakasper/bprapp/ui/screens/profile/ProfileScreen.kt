@@ -96,6 +96,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormatted
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.generateRandomColor
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 @ExperimentalMaterial3Api
@@ -397,8 +398,10 @@ private fun FinishedJoinedEventsTab(
 
 @Composable
 private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistory>>) {
+
+
     Text(
-        text = "Experience gained over time",
+        text = "Experience gained over the 30 days",
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
@@ -414,7 +417,7 @@ private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistor
             LineChart(
                 linesChartData = listOf(
                     LineChartData(
-                        points = experienceHistory.value.map {
+                        points = ExperienceFromWithinTime(experienceHistory, 30).map {
                             LineChartData.Point(
                                 value = it.exp.toFloat(), label = DisplayFormattedTime(it.date)
                             )
@@ -441,6 +444,18 @@ private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistor
             )
         }
     }
+}
+
+@Composable
+private fun ExperienceFromWithinTime(
+    experienceHistory: State<List<ExperienceHistory>>,
+    days: Int
+): List<ExperienceHistory> {
+    val eventsLast30Days = experienceHistory.value.filter { event ->
+        val daysDifference = ChronoUnit.DAYS.between(event.date, LocalDateTime.now())
+        daysDifference in 1..days
+    }
+    return eventsLast30Days
 }
 
 

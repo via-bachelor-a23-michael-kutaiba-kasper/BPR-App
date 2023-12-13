@@ -44,11 +44,12 @@ class AchievementsViewModel(val repository: IEventRepository = EventRepository()
 
     fun all() {
         getUserExperience()
-        getAchievements()
         getUserAchievements()
+        getAchievements()
+
     }
 
-    fun synchronizeAchievements() {
+    private fun synchronizeAchievements() {
         val hashmap = HashMap<String, Achievement>()
         for (userachivement in _userAchievements.value) {
             hashmap[userachivement.name] = userachivement
