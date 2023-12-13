@@ -134,7 +134,7 @@ class FakeEventRepository : IEventRepository {
         return listOf("Music", "Education", "Technology")
     }
 
-    override suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent> {
+    override suspend fun getJoinedEvents(userId: String): List<MinimalEvent> {
         return listOf(
             MinimalEvent(
                 title = "Run Event",

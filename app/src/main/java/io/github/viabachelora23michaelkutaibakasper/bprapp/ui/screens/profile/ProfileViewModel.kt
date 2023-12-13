@@ -19,13 +19,15 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
     private val eventRepository: IEventRepository = repository
-    private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
+    private val _createdEvents = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
+    private val _currentJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _reviewIds = MutableStateFlow<List<EventRating>>(emptyList())
     private val _experienceHistory = MutableStateFlow<List<ExperienceHistory>>(emptyList())
     private val _highestRatedCategory = MutableStateFlow("")
-    val eventList = _eventList.asStateFlow()
+    val createdEvents = _createdEvents.asStateFlow()
     val finishedJoinedEvents = _finishedJoinedList.asStateFlow()
+    val currentJoinedEvents = _currentJoinedList.asStateFlow()
     val reviewIds = _reviewIds.asStateFlow()
     val experienceHistory = _experienceHistory.asStateFlow()
     val isLoading = mutableStateOf(false)
@@ -39,9 +41,10 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
         if (user.value == null)
             return
 
-        getEvents(hostId = user.value!!.uid, includePrivate = true)
+        getCreatedEvents(hostId = user.value!!.uid, includePrivate = true)
         getReviewIds(hostId = user.value!!.uid)
         getFinishedJoinedEvents(userId = user.value!!.uid)
+        getCurrentJoinedEvents(userId = user.value!!.uid)
         getExperienceHistory(hostId = user.value!!.uid)
     }
 
@@ -79,14 +82,14 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     }
 
 
-    private fun getEvents(hostId: String, includePrivate: Boolean? = null) {
+    private fun getCreatedEvents(hostId: String, includePrivate: Boolean? = null) {
         viewModelScope.launch {
             errorFetchingEvents.value = false
             try {
                 isLoading.value = true
                 val events =
                     eventRepository.getEvents(hostId = hostId, includePrivate = includePrivate)
-                _eventList.value = events
+                _createdEvents.value = events
                 Log.d("profileviewmodel", "getevents: $events")
                 isLoading.value = false
             } catch (e: Exception) {
@@ -100,15 +103,33 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     fun getFinishedJoinedEvents(userId: String) {
         viewModelScope.launch {
             try {
-                val events = eventRepository.getFinishedJoinedEvents(userId)
+                val events = eventRepository.getJoinedEvents(userId, EventState.COMPLETED.name)
                 _finishedJoinedList.value = events
                 getFavoriteCategory()
-                Log.d("profileviewmodel", "getevents: $events")
+                Log.d("profileviewmodel", "getFinishedJoinedEvents: $events")
 
             } catch (e: Exception) {
                 Log.d("profileViewViewModel", "error message: ${e.message}")
             }
         }
+    }
+
+    fun getCurrentJoinedEvents(userId: String) {
+        viewModelScope.launch {
+            try {
+                val events = eventRepository.getJoinedEvents(userId, EventState.CURRENT.name)
+                _currentJoinedList.value = events
+                Log.d("profileviewmodel", "getCurrentJoinedEvents: $events")
+
+            } catch (e: Exception) {
+                Log.d("profileViewViewModel", "error message: ${e.message}")
+            }
+        }
+    }
+
+    enum class EventState {
+        COMPLETED,
+        CURRENT
     }
 
     fun createReview(eventId: Int, userId: String, rating: Float, reviewDate: String) {

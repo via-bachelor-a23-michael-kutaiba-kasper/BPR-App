@@ -296,7 +296,11 @@ type Query {
 
   reviewsByUser(userId: String): ReviewsByUserResponse
 
-  finishedJoinedEvents(userId: String): EventsResponse
+  """
+  Fetches the events the user has joined.
+  eventState can either be "COMPLETED" og "CURRENT"
+  """
+  joinedEvents(userId: String!, eventState: String!): EventsResponse
 
   recommendations(userId: String!, limit: Int): RecommendationsResponse
 

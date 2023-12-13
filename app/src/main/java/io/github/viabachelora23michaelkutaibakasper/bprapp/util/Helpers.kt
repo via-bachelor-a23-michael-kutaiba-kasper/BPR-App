@@ -14,6 +14,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -23,9 +24,9 @@ import kotlin.random.Random
 fun parseUtcStringToLocalDateTime(utcString: String): LocalDateTime {
 
     val formatter = DateTimeFormatter.ISO_DATE_TIME
-
-
-    return LocalDateTime.parse(utcString, formatter)
+    val somethinh =
+        LocalDateTime.parse(utcString, formatter).atOffset(ZoneOffset.UTC).toLocalDateTime()
+    return somethinh.atZone(ZoneId.of("Europe/Copenhagen")).toLocalDateTime()
 }
 
 fun DisplayFormattedTime(
@@ -56,8 +57,10 @@ fun Float.roundToNearestHalf(): Float {
 }
 
 fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime? {
-    return localDateTime.atOffset(ZoneOffset.UTC).toLocalDateTime()
 
+    val zonedDateTimeLocal = ZonedDateTime.of(localDateTime, ZoneId.of("Europe/Copenhagen"))
+    val zonedDateTimeUtc = zonedDateTimeLocal.withZoneSameInstant(ZoneId.of("UTC"))
+    return zonedDateTimeUtc.toLocalDateTime()
 }
 
 class GreyScaleModifier : DrawModifier {

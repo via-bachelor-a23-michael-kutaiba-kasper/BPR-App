@@ -8,7 +8,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateReviewMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchFinishedJoinedEventsQuery
+import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchJoinedEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetAllAchievementsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
@@ -209,16 +209,16 @@ class EventRepository : IEventRepository {
         return response.data?.categories?.result?.map { it!! } ?: emptyList()
     }
 
-    override suspend fun getFinishedJoinedEvents(userId: String): List<MinimalEvent> {
+    override suspend fun getJoinedEvents(userId: String,eventState:String): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
             .build()
-        val response = apolloClient.query(FetchFinishedJoinedEventsQuery(userId = userId)).execute()
+        val response = apolloClient.query(FetchJoinedEventsQuery(userId = userId,eventState=eventState)).execute()
         Log.d(
             "ApolloEventClient",
-            "getFinishedJoinedEvents: ${response.data?.finishedJoinedEvents}"
+            "getFinishedJoinedEvents: ${response.data?.joinedEvents}"
         )
-        return response.data?.finishedJoinedEvents?.result?.map {
+        return response.data?.joinedEvents?.result?.map {
             MinimalEvent(
                 title = it?.title!!,
                 selectedStartDateTime = parseUtcStringToLocalDateTime(it.startDate!!),

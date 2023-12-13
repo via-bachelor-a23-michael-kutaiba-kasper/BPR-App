@@ -112,8 +112,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val currentEventId = remember { mutableIntStateOf(0) }
     val isLoading by viewModel.isLoading
     val openDialog = remember { mutableStateOf(false) }
-    val events by viewModel.eventList.collectAsState()
+    val events by viewModel.createdEvents.collectAsState()
     val participatedEvents by viewModel.finishedJoinedEvents.collectAsState()
+    val currentJoinedEvents by viewModel.currentJoinedEvents.collectAsState()
     val reviewIds by viewModel.reviewIds.collectAsState()
     val highestRatedCategory by viewModel.highestRatedCategory.collectAsState()
     val errorFetchingEvents by viewModel.errorFetchingEvents
@@ -188,7 +189,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         message = "Error fetching events :("
                     )
                 } else if (events.isEmpty()) {
-                    RefreshButton(message = "Pull down to refresh")
+                    RefreshButton(message = "No events found.. Swipe down to refresh")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -221,6 +222,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
                         finishedJoinedEvents -> {
                             FinishedJoinedEventsTab(
                                 participatedEvents,
+                                currentJoinedEvents,
                                 navController,
                                 reviewIds,
                                 currentEventId,
@@ -316,6 +318,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
 @Composable
 private fun FinishedJoinedEventsTab(
     participatedEvents: List<MinimalEvent>,
+    currentJoinedEvents: List<MinimalEvent>,
     navController: NavController,
     reviewIds: List<EventRating>,
     currentEventId: MutableIntState,
@@ -331,34 +334,66 @@ private fun FinishedJoinedEventsTab(
             .padding(8.dp)
     ) {
         LazyColumn {
-            items(participatedEvents) { event ->
-                FinishedJoinedEvents(navController, event, reviewIds, currentEventId, openDialog)
-            }
-            if (participatedEvents.isNotEmpty()) {
+            if (currentJoinedEvents.isNotEmpty()) {
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    PiechartOfEvents(participatedEvents, "Category participations")
+                    Text(
+                        text = "Your current joined events",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(8.dp, bottom = 16.dp)
+                    )
                 }
-                item {
-                    Text(buildAnnotatedString {
-                        append("Your favorite category, based on your ratings, is ")
-
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(highestRatedCategory)
-                        }
-                        append(". Does this match with the events you have attended?\uD83E\uDD14")
-                    })
+                items(currentJoinedEvents) { event ->
+                    FinishedJoinedEvents(
+                        navController,
+                        event,
+                        reviewIds,
+                        currentEventId,
+                        openDialog
+                    )
                 }
+                if (participatedEvents.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Your participations",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(8.dp, bottom = 16.dp)
+                        )
+                    }
+                    items(participatedEvents) { event ->
+                        FinishedJoinedEvents(
+                            navController,
+                            event,
+                            reviewIds,
+                            currentEventId,
+                            openDialog
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        PiechartOfEvents(participatedEvents, "Category participations")
+                    }
+                    item {
+                        Text(buildAnnotatedString {
+                            append("Your favorite category, based on your ratings, is ")
 
-                item {
-                    LinechartOfExpHistory(experienceHistory)
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(highestRatedCategory)
+                            }
+                            append(". Does this match with the events you have attended?\uD83E\uDD14")
+                        })
+                    }
 
+                    item {
+                        LinechartOfExpHistory(experienceHistory)
+                    }
                 }
             }
         }
-
     }
 }
+
 
 @Composable
 private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistory>>) {
@@ -527,7 +562,7 @@ private fun FinishedJoinedEvents(
                         text = if (event.selectedEndDateTime?.isBefore(
                                 LocalDateTime.now()
                             ) == true
-                        ) "Ended" else "Ongoing"
+                        ) "Ended" else "Not ended"
                     )
                 }
             }
@@ -557,19 +592,21 @@ private fun PiechartOfEvents(participatedEvents: List<MinimalEvent>, message: St
                 fontWeight = FontWeight.SemiBold
             )
 
-            PieChart(pieChartData = PieChartData(
+            PieChart(
+                pieChartData = PieChartData(
 
-                slices = categories.map { category ->
-                    PieChartData.Slice(
-                        value = category.count.toFloat(),
-                        color = category.color,
-                    )
-                }),
+                    slices = categories.map { category ->
+                        PieChartData.Slice(
+                            value = category.count.toFloat(),
+                            color = category.color,
+                        )
+                    }),
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.CenterHorizontally),
                 animation = simpleChartAnimation(),
-                sliceDrawer = SimpleSliceDrawer(sliceThickness = 100f))
+                sliceDrawer = SimpleSliceDrawer(sliceThickness = 100f)
+            )
         }
 
 

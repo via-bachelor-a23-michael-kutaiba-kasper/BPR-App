@@ -52,6 +52,7 @@ import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.DisplayFormattedTime
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.greyScale
 
@@ -65,65 +66,68 @@ fun AchievementsScreen(viewModel: AchievementsViewModel) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     val selectedAchievement by viewModel.selectedAchievement.collectAsState()
 
-
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = {
-            (viewModel::all)(
-            )
-        },
-        indicator = { state, refreshTrigger ->
-            SwipeRefreshIndicator(
-                state = state,
-                refreshTriggerDistance = refreshTrigger,
-                backgroundColor = MaterialTheme.colorScheme.onPrimary,
-                contentColor = MaterialTheme.colorScheme.primary
-            )
-        },
-    ) {
-        if (user == null) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Please sign in to see recommendations",
-                    textAlign = TextAlign.Center
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = {
+                (viewModel::all)(
                 )
-                Button(onClick = { viewModel.getAchievements() }) {
-                    Text(text = "Refresh")
+            },
+            indicator = { state, refreshTrigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = refreshTrigger,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            },
+        ) {
+            if (user == null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Please sign in to see recommendations",
+                        textAlign = TextAlign.Center
+                    )
+                    Button(onClick = { viewModel.getAchievements() }) {
+                        Text(text = "Refresh")
 
+                    }
                 }
+            } else {
+                LazyVerticalGrid(columns = GridCells.Fixed(2),
+
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(8.dp),
+                    content = {
+
+                        item(span = { GridItemSpan(2) }) {
+                            LevelAndExperiencePart(viewModel = viewModel)
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            AchievementsHeader()
+                        }
+                        items(achievements.size) {
+                            AchievementCard(
+                                achievement = achievements[it],
+                                onClick = { openDialogFun(openDialog, true) },
+                                viewModel = viewModel
+                            )
+                        }
+                    })
             }
-        } else {
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
-
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(8.dp),
-                content = {
-
-                    item(span = { GridItemSpan(2) }) {
-                        LevelAndExperiencePart(viewModel = viewModel)
-                    }
-                    item(span = { GridItemSpan(2) }) {
-                        AchievementsHeader()
-                    }
-                    items(achievements.size) {
-                        AchievementCard(
-                            achievement = achievements[it],
-                            onClick = { openDialogFun(openDialog, true) },
-                            viewModel = viewModel
-                        )
-                    }
-                })
         }
-    }
-    if (openDialog.value) {
+        if (openDialog.value) {
 
-        FocusedCardDialog(openDialog, selectedAchievement)
+            FocusedCardDialog(openDialog, selectedAchievement)
+        }
     }
 }
 
@@ -176,8 +180,10 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         LinearProgressIndicator(
-                            progress = {  achievement.progress!!.toFloat()
-                                .div(achievement.requirement.toFloat()) },
+                            progress = {
+                                achievement.progress!!.toFloat()
+                                    .div(achievement.requirement.toFloat())
+                            },
                             strokeCap = StrokeCap.Round,
                             modifier = Modifier
                                 .height(8.dp)

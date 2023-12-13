@@ -18,9 +18,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class MapViewViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
+
     private val eventRepository: IEventRepository = repository
+
     private val _eventList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     val eventList = _eventList.asStateFlow()
+
     private val _clusterEvents = MutableStateFlow<List<EventClusterItem>>(emptyList())
     val clusterEvents = _clusterEvents.asStateFlow()
     private val _event = MutableStateFlow<Event?>(null)

@@ -144,9 +144,7 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                     onValueChange = {
                         if (it.all { char -> char.isDigit() } && it.isNotEmpty() && it.toInt() <= 10000) {
                             viewModel.setMaxNumberOfAttendees(it.toInt())
-                            if (viewModel.maxNumberOfAttendees.value == 0) {
-                                viewModel.setMaxNumberOfAttendees(-1)
-                            }
+
                         }
                     },
                     label = { Text("Enter Number") },
@@ -282,6 +280,9 @@ fun CreateEventDetailsScreen(navController: NavController, viewModel: CreateEven
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
+                        if (viewModel.maxNumberOfAttendees.value == 0) {
+                            viewModel.setMaxNumberOfAttendees(-1)
+                        }
                         viewModel.setEvent()
 
                         navigateTo(CreateEventScreens.EventSummary.name, navController)

@@ -138,7 +138,9 @@ fun Map(navController: NavController, modifier: Modifier = Modifier, viewModel: 
 @Composable
 fun EventList(viewModel: MapViewViewModel, navController: NavController) {
     var response by remember { mutableStateOf<List<MinimalEvent>>(emptyList()) }
+
     val events by viewModel.eventList.collectAsState(emptyList())
+
     val isLoading by viewModel.isLoading
     val errorFetchingEvents by viewModel.errorFetchingEvent
     response = events

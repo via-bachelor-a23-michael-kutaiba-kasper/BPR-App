@@ -102,8 +102,8 @@ query FetchAllEvents($hostId: String, $from: String, $includePrivateEvents: Bool
     }
 }
 
-query FetchFinishedJoinedEvents($userId: String!) {
-    finishedJoinedEvents(userId: $userId) {
+query FetchJoinedEvents($userId: String!, $eventState: String!) {
+    joinedEvents(userId: $userId, eventState: $eventState) {
         result {
             id
             title
