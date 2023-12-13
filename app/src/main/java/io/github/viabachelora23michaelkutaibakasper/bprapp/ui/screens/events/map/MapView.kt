@@ -154,7 +154,11 @@ fun EventList(viewModel: MapViewViewModel, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Error fetching events")
+            Text(
+                text = "It seems there was an error updating the events. We are so sorry for this inconvenience :(",
+                modifier = Modifier.padding(16.dp),
+                textAlign = TextAlign.Center
+            )
             Button(onClick = {
                 viewModel.getEvents(
                     from = localDateTimeToUTCLocalDateTime(

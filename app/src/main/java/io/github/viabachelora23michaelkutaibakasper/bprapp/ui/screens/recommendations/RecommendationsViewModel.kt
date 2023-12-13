@@ -42,7 +42,6 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     }
 
     init {
-
         all()
     }
 

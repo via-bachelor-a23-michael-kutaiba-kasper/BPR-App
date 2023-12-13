@@ -174,171 +174,189 @@ private fun InterestSurvey(
 ) {
     var selectedCategories1 = selectedCategories
     var selectedKeywords1 = selectedKeywords
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+    val isLoading by viewModel.isLoading
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            (viewModel::all)(
+            )
+        },
+        indicator = { state, refreshTrigger ->
+            SwipeRefreshIndicator(
+                state = state,
+                refreshTriggerDistance = refreshTrigger,
+                backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.primary
+            )
+        },
     ) {
-        Text(
-            text = "Interest Survey",
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "Please complete this survey to get the best recommendations for you!",
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "Please select 3 of these Categories that interest you the most",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Card(
-            Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
-        )
-        {
-            Row(
+                .fillMaxHeight()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Text(
+                text = "Interest Survey",
                 modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Please complete this survey to get the best recommendations for you!",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Please select 3 of these Categories that interest you the most",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+            Card(
+                Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                FlowColumn(
+                    .padding(8.dp)
+            )
+            {
+                Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(bottom = 8.dp)
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .horizontalScroll(rememberScrollState())
                 ) {
-                    for (category in predefinedCategories) {
-                        FilterChip(
-                            modifier = Modifier.padding(4.dp),
-                            label = { Text(category) },
-                            selected = selectedCategories1.contains(category),
-                            onClick = {
-                                selectedCategories1 =
-                                    if (selectedCategories1.contains(category)) {
-                                        viewModel.setCategories(selectedCategories1 - category)
+                    FlowColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        for (category in predefinedCategories) {
+                            FilterChip(
+                                modifier = Modifier.padding(4.dp),
+                                label = { Text(category) },
+                                selected = selectedCategories1.contains(category),
+                                onClick = {
+                                    selectedCategories1 =
+                                        if (selectedCategories1.contains(category)) {
+                                            viewModel.setCategories(selectedCategories1 - category)
+                                        } else {
+                                            if (selectedCategories1.size >= 3) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "You can only select 3 categories",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                selectedCategories1
+                                            } else {
+                                                viewModel.setCategories(selectedCategories1 + category)
+                                            }
+                                        }
+                                },
+                                leadingIcon = if (selectedCategories1.contains(category)) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Filled.Favorite,
+                                            contentDescription = "liked icon",
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    }
+                                } else {
+                                    null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            Text(
+                text = "And select 3 of these keywords that interest you the most",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+            {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .horizontalScroll(rememberScrollState())
+                ) {
+                    FlowColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        for (keyword in predefinedKeywords) {
+                            FilterChip(
+                                modifier = Modifier.padding(4.dp),
+                                label = { Text(keyword) },
+                                selected = selectedKeywords1.contains(keyword),
+                                onClick = {
+                                    selectedKeywords1 = if (selectedKeywords1.contains(keyword)) {
+                                        viewModel.setKeywords(selectedKeywords1 - keyword)
                                     } else {
-                                        if (selectedCategories1.size >= 3) {
+                                        if (selectedKeywords1.size >= 3) {
                                             Toast.makeText(
                                                 context,
-                                                "You can only select 3 categories",
+                                                "You can only select 3 keywords",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            selectedCategories1
+                                            selectedKeywords1
                                         } else {
-                                            viewModel.setCategories(selectedCategories1 + category)
+                                            viewModel.setKeywords(selectedKeywords1 + keyword)
                                         }
                                     }
-                            },
-                            leadingIcon = if (selectedCategories1.contains(category)) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "liked icon",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        Text(
-            text = "And select 3 of these keywords that interest you the most",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
-        {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                FlowColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(bottom = 8.dp)
-                ) {
-                    for (keyword in predefinedKeywords) {
-                        FilterChip(
-                            modifier = Modifier.padding(4.dp),
-                            label = { Text(keyword) },
-                            selected = selectedKeywords1.contains(keyword),
-                            onClick = {
-                                selectedKeywords1 = if (selectedKeywords1.contains(keyword)) {
-                                    viewModel.setKeywords(selectedKeywords1 - keyword)
-                                } else {
-                                    if (selectedKeywords1.size >= 3) {
-                                        Toast.makeText(
-                                            context,
-                                            "You can only select 3 keywords",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        selectedKeywords1
-                                    } else {
-                                        viewModel.setKeywords(selectedKeywords1 + keyword)
+                                },
+                                leadingIcon = if (selectedKeywords1.contains(keyword)) {
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Filled.Favorite,
+                                            contentDescription = "liked icon",
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
                                     }
+                                } else {
+                                    null
                                 }
-                            },
-                            leadingIcon = if (selectedKeywords1.contains(keyword)) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "liked icon",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            } else {
-                                null
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
-        }
-        Button(
-            onClick = {
-                if (selectedCategories1.size != 3 || selectedKeywords1.size != 3) {
-                    Toast.makeText(
-                        context,
-                        "Please select 3 categories and 3 keywords",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    viewModel.storeInterestSurvey(
-                        userId = user!!.uid,
-                        keywords = selectedKeywords1,
-                        categories = selectedCategories1
-                    )
-                }
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(text = "Submit Survey")
+            Button(
+                onClick = {
+                    if (selectedCategories1.size != 3 || selectedKeywords1.size != 3) {
+                        Toast.makeText(
+                            context,
+                            "Please select 3 categories and 3 keywords",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        viewModel.storeInterestSurvey(
+                            userId = user!!.uid,
+                            keywords = selectedKeywords1,
+                            categories = selectedCategories1
+                        )
+                    }
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Submit Survey")
+            }
         }
     }
 }
