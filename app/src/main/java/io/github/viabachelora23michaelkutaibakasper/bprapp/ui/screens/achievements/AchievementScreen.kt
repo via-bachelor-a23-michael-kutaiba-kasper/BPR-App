@@ -176,7 +176,8 @@ private fun FocusedCardDialog(openDialog: MutableState<Boolean>, achievement: Ac
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         LinearProgressIndicator(
-                            progress = { 0.7f },
+                            progress = {  achievement.progress!!.toFloat()
+                                .div(achievement.requirement.toFloat()) },
                             strokeCap = StrokeCap.Round,
                             modifier = Modifier
                                 .height(8.dp)
