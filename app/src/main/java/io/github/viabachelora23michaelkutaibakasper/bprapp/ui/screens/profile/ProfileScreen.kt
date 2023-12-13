@@ -355,7 +355,7 @@ private fun FinishedJoinedEventsTab(
                 if (participatedEvents.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Your participations",
+                            text = "Your completed joined events",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(8.dp, bottom = 16.dp)

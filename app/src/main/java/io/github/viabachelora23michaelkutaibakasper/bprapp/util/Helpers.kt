@@ -1,6 +1,4 @@
 package io.github.viabachelora23michaelkutaibakasper.bprapp.util
-
-
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Rect
@@ -24,9 +22,10 @@ import kotlin.random.Random
 fun parseUtcStringToLocalDateTime(utcString: String): LocalDateTime {
 
     val formatter = DateTimeFormatter.ISO_DATE_TIME
-    val somethinh =
-        LocalDateTime.parse(utcString, formatter).atOffset(ZoneOffset.UTC).toLocalDateTime()
-    return somethinh.atZone(ZoneId.of("Europe/Copenhagen")).toLocalDateTime()
+
+    return LocalDateTime.parse(utcString, formatter).atOffset(ZoneOffset.UTC).atZoneSameInstant(
+        ZoneId.of(ZoneId.systemDefault().id)
+    ).toLocalDateTime()
 }
 
 fun DisplayFormattedTime(
@@ -57,8 +56,7 @@ fun Float.roundToNearestHalf(): Float {
 }
 
 fun localDateTimeToUTCLocalDateTime(localDateTime: LocalDateTime): LocalDateTime? {
-
-    val zonedDateTimeLocal = ZonedDateTime.of(localDateTime, ZoneId.of("Europe/Copenhagen"))
+    val zonedDateTimeLocal = ZonedDateTime.of(localDateTime, ZoneId.of(ZoneId.systemDefault().id))
     val zonedDateTimeUtc = zonedDateTimeLocal.withZoneSameInstant(ZoneId.of("UTC"))
     return zonedDateTimeUtc.toLocalDateTime()
 }
