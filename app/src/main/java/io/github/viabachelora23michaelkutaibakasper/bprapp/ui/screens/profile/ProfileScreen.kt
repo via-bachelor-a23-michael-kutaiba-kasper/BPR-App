@@ -375,15 +375,18 @@ private fun FinishedJoinedEventsTab(
                         Spacer(modifier = Modifier.height(16.dp))
                         PiechartOfEvents(participatedEvents, "Category participations")
                     }
-                    item {
-                        Text(buildAnnotatedString {
-                            append("Your favorite category, based on your ratings, is ")
+                    //if there are any ratings
+                    if (reviewIds.isNotEmpty()) {
+                        item {
+                            Text(buildAnnotatedString {
+                                append("Your favorite category, based on your ratings, is ")
 
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(highestRatedCategory)
-                            }
-                            append(". Does this match with the events you have attended?\uD83E\uDD14")
-                        })
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append(highestRatedCategory)
+                                }
+                                append(". Does this match with the events you have attended?\uD83E\uDD14")
+                            })
+                        }
                     }
 
                     item {
