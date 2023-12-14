@@ -106,7 +106,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
 
     val createdEvents = 0
     val finishedJoinedEvents = 1
-    val tabs = listOf("My Events", "Your Participations")
+    val tabs = listOf("My Events", "My Participations")
     val selectedIndex = remember { mutableIntStateOf(0) }
     val user by viewModel.user
     var sliderValue by remember { mutableFloatStateOf(0f) }
