@@ -21,7 +21,7 @@ class ProfileViewModelTest {
     @Test
     fun getReviewIds_returnsListOfInts() {
         val viewModel =
-            ProfileViewModel(repository = repository)
+            ProfileViewModel(reviewRepo = repository)
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<Int>(), viewModel.reviewIds.value)
@@ -38,7 +38,7 @@ class ProfileViewModelTest {
     @Test
     fun getFinishedJoinedEvents_returnsListOfEvents() {
         val viewModel =
-            ProfileViewModel(repository = repository)
+            ProfileViewModel(reviewRepo = repository)
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<Int>(), viewModel.finishedJoinedEvents.value)
@@ -55,7 +55,7 @@ class ProfileViewModelTest {
     @Test
     fun createReview_returnsInt() {
         val viewModel =
-            ProfileViewModel(repository = repository)
+            ProfileViewModel(reviewRepo = repository)
 
         // Verify the initial state
         TestCase.assertEquals(false, viewModel.reviewCreated.value)

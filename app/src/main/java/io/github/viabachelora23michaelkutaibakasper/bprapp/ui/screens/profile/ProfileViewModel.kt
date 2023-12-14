@@ -10,15 +10,23 @@ import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.EventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.progress.IProgressRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.review.IReviewRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.progress.ProgressRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.review.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
-    private val eventRepository: IEventRepository = repository
+class ProfileViewModel(
+    private val reviewRepository: IReviewRepository = ReviewRepository(),
+    private val eventRepository: IEventRepository = EventRepository(),
+    private val progressRepository: IProgressRepository = ProgressRepository()
+) : ViewModel() {
+    //private val reviewRepository = reviewRepo
     private val _createdEvents = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _finishedJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
     private val _currentJoinedList = MutableStateFlow<List<MinimalEvent>>(emptyList())
@@ -137,7 +145,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
         viewModelScope.launch {
             try {
                 Log.d("profileviewmodel", "createReview: $eventId, $userId, $rating, $reviewDate")
-                val review = eventRepository.createReview(eventId, userId, rating, reviewDate)
+                val review = reviewRepository.createReview(eventId, userId, rating, reviewDate)
                 Log.d("profileviewmodel", "getevents: $review")
                 reviewCreated.value = true
             } catch (e: Exception) {
@@ -150,7 +158,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     fun getReviewIds(hostId: String) {
         viewModelScope.launch {
             try {
-                val reviewIds = eventRepository.getReviewIds(hostId)
+                val reviewIds = reviewRepository.getReviewIds(hostId)
                 _reviewIds.value = reviewIds
                 Log.d("profileviewmodel", "the idsss!!: $reviewIds")
             } catch (e: Exception) {
@@ -162,7 +170,7 @@ class ProfileViewModel(repository: IEventRepository = EventRepository()) : ViewM
     fun getExperienceHistory(hostId: String) {
         viewModelScope.launch {
             try {
-                val experienceHistory = eventRepository.getUserExperienceHistory(hostId)
+                val experienceHistory = progressRepository.getUserExperienceHistory(hostId)
                 _experienceHistory.value = experienceHistory
                 Log.d("profileViewViewModel", "the experienceHistory!!: $experienceHistory")
             } catch (e: Exception) {

@@ -9,8 +9,10 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.EventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.metadata.IMetadataRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.metadata.MetaDataRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidAddress
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidCategory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInvalidDescription
@@ -20,10 +22,11 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.validators.isInv
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class CreateEventViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
+class CreateEventViewModel(eventRepo: IEventRepository = EventRepository(), metaRepo: IMetadataRepository = MetaDataRepository()) : ViewModel() {
     val eventCreated = mutableStateOf(false)
     val createdEventId = mutableStateOf(0)
-    private val eventRepository = repository
+    private val eventRepository = eventRepo
+    private val metaRepository = metaRepo
     var predefinedKeywords = mutableStateOf(emptyList<String>())
     var predefinedCategories = mutableStateOf(emptyList<String>())
     private var _title = mutableStateOf("")
@@ -255,7 +258,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     private fun getKeywords(): List<String> {
         viewModelScope.launch {
             try {
-                val keywords = eventRepository.getKeywords()
+                val keywords = metaRepository.getKeywords()
                 predefinedKeywords.value = keywords
                 Log.d("CreateEventViewModel", "failed to getKeywords: $keywords")
             } catch (e: Exception) {
@@ -268,7 +271,7 @@ class CreateEventViewModel(repository: IEventRepository = EventRepository()) : V
     private fun getCategories(): List<String> {
         viewModelScope.launch {
             try {
-                val categories = eventRepository.getCategories()
+                val categories = metaRepository.getCategories()
                 predefinedCategories.value = categories
                 Log.d("CreateEventViewModel", "failed to getCategories: $categories")
             } catch (e: Exception) {

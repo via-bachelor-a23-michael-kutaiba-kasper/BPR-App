@@ -8,13 +8,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Experience
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.progress.IProgressRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.progress.ProgressRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AchievementsViewModel(val repository: IEventRepository = EventRepository()) : ViewModel() {
+class AchievementsViewModel(val repository: IProgressRepository = ProgressRepository()) : ViewModel() {
     val isLoading = mutableStateOf(false)
     private var _user = MutableStateFlow(Firebase.auth.currentUser)
     val user = _user.asStateFlow()

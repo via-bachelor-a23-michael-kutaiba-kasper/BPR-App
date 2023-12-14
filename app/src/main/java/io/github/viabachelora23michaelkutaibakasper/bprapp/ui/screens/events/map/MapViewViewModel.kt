@@ -9,8 +9,8 @@ import com.google.maps.android.clustering.ClusterItem
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.EventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.IEventRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.util.localDateTimeToUTCLocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

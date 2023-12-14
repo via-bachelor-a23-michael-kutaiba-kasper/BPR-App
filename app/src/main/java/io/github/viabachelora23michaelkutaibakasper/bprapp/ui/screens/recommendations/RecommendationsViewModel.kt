@@ -7,14 +7,23 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.EventRepository
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.metadata.IMetadataRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.recommendations.IRecommendationsRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.survey.ISurveyRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.metadata.MetaDataRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.recommendations.RecommendationsRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.survey.SurveyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class RecommendationsViewModel(repository: IEventRepository = EventRepository()) : ViewModel() {
-    private val eventRepository = repository
+class RecommendationsViewModel(
+    metaRepo: IMetadataRepository = MetaDataRepository(),
+    surveyRepo: ISurveyRepository = SurveyRepository(), recommendationsRepo: IRecommendationsRepository = RecommendationsRepository()
+) : ViewModel() {
+    private val metaRepo = metaRepo
+    private val surveyRepo = surveyRepo
+    private val recommendationsRepo = recommendationsRepo
     private val _isSurveyFilled = MutableStateFlow(false)
     val isSurveyFilled = _isSurveyFilled.asStateFlow()
     private var _user = MutableStateFlow(Firebase.auth.currentUser)
@@ -58,7 +67,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     fun getKeywords(): List<String> {
         viewModelScope.launch {
             try {
-                val keywords = eventRepository.getKeywords()
+                val keywords = metaRepo.getKeywords()
                 _predefinedKeywords.value = keywords
                 Log.d("RecommendationsViewModel", "getKeywords: $keywords")
             } catch (e: Exception) {
@@ -71,7 +80,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
     fun getCategories(): List<String> {
         viewModelScope.launch {
             try {
-                val categories = eventRepository.getCategories()
+                val categories = metaRepo.getCategories()
                 _predefinedCategories.value = categories
                 Log.d("RecommendationsViewModel", "failed to getCategories: $categories")
             } catch (e: Exception) {
@@ -87,7 +96,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
             try {
                 isLoading.value = true
                 val events =
-                    eventRepository.getReccommendations(
+                    recommendationsRepo.getReccommendations(
                         userId = userId,
                         numberOfEvents = numberOfEvents
                     )
@@ -107,7 +116,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
         var statusCode = 0
         viewModelScope.launch {
             try {
-                val status = eventRepository.getInterestSurvey(userId = userId)
+                val status = surveyRepo.getInterestSurvey(userId = userId)
                 isFilled = status.code == 200
                 _isSurveyFilled.value = isFilled
                 statusCode = status.code
@@ -130,7 +139,7 @@ class RecommendationsViewModel(repository: IEventRepository = EventRepository())
 
             viewModelScope.launch {
                 try {
-                    val status = eventRepository.storeInterestSurvey(
+                    val status = surveyRepo.storeInterestSurvey(
                         userId = userId,
                         keywords = keywords,
                         categories = categories

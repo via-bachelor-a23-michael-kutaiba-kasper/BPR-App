@@ -10,7 +10,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.IEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events.IEventRepository
 import java.time.LocalDateTime
 
 class FakeEventRepository : IEventRepository {

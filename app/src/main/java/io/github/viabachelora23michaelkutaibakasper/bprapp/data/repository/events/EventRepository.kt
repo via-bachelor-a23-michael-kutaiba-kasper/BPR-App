@@ -1,4 +1,4 @@
-package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository
+package io.github.viabachelora23michaelkutaibakasper.bprapp.data.repository.events
 
 import android.net.Uri
 import android.util.Log
@@ -6,30 +6,14 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import io.github.viabachelora23michaelkutaibakasper.bprapp.BuildConfig
 import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateEventMutation
-import io.github.viabachelora23michaelkutaibakasper.bprapp.CreateReviewMutation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchAllEventsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.FetchJoinedEventsQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetAllAchievementsQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetCategoriesQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.GetEventQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetExperienceHistoryQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetExperienceQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetInterestSurveyQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetKeywordsQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetRecommendationsQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.GetUserAchievementsQuery
 import io.github.viabachelora23michaelkutaibakasper.bprapp.JoinEventMutation
-import io.github.viabachelora23michaelkutaibakasper.bprapp.ReviewsByUserQuery
-import io.github.viabachelora23michaelkutaibakasper.bprapp.StoreInterestSurveyMutation
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Experience
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Status
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.User
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.GeoLocationInput
 import io.github.viabachelora23michaelkutaibakasper.bprapp.type.UserInput
@@ -191,24 +175,6 @@ class EventRepository : IEventRepository {
         Log.d("ApolloEventClient", "joinEvent: ${response.data?.joinEvent?.result?.id}")
     }
 
-    override suspend fun getKeywords(): List<String> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetKeywordsQuery()).execute()
-        Log.d("ApolloEventClient", "getKeywords: ${response.data?.keywords}")
-        return response.data?.keywords?.result?.map { it!! } ?: emptyList()
-    }
-
-    override suspend fun getCategories(): List<String> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetCategoriesQuery()).execute()
-        Log.d("ApolloEventClient", "getCategories: ${response.data?.categories}")
-        return response.data?.categories?.result?.map { it!! } ?: emptyList()
-    }
-
     override suspend fun getJoinedEvents(userId: String,eventState:String): List<MinimalEvent> {
         val apolloClient = ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL)
@@ -249,217 +215,4 @@ class EventRepository : IEventRepository {
             )
         } ?: emptyList()
     }
-
-    override suspend fun createReview(
-        eventId: Int,
-        userId: String,
-        rating: Float,
-        reviewDate: String
-    ): Int {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response =
-            apolloClient.mutation(
-                CreateReviewMutation(
-                    eventId = eventId,
-                    rate = rating.toDouble(),
-                    reviewerId = userId,
-                    reviewDate = reviewDate
-                )
-            ).execute()
-
-        return response.data?.createReview?.result?.id!!
-    }
-
-    override suspend fun getReviewIds(userId: String): List<EventRating> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response =
-            apolloClient.query(ReviewsByUserQuery(userId = Optional.presentIfNotNull(userId)))
-                .execute()
-        Log.d(
-            "ApolloEventClient",
-            "getReviewIds: ${response.data?.reviewsByUser?.result}"
-        )
-        return response.data?.reviewsByUser?.result?.map {
-            EventRating(
-                eventId = it?.eventId!!,
-                rating = it.rate!!.toFloat()
-            )
-        } ?: emptyList()
-    }
-
-    override suspend fun getReccommendations(
-        userId: String,
-        numberOfEvents: Int
-    ): List<MinimalEvent> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(
-            GetRecommendationsQuery(
-                userId = userId,
-                limit = Optional.presentIfNotNull(numberOfEvents)
-            )
-        ).execute()
-        Log.d(
-            "ApolloEventClient",
-            "getReccommendations: ${response.data?.recommendations}"
-        )
-        return response.data?.recommendations?.result?.result?.map {
-            MinimalEvent(
-                title = it?.event?.title!!,
-                selectedStartDateTime = parseUtcStringToLocalDateTime(it.event.startDate!!),
-                eventId = it.event.id!!,
-                selectedCategory = it.event.category!!,
-                photos = it.event.images,
-                description = it.event.description,
-                location = Location(
-                    city = it.event.city,
-                    completeAddress = it.event.location,
-                    geoLocation = GeoLocation(
-                        lat = it.event.geoLocation?.lat!!.toDouble(),
-                        lng = it.event.geoLocation.lng!!.toDouble()
-                    )
-                ), selectedEndDateTime = parseUtcStringToLocalDateTime(it.event.endDate!!),
-                host = User(
-                    displayName = it.event.host?.displayName!!,
-                    userId = it.event.host.userId!!,
-                    photoUrl = it.event.host.photoUrl?.let { Uri.parse(it) },
-                    creationDate = parseUtcStringToLocalDateTime(
-                        it.event
-                            .host.creationDate!!
-                    ),
-                    lastSeenOnline = it.event.host.lastSeenOnline?.let { it1 ->
-                        parseUtcStringToLocalDateTime(
-                            it1
-                        )
-                    }
-                ), numberOfAttendees = null
-            )
-        } ?: emptyList()
-    }
-
-    override suspend fun getInterestSurvey(userId: String): Status {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetInterestSurveyQuery(userId = userId)).execute()
-        Log.d(
-            "ApolloEventClient",
-            "GetInterestSurvey: ${response.data?.interestSurvey}"
-        )
-        return Status(
-            message = response.data?.interestSurvey?.status?.message!!,
-            code = response.data?.interestSurvey?.status?.code!!
-        )
-    }
-
-    override suspend fun storeInterestSurvey(
-        userId: String,
-        keywords: List<String>,
-        categories: List<String>
-    ): Status {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.mutation(
-            StoreInterestSurveyMutation(
-                userId = userId,
-                keywords = keywords,
-                categories = categories
-            )
-        ).execute()
-        Log.d(
-            "ApolloEventClient",
-            "StoreInterestSurvey: ${response.data?.storeInterestSurvey}"
-        )
-        return Status(
-            message = response.data?.storeInterestSurvey?.status?.message!!,
-            code = response.data?.storeInterestSurvey?.status?.code!!
-        )
-    }
-
-    override suspend fun getUserAchievements(userId: String): List<Achievement> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetUserAchievementsQuery(userId = userId)).execute()
-        Log.d(
-            "ApolloEventClient",
-            "getUserAchievements: ${response.data?.userAchievements?.result}"
-        )
-        return response.data?.userAchievements?.result?.map {
-            Achievement(
-                icon = it?.icon!!,
-                name = it.name!!,
-                description = it.description!!,
-                expReward = it.expReward!!,
-                requirement = it.requirement!!,
-                progress = it.progress!!,
-                unlockDate = it.unlockDate?.let { it1 -> parseUtcStringToLocalDateTime(it1) },
-                isAchieved = null
-            )
-        } ?: emptyList()
-
-    }
-
-    override suspend fun getAllAchievements(): List<Achievement> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetAllAchievementsQuery()).execute()
-        Log.d("ApolloEventClient", "getKeywords: ${response.data?.allAchievements?.result}")
-        return response.data?.allAchievements?.result?.map {
-            Achievement(
-                icon = it?.icon!!,
-                name = it.name!!,
-                description = it.description!!,
-                expReward = it.expReward!!,
-                progress = null,
-                requirement = it.requirement!!,
-                unlockDate = null,
-                isAchieved = null
-            )
-        } ?: emptyList()
-    }
-
-    override suspend fun getExperience(userId: String): Experience {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetExperienceQuery(userId = userId)).execute()
-        Log.d(
-            "ApolloEventClient",
-            "getExperience: ${response.data?.expProgress?.result}"
-        )
-        return Experience(
-            totalExp = response.data?.expProgress?.result?.totalExp!!,
-            level = response.data?.expProgress?.result?.level?.value!!,
-            minExp = response.data?.expProgress?.result?.level!!.minExp!!,
-            maxExp = response.data?.expProgress?.result?.level!!.maxExp!!,
-            stage = response.data?.expProgress?.result?.stage!!,
-            name = response.data?.expProgress?.result?.level!!.name!!
-        )
-    }
-
-    override suspend fun getUserExperienceHistory(userId: String): List<ExperienceHistory> {
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
-            .build()
-        val response = apolloClient.query(GetExperienceHistoryQuery(userId = userId)).execute()
-        Log.d(
-            "ApolloEventClient",
-            "getUserExperienceHistory: ${response.data?.expProgress?.result}"
-        )
-        return response.data?.expProgress?.result?.expProgressHistory?.map {
-            ExperienceHistory(
-                exp = it?.expGained!!,
-                date = parseUtcStringToLocalDateTime(it.timestamp!!)
-            )
-        } ?: emptyList()
-    }
-
 }

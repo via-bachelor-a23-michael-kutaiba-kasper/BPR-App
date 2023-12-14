@@ -26,7 +26,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_ExpectedValues_returnsCreated() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Run Event",
@@ -81,7 +81,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_EmptyTitle_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "",
@@ -136,7 +136,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_EmptyAddress_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "hey",
@@ -191,7 +191,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_DefaultCategory_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -246,7 +246,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_EmptyCategory_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -301,7 +301,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_KeywordsIsEmpty_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -356,7 +356,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_KeywordsSizeLessThanThree_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -412,7 +412,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_KeywordsMoreThanFive_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -468,7 +468,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_EndDateIsBeforeStartDate_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         //create an event object
         val event = Event(
             title = "Hey",
@@ -524,7 +524,7 @@ class CreateEventViewModelTest {
     @Test
     fun createEvent_EndDateIsEqualToStartDate_DoesNotCreate() {
         val viewModel =
-            CreateEventViewModel(repository = repository)
+            CreateEventViewModel(eventRepo = repository)
         val event = Event(
             title = "Hey",
             description = "Run for 5km",
