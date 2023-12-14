@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.GeoLocation
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Location
@@ -21,6 +23,7 @@ class EventDetailsViewModel(repository: IEventRepository = EventRepository()) : 
     private val eventRepository: IEventRepository = repository
     val errorFetchingEvent = mutableStateOf(false)
     val invalidJoin = mutableStateOf(false)
+    val user = mutableStateOf(Firebase.auth.currentUser)
     private val _event = MutableStateFlow<Event>(
         Event(
             "title",

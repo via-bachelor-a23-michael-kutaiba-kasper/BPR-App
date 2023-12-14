@@ -54,8 +54,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import io.github.viabachelora23michaelkutaibakasper.bprapp.R
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Event
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen
@@ -70,7 +68,7 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
     val event by viewModel.event.collectAsState()
     val isLoading by viewModel.isLoading
     Log.d("eventDetailsScreen", "event: $event")
-    val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+    val user by viewModel.user
     val errorFetchingEvent by viewModel.errorFetchingEvent
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -117,9 +115,21 @@ fun EventDetailsScreen(navController: NavController, viewModel: EventDetailsView
                 LinkToEvent(event = event, context = context, viewModel = viewModel)
             }
 
-            EditandDeleteButtons(user, viewModel)
 
-            ShareandJoinButtons(user, viewModel, openDialog)
+            EditandDeleteButtons(user, viewModel)
+            //check if current user is in attendees list
+
+            if (user?.uid != viewModel.event.value.host?.userId && viewModel.event.value.attendees?.any { it?.userId == user?.uid } == false) {
+                Button(
+                    onClick = { openDialog.value = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Text(text = "Join event")
+                }
+            }
+            Sharebutton(user, viewModel, openDialog)
         }
         ConfirmationDialog(openDialog, viewModel, user, context)
     }
@@ -192,7 +202,7 @@ private fun LinkToEvent(
 }
 
 @Composable
-private fun ShareandJoinButtons(
+private fun Sharebutton(
     user: FirebaseUser?,
     viewModel: EventDetailsViewModel,
     openDialog: MutableState<Boolean>
@@ -202,22 +212,12 @@ private fun ShareandJoinButtons(
             onClick = { /*TODO*/ },
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+
                 .padding(8.dp)
         ) {
             Text(text = "Share event")
         }
-        if (user?.uid != viewModel.event.value.host?.userId) {
-            Button(
-                onClick = { openDialog.value = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(8.dp)
-            ) {
-                Text(text = "Join event")
-            }
-        }
+
     }
 }
 
@@ -239,7 +239,7 @@ private fun EditandDeleteButtons(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
+
                             .padding(8.dp)
                     ) {
                         Text(text = "Edit event")
@@ -248,7 +248,7 @@ private fun EditandDeleteButtons(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
+
                             .padding(8.dp)
                     ) {
                         Text(text = "Delete event")
