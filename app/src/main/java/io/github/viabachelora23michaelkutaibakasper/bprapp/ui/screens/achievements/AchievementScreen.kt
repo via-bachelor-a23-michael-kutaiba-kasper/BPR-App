@@ -326,7 +326,10 @@ private fun AchievementsHeader() {
 @Composable
 private fun LevelAndExperiencePart(viewModel: AchievementsViewModel) {
     val experience by viewModel.experience.collectAsState()
-    val currentProgress = experience.totalExp.toFloat() / experience.maxExp.toFloat()
+   // val currentProgress = experience.totalExp.toFloat() / experience.maxExp.toFloat()
+    val maxExp = experience.maxExp- experience.minExp
+    val currentExp = (experience.totalExp - experience.minExp).toFloat() / maxExp.toFloat()
+    val currentExp2 = (experience.totalExp - experience.minExp)
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -358,14 +361,14 @@ private fun LevelAndExperiencePart(viewModel: AchievementsViewModel) {
                     fontSize = 20.sp
                 )
                 LinearProgressIndicator(
-                    progress = { currentProgress },
+                    progress = { currentExp },
                     strokeCap = StrokeCap.Round,
                     modifier = Modifier
                         .height(8.dp)
                         .fillMaxWidth(0.5f)
                 )
-                Text(text = "${experience.totalExp} / ${experience.maxExp}")
-                if (currentProgress >= 0.7f) {
+                Text(text = "$currentExp2 / $maxExp")
+                if (currentExp >= 0.7f) {
                     Text(
                         text = "Almost there! \uD83D\uDCAA",
                         modifier = Modifier.padding(12.dp),
