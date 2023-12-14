@@ -88,7 +88,7 @@ import io.github.viabachelora23michaelkutaibakasper.bprapp.data.authentication.I
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.EventRating
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.notifications.NotificationClient
+import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.notifications.NotificationClient
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.BottomNavigationScreens
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.navigation.navigateTo
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.events.map.LoadingScreen

@@ -1,4 +1,4 @@
-package io.github.viabachelora23michaelkutaibakasper.bprapp.notifications
+package io.github.viabachelora23michaelkutaibakasper.bprapp.ui.notifications
 
 import android.content.ContentValues.TAG
 import android.util.Log
