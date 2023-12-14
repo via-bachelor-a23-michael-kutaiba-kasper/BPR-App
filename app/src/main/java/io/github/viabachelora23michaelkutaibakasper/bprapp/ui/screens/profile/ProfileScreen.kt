@@ -404,7 +404,7 @@ private fun LinechartOfExpHistory(experienceHistory: State<List<ExperienceHistor
 
 
     Text(
-        text = "Experience gained over the 30 days",
+        text = "Experience gained over the last 30 days",
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
