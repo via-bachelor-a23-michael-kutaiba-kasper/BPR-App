@@ -126,15 +126,9 @@ class FakeEventRepository : IEventRepository {
         return
     }
 
-    override suspend fun getKeywords(): List<String> {
-        return listOf("Dance", "Gaming", "Fitness", "Coding", "Yoga", "Networking")
-    }
 
-    override suspend fun getCategories(): List<String> {
-        return listOf("Music", "Education", "Technology")
-    }
 
-    override suspend fun getJoinedEvents(userId: String): List<MinimalEvent> {
+    override suspend fun getJoinedEvents(userId: String, eventState: String): List<MinimalEvent> {
         return listOf(
             MinimalEvent(
                 title = "Run Event",
@@ -181,192 +175,10 @@ class FakeEventRepository : IEventRepository {
         )
     }
 
-    override suspend fun createReview(
-        eventId: Int,
-        userId: String,
-        rating: Float,
-        reviewDate: String
-    ): Int {
-        return 1
-    }
 
-    override suspend fun getReviewIds(userId: String): List<EventRating> {
-        return listOf(
-            EventRating(1, 4.5f),
-            EventRating(2, 3.5f),
-            EventRating(3, 2.5f),
-            EventRating(4, 1.5f),
-            EventRating(5, 0.5f)
-        )
-    }
 
-    override suspend fun getReccommendations(
-        userId: String,
-        numberOfEvents: Int
-    ): List<MinimalEvent> {
-        return listOf(
-            MinimalEvent(
-                title = "Run Event",
-                description = "Run for 5km",
-                location = Location(
-                    city = "Horsens",
-                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
-                    geoLocation = GeoLocation(55.860916, 9.850000)
-                ),
-                selectedCategory = "Music",
-                selectedStartDateTime = LocalDateTime.now(),
-                selectedEndDateTime = LocalDateTime.now().plusHours(5),
-                photos = null,
-                eventId = 1,
-                host = User(
-                    "Michael Kuta Ibaka",
-                    "123456789",
-                    null,
-                    LocalDateTime.now(),
-                    LocalDateTime.now()
-                ), numberOfAttendees = null
-            ),
-            MinimalEvent(
-                title = "Run Event",
-                description = "Run for 5km",
-                location = Location(
-                    city = "Horsens",
-                    completeAddress = "Hospitalsgade 86, 8701 Horsens",
-                    geoLocation = GeoLocation(55.860916, 9.850000)
-                ),
-                selectedCategory = "Music",
-                selectedStartDateTime = LocalDateTime.now(),
-                selectedEndDateTime = LocalDateTime.now().plusHours(5),
-                photos = null,
-                eventId = 1,
-                host = User(
-                    "Michael Kuta Ibaka",
-                    "123456789",
-                    null,
-                    LocalDateTime.now(),
-                    LocalDateTime.now()
-                ), numberOfAttendees = null
-            )
-        )
-    }
 
-    override suspend fun getInterestSurvey(userId: String): Status {
-        return Status("Success", 200)
-    }
 
-    override suspend fun storeInterestSurvey(
-        userId: String,
-        keywords: List<String>,
-        categories: List<String>
-    ): Status {
-        return Status("Success", 200)
-    }
 
-    override suspend fun getUserAchievements(userId: String): List<Achievement> {
-        return listOf(
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ),
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ), Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ),
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            )
-        )
-    }
 
-    override suspend fun getAllAchievements(): List<Achievement> {
-        return listOf(
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ),
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ), Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            ),
-            Achievement(
-                name = "Music Maestro",
-                description = "Host 5 music events",
-                expReward = 10,
-                icon = "",
-                requirement = 1, progress = 2,
-                unlockDate = LocalDateTime.now(),
-                isAchieved = false
-            )
-        )
-    }
-
-    override suspend fun getExperience(userId: String): Experience {
-        return Experience(
-            totalExp = 100,
-            level = 1,
-            maxExp = 200,
-            minExp = 100,
-            stage = 1,
-            name = "Beginner"
-        )
-    }
-
-    override suspend fun getUserExperienceHistory(userId: String): List<ExperienceHistory> {
-        return listOf(
-            ExperienceHistory(
-                exp = 100,
-                date = LocalDateTime.now()
-            ),
-            ExperienceHistory(
-                exp = 100,
-                date = LocalDateTime.now()
-            ),
-            ExperienceHistory(
-                exp = 100,
-                date = LocalDateTime.now()
-            ),
-        )
-    }
 }

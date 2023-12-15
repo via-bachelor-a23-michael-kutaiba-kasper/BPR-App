@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.Achievement
 import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeProgressRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.achievements.AchievementsViewModel
 import junit.framework.TestCase
 import org.junit.Rule
@@ -14,7 +15,7 @@ import org.junit.runner.RunWith
 class AchievementsViewModelTest {
     @get:Rule
     val composeTestRule = createComposeRule()
-    private val repository = FakeEventRepository()
+    private val repository = FakeProgressRepository()
 
 
     @Test

@@ -4,6 +4,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.ExperienceHistory
 import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeProgressRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeReviewRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.profile.ProfileViewModel
 import junit.framework.TestCase
 import org.junit.Rule
@@ -15,13 +17,17 @@ class ProfileViewModelTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
-    private val repository = FakeEventRepository()
+    private val eventRepository = FakeEventRepository()
+    private val reviewRepository = FakeReviewRepository()
+    private val progressRepository = FakeProgressRepository()
+
+
 
 
     @Test
     fun getReviewIds_returnsListOfInts() {
         val viewModel =
-            ProfileViewModel(reviewRepo = repository)
+            ProfileViewModel(eventRepository = eventRepository, reviewRepository = reviewRepository, progressRepository = progressRepository)
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<Int>(), viewModel.reviewIds.value)
@@ -38,7 +44,7 @@ class ProfileViewModelTest {
     @Test
     fun getFinishedJoinedEvents_returnsListOfEvents() {
         val viewModel =
-            ProfileViewModel(reviewRepo = repository)
+            ProfileViewModel(eventRepository = eventRepository, reviewRepository = reviewRepository, progressRepository = progressRepository)
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<Int>(), viewModel.finishedJoinedEvents.value)
@@ -55,7 +61,7 @@ class ProfileViewModelTest {
     @Test
     fun createReview_returnsInt() {
         val viewModel =
-            ProfileViewModel(reviewRepo = repository)
+            ProfileViewModel(eventRepository = eventRepository, reviewRepository = reviewRepository, progressRepository = progressRepository)
 
         // Verify the initial state
         TestCase.assertEquals(false, viewModel.reviewCreated.value)
@@ -76,7 +82,8 @@ class ProfileViewModelTest {
 
     @Test
     fun getExperienceHistory_returnsListOfExperience() {
-        val viewModel = ProfileViewModel(repository)
+        val viewModel =
+            ProfileViewModel(eventRepository = eventRepository, reviewRepository = reviewRepository, progressRepository = progressRepository)
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<ExperienceHistory>(), viewModel.experienceHistory.value)

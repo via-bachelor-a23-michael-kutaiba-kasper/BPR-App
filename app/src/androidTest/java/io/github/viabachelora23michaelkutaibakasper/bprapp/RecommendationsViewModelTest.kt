@@ -3,7 +3,9 @@ package io.github.viabachelora23michaelkutaibakasper.bprapp
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.viabachelora23michaelkutaibakasper.bprapp.data.domain.MinimalEvent
-import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeEventRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeMetadataRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeRecommendationsRepository
+import io.github.viabachelora23michaelkutaibakasper.bprapp.mocks.FakeSurveyRepository
 import io.github.viabachelora23michaelkutaibakasper.bprapp.ui.screens.recommendations.RecommendationsViewModel
 import junit.framework.TestCase
 import org.junit.Rule
@@ -14,13 +16,19 @@ import org.junit.runner.RunWith
 class RecommendationsViewModelTest {
     @get:Rule
     val composeTestRule = createComposeRule()
-    private val repository = FakeEventRepository()
+    private val metaRepository = FakeMetadataRepository()
+    private val surveyRepository = FakeSurveyRepository()
+    private val recommendationsRepository = FakeRecommendationsRepository()
 
 
     @Test
     fun getRecommendations_returnsListOfEvents() {
         val viewModel =
-            RecommendationsViewModel(repository = repository)
+            RecommendationsViewModel(
+                metaRepo = metaRepository,
+                surveyRepo = surveyRepository,
+                recommendationsRepo = recommendationsRepository
+            )
 
         // Verify the initial state
         TestCase.assertEquals(emptyList<MinimalEvent>(), viewModel.recommendationsList.value)
@@ -37,8 +45,11 @@ class RecommendationsViewModelTest {
     @Test
     fun getKeywords_returnsListOfStrings() {
         val viewModel =
-            RecommendationsViewModel(repository = repository)
-
+            RecommendationsViewModel(
+                metaRepo = metaRepository,
+                surveyRepo = surveyRepository,
+                recommendationsRepo = recommendationsRepository
+            )
         // Verify the initial state
         TestCase.assertEquals(emptyList<String>(), viewModel.predefinedKeywords.value)
 
@@ -54,8 +65,11 @@ class RecommendationsViewModelTest {
     @Test
     fun getCategories_returnsListOfStrings() {
         val viewModel =
-            RecommendationsViewModel(repository = repository)
-
+            RecommendationsViewModel(
+                metaRepo = metaRepository,
+                surveyRepo = surveyRepository,
+                recommendationsRepo = recommendationsRepository
+            )
         // Verify the initial state
         TestCase.assertEquals(emptyList<String>(), viewModel.predefinedCategories.value)
 
@@ -71,8 +85,11 @@ class RecommendationsViewModelTest {
     @Test
     fun getInterestSurvey_returns200() {
         val viewModel =
-            RecommendationsViewModel(repository = repository)
-
+            RecommendationsViewModel(
+                metaRepo = metaRepository,
+                surveyRepo = surveyRepository,
+                recommendationsRepo = recommendationsRepository
+            )
         // Verify the updated state
         TestCase.assertEquals(0, viewModel.isInterestSurveyFilled(userId = "abc"))
     }
@@ -80,14 +97,28 @@ class RecommendationsViewModelTest {
     @Test
     fun storeInterestSurvey_correctNumberOfKeywordsAndCategories_returns200() {
         val viewModel =
-            RecommendationsViewModel(repository = repository)
-
-        var statusCode =0
+            RecommendationsViewModel(
+                metaRepo = metaRepository,
+                surveyRepo = surveyRepository,
+                recommendationsRepo = recommendationsRepository
+            )
+        var statusCode = 0
         // Verify the initial state
-        TestCase.assertEquals(statusCode, viewModel.storeInterestSurvey(userId = "abc", keywords = emptyList(), categories = emptyList()))
+        TestCase.assertEquals(
+            statusCode,
+            viewModel.storeInterestSurvey(
+                userId = "abc",
+                keywords = emptyList(),
+                categories = emptyList()
+            )
+        )
 
         composeTestRule.runOnIdle {
-          statusCode =  viewModel.storeInterestSurvey(userId = "abc", keywords = listOf("abc","def","ghi"), categories = listOf("abc","def","ghi"))
+            statusCode = viewModel.storeInterestSurvey(
+                userId = "abc",
+                keywords = listOf("abc", "def", "ghi"),
+                categories = listOf("abc", "def", "ghi")
+            )
         }
         composeTestRule.waitForIdle()
 
